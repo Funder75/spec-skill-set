@@ -1,0 +1,9 @@
+{
+  "name": "spec-skill-set",
+  "displayName": "Spec",
+  "description": "Gated design, tech specs, implementation plan, and one-phase implement workflow",
+  "version": "0.1.0",
+  "license": "MIT",
+  "keywords": ["skills", "spec", "planning", "workflows"],
+  "skills": "./skills/"
+}
