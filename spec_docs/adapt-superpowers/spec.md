@@ -48,7 +48,7 @@
 
 ## Goals and acceptance criteria
 
-**In short:** Dialogue and approval before the file, stronger UI when the surface is a screen, plans with guiding code but no pasteables, and no SCM or skill sprawl.
+**In short:** Dialogue and approval before the file, stronger UI when any goal is user-visible, plans with guiding code but no pasteables, and no SCM or skill sprawl.
 
 ### G1 (chat dialogue) — Create-spec explores the idea in chat before writing the file
 
@@ -80,7 +80,7 @@ Source: —
 
 Source: —
 
-- Create-spec detects when the primary surface is a user-facing screen.
+- Create-spec treats a feature as UI-primary when any goal needs a user-visible change, including copy-only (see D8 (ui trigger)).
 - For those specs, `spec.md` must cover layout regions, main interactions, empty and error states, and glance versus control when both exist.
 - The design still defers component props and wireframes to `ui.md` at promote.
 - Non-UI features keep journeys as `n/a` with a reason, as today.
@@ -155,7 +155,7 @@ Covers: G1 (chat dialogue), G2 (chat approval), G3 (self review)
 
 ### Create a UI-primary design
 
-Starting point: the developer asks for a design whose main surface is a screen.
+Starting point: the developer asks for a design where at least one goal needs a user-visible change (including copy-only).
 
 1. Dialogue and approval run as in the first journey.
 2. The written design includes layout regions, main interactions, and empty or error states.
@@ -224,7 +224,7 @@ Covers: G6 (no scm), G7 (one skill)
 ## Concerns
 
 - **Longer create loop.** Dialogue adds turns. Without skip rules, small specs feel heavy. G2 (chat approval) allows skipping approaches when there is no fork.
-- **UI detection.** "Primary surface is a screen" can be fuzzy. If left vague: agents under- or over-apply G4 (ui depth). See Q1 (ui trigger).
+- **UI breadth.** D8 (ui trigger) includes copy-only goals, so more creates need screen depth. If depth feels heavy for a one-line copy change: keep the detector, scale how much layout detail is written, and still name empty or error states when they apply.
 
 ## Proposed solution
 
@@ -266,14 +266,14 @@ State the no-SCM rule in stages that touch execution. Keep a single `spec` skill
 ## Glossary
 
 - **Chat approval:** The user accepts the design shape in conversation before `spec.md` exists.
-- **UI-primary:** The main deliverable is a screen or interactive surface people use.
+- **UI-primary:** Any goal needs a user-visible change, including copy-only (see D8 (ui trigger)).
 - **Approach round:** Two or three options with trade-offs and a recommendation, only when a real fork exists.
 - **Pasteable code:** Full implementation blocks in a plan meant to be copied into the repo without further design.
 - **Guiding code:** Short snippets, signatures, or sketches that show the intended shape without being a drop-in file.
 
 ## Decisions
 
-**In short:** One skill, chat-first create, UI depth when needed, plans are guided contracts (not paste scripts), no SCM, packaging stays separate.
+**In short:** One skill, chat-first create, UI depth for any user-visible goal (including copy-only), plans are guided contracts (not paste scripts), no SCM, packaging stays separate.
 
 ### D1 (one skill) — Keep a single spec skill with stages
 
@@ -317,14 +317,8 @@ State the no-SCM rule in stages that touch execution. Keep a single `spec` skill
 - **Why:** The user invokes `/spec`. Hooks that steal every session are out of scope.
 - **Rejected:** a using-superpowers style always-on injector.
 
-## Open questions
+### D8 (ui trigger) — UI-primary when any goal needs a user-visible change, including copy-only
 
-### Q1 (ui trigger) — How does create-spec decide a feature is UI-primary?
-
-- **Priority:** high · **Blocks:** phase 2 (UI depth at design) · **Owner:** Dan
-- **Options:**
-  - **A.** Primary surface is a screen, form, or interactive panel people use.
-  - **B.** Only when the user says the work is UI, or asks for `ui.md` later.
-  - **C.** When any goal needs a user-visible change, including copy-only.
-
-> **Open:** Q1 (ui trigger)
+- **Date:** 2026-10-24 · **Area:** create-spec
+- **Why:** Narrower triggers miss copy-only and glance-surface work that still needs empty, error, and layout context at the design gate.
+- **Rejected:** (A) only when the primary surface is a screen, form, or interactive panel. (B) only when the user says the work is UI, or asks for `ui.md` later.

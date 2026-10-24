@@ -12,10 +12,6 @@ Phases for [spec.md](./spec.md).
 | **2** | Not started | UI depth at design | Medium | 1 | 3 |
 | **3** | Not started | Plan contracts and bounds | Medium | — | 2 |
 
-## Prerequisites
-
-- [ ] **Q1 (ui trigger)** answered before starting phase 2 (detector text must not be invented)
-
 ## Phase 1 — Create-spec chat gate
 
 **Goal:** Create-spec finishes dialogue and chat approval before writing `spec.md`, then self-reviews before the file-review ask.
@@ -110,11 +106,11 @@ Phases for [spec.md](./spec.md).
 **Read first:**
 
 - [business-logic.md › R6 (ui depth)](./business-logic.md#r6-ui-depth)
-- [spec.md › Q1 (ui trigger)](./spec.md#q1-ui-trigger)
+- [spec.md › D8 (ui trigger)](./spec.md#d8-ui-trigger)
 
 **Tier:** Medium — local design choices for template prompts and create-spec Write rules within a known stage pattern
 
-**Not in this phase:** Chat-gate ordering (phase 1); plan Approach (phase 3); inventing a UI-primary detector before Q1 (ui trigger) closes
+**Not in this phase:** Chat-gate ordering (phase 1); plan Approach (phase 3)
 
 **Deliverables:**
 
@@ -123,7 +119,7 @@ Phases for [spec.md](./spec.md).
 
 **Approach** (advisory):
 
-1. Close or apply the chosen option from Q1 (ui trigger) as a short detector sentence in create-spec. Do not ship a detector while the question is open.
+1. Add a short detector sentence in create-spec matching D8 (ui trigger): UI-primary when any goal needs a user-visible change, including copy-only.
 2. In Write spec.md, add a MUST list for UI-primary screen depth matching R6 (ui depth).
 3. In `skills/spec/templates/spec.md`, add author prompts (HTML comments or short stub bullets) for layout, interactions, and empty/error — not component props.
 4. **Do:** keep non-UI journeys as `n/a` with a reason.
@@ -133,7 +129,7 @@ Phases for [spec.md](./spec.md).
 
 - **A2.1 — Screen depth in the design**
   - Journey: Create a UI-primary design, step 2
-  - Given the feature is UI-primary per the closed Q1 (ui trigger) rule
+  - Given the feature is UI-primary per D8 (ui trigger)
   - When create-spec writes `spec.md`
   - Then the design covers layout regions, main interactions, and empty or error states (and glance versus control when both exist)
 
@@ -153,7 +149,7 @@ Phases for [spec.md](./spec.md).
 
 - [ ] Tier verify passes (Medium row in Project conventions)
 - [ ] A2.1–A2.3 pass
-- [ ] Q1 (ui trigger) is closed or the phase is Deferred with a Follow-up
+- [ ] create-spec states the D8 (ui trigger) detector
 - [ ] Phase 1 chat-gate behaviour still holds
 
 ### Close-out
@@ -246,4 +242,4 @@ Phases for [spec.md](./spec.md).
 
 ## Risks
 
-- **Q1 (ui trigger) still open.** Phase 2 cannot invent a detector. Mitigation: keep phase 2 Blocked or Deferred until the question closes; phase 1 and phase 3 can still ship.
+- **UI breadth from D8 (ui trigger).** Copy-only goals still trigger screen-depth MUSTS. Mitigation: scale layout detail to the change; still name empty or error states when they apply.

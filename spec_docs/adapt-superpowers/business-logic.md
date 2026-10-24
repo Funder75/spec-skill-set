@@ -7,7 +7,7 @@ Rules for **adapt-superpowers**. [spec.md](./spec.md) owns scope, non-goals, glo
 ## TL;DR
 
 - Create-spec must finish dialogue and chat approval before writing `spec.md`.
-- UI-primary designs must carry screen depth in the design file; detection stays open.
+- UI-primary designs must carry screen depth in the design file; UI-primary means any user-visible goal change, including copy-only (D8 (ui trigger)).
 - Plan Approach must guide with examples and must not ship pasteable full code; stages must refuse surprise SCM.
 
 ## Rules
@@ -59,11 +59,10 @@ Rules for **adapt-superpowers**. [spec.md](./spec.md) owns scope, non-goals, glo
 
 **Lands in:** `skills/spec/stages/create-spec.md` › Write spec.md; `skills/spec/templates/spec.md` › User journeys / optional UI-primary prompts
 
+- A feature is UI-primary when any goal needs a user-visible change, including copy-only (see D8 (ui trigger)).
 - When the feature is UI-primary, the written `spec.md` MUST cover layout regions, main interactions, empty and error states, and glance versus control when both exist (see D4 (ui at design)).
 - Component props and wireframes MUST stay out of `spec.md`; they belong in `ui.md` at promote.
 - Non-UI features keep journeys as `n/a` with a reason, as today.
-
-> **Open:** Q1 (ui trigger) — how create-spec decides UI-primary is unsettled. Do not invent a detector until that question closes.
 
 ### R7 (plan guiding)
 
@@ -102,7 +101,7 @@ Rules for **adapt-superpowers**. [spec.md](./spec.md) owns scope, non-goals, glo
 | Entry point | User action | System response | Handled by |
 | ----------- | ----------- | --------------- | ---------- |
 | `/spec` create | Ask for a new design | Dialogue, then chat approval, then file | `create-spec.md` |
-| `/spec` create (UI-primary) | Same, screen is main surface | Plus screen depth in `spec.md` | `create-spec.md` + template |
+| `/spec` create (UI-primary) | Same, any goal is user-visible (incl. copy-only) | Plus screen depth in `spec.md` | `create-spec.md` + template |
 | `/spec` promote plan | Ask for implementation plan | Phases with guided Approach | `plan.md` + `design-quality.md` |
 | `/spec` implement | Ask to run a phase | Edit product files; no surprise SCM | `implement.md` |
 
