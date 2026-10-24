@@ -1,7 +1,7 @@
 # Adapt Superpowers habits into the spec skill
 
 **Slug:** `adapt-superpowers`
-**Progress:** design
+**Progress:** tech
 **Work item:** —
 **Depends on:** —
 
@@ -17,7 +17,7 @@
 | Doc | Read for | Present? |
 | --- | -------- | -------- |
 | This file | Scope, goals, journeys, constraints, work split | yes |
-| business-logic.md | Rules, workflows, state transitions | pending |
+| [business-logic.md](./business-logic.md) | Rules, workflows, state transitions | yes |
 | contracts.md | Types, API contracts, state ownership, storage | not needed |
 | ui.md | Layout, interaction, states, copy | not needed |
 | implementation-plan.md | Phases and phase status | pending |
