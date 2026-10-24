@@ -1,7 +1,7 @@
 # Adapt Superpowers habits into the spec skill
 
 **Slug:** `adapt-superpowers`
-**Progress:** tech
+**Progress:** plan
 **Work item:** —
 **Depends on:** —
 
@@ -20,7 +20,7 @@
 | [business-logic.md](./business-logic.md) | Rules, workflows, state transitions | yes |
 | contracts.md | Types, API contracts, state ownership, storage | not needed |
 | ui.md | Layout, interaction, states, copy | not needed |
-| implementation-plan.md | Phases and phase status | pending |
+| [implementation-plan.md](./implementation-plan.md) | Phases and phase status | yes |
 
 ## Source
 
@@ -321,7 +321,7 @@ State the no-SCM rule in stages that touch execution. Keep a single `spec` skill
 
 ### Q1 (ui trigger) — How does create-spec decide a feature is UI-primary?
 
-- **Priority:** high · **Blocks:** tech specs for G4 (ui depth) · **Owner:** Dan
+- **Priority:** high · **Blocks:** phase 2 (UI depth at design) · **Owner:** Dan
 - **Options:**
   - **A.** Primary surface is a screen, form, or interactive panel people use.
   - **B.** Only when the user says the work is UI, or asks for `ui.md` later.

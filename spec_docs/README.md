@@ -57,36 +57,37 @@ The skill reads this section when it needs a project fact. If a subsection is st
 
 ### Work items
 
-{{Where a work-item id comes from, and how to fetch it. Keep the title, description, and acceptance criteria. Map each acceptance criterion into a goal's Source line, for example `WI AC2`.}}
+This repo has no work-item system. Specs come from chat or free text. If a future id scheme appears, keep title, description, and acceptance criteria, and map each criterion to a goal **Source** line (for example `WI AC2`).
 
 ### Verify tiers
 
+This repo is skill and plugin markdown. There is no app build. Run verify from the repo root. Commands are checks the implementer performs and records under phase **Close-out**.
+
 | Tier | Verify |
 | ---- | ------ |
-| Low | {{command}} |
-| Medium | {{command}} |
-| High | {{command}} |
+| Low | Diff each deliverable path against the phase **Done when** and scenarios; confirm no `{{…}}` or HTML author comments remain in touched skill files |
+| Medium | Low, plus `rg` that each cited rule and goal ID (full form) appears in the named stage or template |
+| High | Medium, plus a dry read of the stage as an agent would: walk the ordered sections and confirm the chat-gate or Approach rules cannot be skipped |
 
-{{Where to run the commands, and any setup they assume.}}
+No install or test runner is required for these checks.
 
 ### Complexity hotspots
 
-<!-- include when: this repo has areas the generic tier rubric cannot rate. Omit the subsection when there are none. The planner reads this when setting a phase tier. A missing or placeholder subsection is not a question. -->
-
-- {{area — why a phase that touches it is harder}}
+- **Create-spec chat gate** — Ordered clarify → approach → approval → write; mistakes pass a file diff and only show up in a live `/spec create` session.
+- **Plan Approach contract** — Guiding vs pasteable is judgmental; weak feedback until someone runs promote.
 
 ### Stack notes for spec docs
 
-The skill reads this when filling `contracts.md` and `ui.md`.
+This plugin does not ship an application UI or data layer. Specs that only change skill text set tech rows to `not needed` or fold notes. When a feature later needs app-facing tech docs:
 
-- **UI library:** {{component library, and where to look up props}}
-- **Data access:** {{how this repo calls APIs or storage}}
-- **Validation:** {{how untrusted data is checked at the boundary}}
-- **Errors:** {{the type used for expected failures}}
-- **i18n:** {{where user-facing copy lives, or "none"}}
+- **UI library:** n/a in this repo
+- **Data access:** n/a in this repo
+- **Validation:** n/a in this repo
+- **Errors:** n/a in this repo
+- **i18n:** none
 
 ### Other commands
 
 | Task | Command | Notes |
 | ---- | ------- | ----- |
-| {{dev server}} | {{…}} | {{…}} |
+| Reload local plugin | Copy repo to `~/.cursor/plugins/local/spec-skill-set`, then Reload Window | Required after skill edits for Cursor to pick them up |
