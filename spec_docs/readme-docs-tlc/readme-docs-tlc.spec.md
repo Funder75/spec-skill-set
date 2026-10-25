@@ -7,7 +7,7 @@ document_url: n/a
 
 # Project README docs TLC
 
-**Progress:** plan
+**Progress:** implementing
 **Depth:** lite
 **Depends on:** —
 

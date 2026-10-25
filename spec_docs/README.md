@@ -2,6 +2,8 @@
 
 Planning documents for this repo. One folder per feature spec. The spec workflow skill reads **Project conventions** below when it needs a project fact. It does not use the rest of this file as its process.
 
+For a short first-read overview (folder role, write loop, tips), see the [project README](../README.md).
+
 | Path | Role |
 | ---- | ---- |
 | `<slug>/` | Active spec. Start at `<slug>.spec.md` |

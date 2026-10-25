@@ -8,7 +8,7 @@ Phases for [readme-docs-tlc.spec.md](./readme-docs-tlc.spec.md).
 
 | Phase | Status | Name | Tier | Depends on | Combinable with |
 | ----- | ---- | ------ | ---- | ---------- | --------------- |
-| **1** | Not started | README docs and tips | Low | — | — |
+| **1** | Done | README docs and tips | Low | — | — |
 
 ## Phase 1 — README docs and tips
 
@@ -64,13 +64,13 @@ Note: the source todo was removed from `spec_docs/todos.md` when this folder was
 
 ### Done when
 
-- [ ] Tier verify passes (Project conventions in `spec_docs/README.md`)
-- [ ] A1.1–A1.3 pass
-- [ ] Existing install, Linear, and contrib sections remain accurate
-- [ ] No files under `skills/spec/` were changed
+- [x] Tier verify passes (Project conventions in `spec_docs/README.md`)
+- [x] A1.1–A1.3 pass
+- [x] Existing install, Linear, and contrib sections remain accurate
+- [x] No files under `skills/spec/` were changed
 
 ### Close-out
 
-- Verified:
-- Deviations:
-- Follow-ups:
+- Verified: Tier Low → n/a (Project conventions). A1.1: root README › What `spec_docs/` is for covers folder role, active vs archive, link to `spec_docs/README.md`. A1.2: Write and iterate names create → archive and Depth without contradicting `spec_docs/README.md`. A1.3: Tips has 7 bullets; archive-grounded items include slug-prefixed names (`slug-prefixed-docs`), bootstrap conventions fill (`init-readme-fill`), one-open-unit / no parallel implementers (`multi-subagent`), repo-canonical Linear (`linear-integration`), no surprise SCM (`adapt-superpowers` / `cursor-plugin`). `git diff --stat -- skills/spec/` empty. Install / Getting started / Contribute unchanged in substance; Linear kept with one accuracy tweak (`spec.md` → `<slug>.spec.md`).
+- Deviations: None from advisory Approach. Light cross-link added at top of `spec_docs/README.md` (in scope).
+- Follow-ups: —
