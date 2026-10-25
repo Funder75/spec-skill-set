@@ -2,12 +2,25 @@
 
 A Cursor plugin that ships the `/spec` skill: a gated workflow from design → technical specs → implementation plan → one phase at a time, then archive.
 
-This repository is the plugin (not an npm package). Install it from the Cursor Marketplace with `/add-plugin`.
+This repository is the plugin (not an npm package). Install it from GitHub with `/add-plugin`. We intend to publish to the [Cursor Marketplace](https://cursor.com/marketplace) later; until then, use the GitHub install below.
 
 ## Getting started
 
-1. In Cursor, run `/add-plugin` and install **Spec** (`spec-skill-set`).
-2. Open Customize and confirm the Spec plugin and the `spec` skill are listed.
+Requires Cursor 2.5+. In a new Agent chat, type the full command (it often does not appear in autocomplete):
+
+```text
+/add-plugin spec-skill-set@https://github.com/Funder75/spec-skill-set
+```
+
+Open Customize and confirm the Spec plugin and the `spec` skill are listed.
+
+### Updates
+
+GitHub `/add-plugin` installs can stay pinned to the commit from first install. Restart, Update/Reinstall, and running `/add-plugin` again often do **not** pull newer commits (known Cursor limitation).
+
+To run a newer revision until that is fixed: clone or copy this repo into `~/.cursor/plugins/local/spec-skill-set` (a real directory under that folder — a symlink to a checkout elsewhere is rejected), then Developer: Reload Window. Prefer that over relying on the marketplace cache when you need the latest skill.
+
+After we are listed on the official Marketplace, installs from there should pick up reviewed updates on restart or window focus.
 
 ## How to use
 
