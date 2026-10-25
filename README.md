@@ -23,6 +23,8 @@ Main actions:
 
 `/spec help` points at the project’s `spec_docs/README.md` when that file exists.
 
+Create-spec runs dialogue and chat approval before writing `spec.md`. Plans use guided Approach (not pasteable full code). The skill does not create branches, worktrees, or commits unless you ask.
+
 For the full workflow, gates, and project conventions, see [`spec_docs/README.md`](spec_docs/README.md).
 
 ## Contribute

@@ -8,9 +8,9 @@ Phases for [spec.md](./spec.md).
 
 | Phase | Status | Name | Tier | Depends on | Combinable with |
 | ----- | ------ | ---- | ---- | ---------- | --------------- |
-| **1** | Not started | Create-spec chat gate | High | — | — |
-| **2** | Not started | UI depth at design | Medium | 1 | 3 |
-| **3** | Not started | Plan contracts and bounds | Medium | — | 2 |
+| **1** | Done | Create-spec chat gate | High | — | — |
+| **2** | Done | UI depth at design | Medium | 1 | 3 |
+| **3** | Done | Plan contracts and bounds | Medium | — | 2 |
 
 ## Phase 1 — Create-spec chat gate
 
@@ -86,16 +86,16 @@ Phases for [spec.md](./spec.md).
 
 ### Done when
 
-- [ ] Tier verify passes (High row in Project conventions)
-- [ ] A1.1–A1.6 pass
-- [ ] Clarify still skips answers already in the input or chat
-- [ ] Progress gates and slug rules in create-spec are unchanged
+- [x] Tier verify passes (High row in Project conventions)
+- [x] A1.1–A1.6 pass
+- [x] Clarify still skips answers already in the input or chat
+- [x] Progress gates and slug rules in create-spec are unchanged
 
 ### Close-out
 
-- Verified:
-- Deviations:
-- Follow-ups:
+- **Verified.** Diffed `skills/spec/stages/create-spec.md` against Done when and A1.1–A1.6. Dry-read ordered sections: Clarify (one question, hold file) → Approach round (fork or skip) → Chat design approval (hold Write) → Write → Self-review → Stop. Assumptions path records Open questions or Decisions then Write. No `{{…}}` left in the stage. Slug and Progress: design rules unchanged.
+- **Deviations.** None.
+- **Follow-ups.** None.
 
 ## Phase 2 — UI depth at design
 
@@ -147,16 +147,16 @@ Phases for [spec.md](./spec.md).
 
 ### Done when
 
-- [ ] Tier verify passes (Medium row in Project conventions)
-- [ ] A2.1–A2.3 pass
-- [ ] create-spec states the D8 (ui trigger) detector
-- [ ] Phase 1 chat-gate behaviour still holds
+- [x] Tier verify passes (Medium row in Project conventions)
+- [x] A2.1–A2.3 pass
+- [x] create-spec states the D8 (ui trigger) detector
+- [x] Phase 1 chat-gate behaviour still holds
 
 ### Close-out
 
-- Verified:
-- Deviations:
-- Follow-ups:
+- **Verified.** Diffed create-spec UI-primary MUST list and template Screen depth prompts against A2.1–A2.3. Detector matches D8 (ui trigger) wording (any user-visible goal, including copy-only). Props/wireframes forbidden in design. Non-UI `n/a` journeys unchanged. Phase 1 chat-gate sections still present.
+- **Deviations.** None.
+- **Follow-ups.** None.
 
 ## Phase 3 — Plan contracts and bounds
 
@@ -229,16 +229,16 @@ Phases for [spec.md](./spec.md).
 
 ### Done when
 
-- [ ] Tier verify passes (Medium row in Project conventions)
-- [ ] A3.1–A3.5 pass
-- [ ] Existing implement “Ask before commit / push / PR” still holds and now covers branches and worktrees
-- [ ] README no longer says adapt-superpowers behaviour is only reserved / not in the repo
+- [x] Tier verify passes (Medium row in Project conventions)
+- [x] A3.1–A3.5 pass
+- [x] Existing implement “Ask before commit / push / PR” still holds and now covers branches and worktrees
+- [x] README no longer says adapt-superpowers behaviour is only reserved / not in the repo
 
 ### Close-out
 
-- Verified:
-- Deviations:
-- Follow-ups:
+- **Verified.** Diffed plan Approach contract, design-quality Bad vs good pair, SKILL Bounds, implement MUST NOT, create-spec Bounds, and README note against A3.1–A3.5. `skills/` still has only `spec` (no peer brainstorming/planning/TDD skills). Ask-before now lists branch / worktree / commit / push / PR.
+- **Deviations.** Root README had no “reserved” line (that lived in archived `cursor-plugin`); added a shipped-behaviour note instead of replacing missing text.
+- **Follow-ups.** None.
 
 ## Risks
 

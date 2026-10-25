@@ -1,7 +1,7 @@
 # Adapt Superpowers habits into the spec skill
 
 **Slug:** `adapt-superpowers`
-**Progress:** plan
+**Progress:** implementing
 **Work item:** —
 **Depends on:** —
 

@@ -98,3 +98,9 @@ If `spec_docs/` does not exist, copy [templates/spec-docs-readme.md](templates/s
 ## Work items
 
 When the input is a work-item id, follow **Project conventions** for how to fetch it. Keep the title and description in the source note, and map acceptance criteria onto the goals. Do not paste the raw work-item payload into `spec.md` or the reply.
+
+## Bounds
+
+- **No surprise SCM.** Do not create branches, worktrees, or commits unless the user explicitly asks in that conversation. Create, promote, and implement do not add a worktree step.
+- **One skill.** Adaptations stay in this skill tree. Do not add peer skills for brainstorming, planning, or TDD for this workflow.
+- **No auto pipeline.** After design-file approval, do not auto-invoke a separate implementation pipeline.

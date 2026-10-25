@@ -36,7 +36,7 @@ Before writing, work out how the input becomes a review-ready `spec.md`. Cover:
 - Scope and non-goals implied by the input and by what the code already does.
 - The user journeys: who starts where, the steps from their side, the end state, and what goes wrong.
 - Edge cases each goal must handle.
-- A coarse work split: ordered slices, the goals each one covers, and the main surface of each.
+- A coarse work split: ordered slices, the goals each covers, and the main surface of each.
 - Decisions that still need a person, versus assumptions safe to record.
 
 Write the analysis in the working turn, specific enough that each section of `spec.md` can be filled from the input and the code you opened. If a section cannot, add a **Q** item and point at it with `> **Open:** Q1 (short name)` instead of inventing it. Do not paste the analysis into `spec.md` as its own section. Do not invent file-level deliverables.
@@ -47,7 +47,7 @@ Kebab-case, two to four words, unique under `spec_docs/` (not under `archive/`).
 
 ## Clarify before writing
 
-Skip questions already answered in the input or chat. Do not create files until the user has answered, or explicitly says to proceed with assumptions (record those in **Open questions**).
+Skip questions already answered in the input or chat. Prefer multiple choice when the options are clear.
 
 Must ask unless already answered: v1 scope, explicit out-of-scope, folder slug, persistence impact (in-memory vs stored vs external API).
 
@@ -55,9 +55,59 @@ Ask if unclear: primary surface, dependencies, whether any tech doc will be need
 
 Default assumptions when the user skips Q&A: v1 is the smallest shippable slice; no new packages without asking; follow patterns already in the touched code.
 
+**MUST:**
+
+- Ask only missing clarifying questions after Investigate and Analysis.
+- Ask exactly one clarifying question per turn while required answers are still missing.
+- Do not create `spec.md` while required answers are still missing, unless the user takes the assumptions path below.
+
+**MUST NOT:**
+
+- Ask several clarifying questions in one turn.
+- Create `spec.md` in the same turn as an unanswered must-ask question.
+
+### Assumptions path
+
+If the user says to proceed with assumptions (from Clarify or from Chat design approval):
+
+1. Record those assumptions as **Open questions** or **Decisions** in `spec.md`.
+2. Unsettled forks that would change later docs stay **Priority** `high` open questions.
+3. Only then may you write the file. Skip any remaining Approach round or sectional approval turns.
+
+## Approach round
+
+Run after Clarify is complete. Finish this round before Chat design approval. Skip this whole section when the assumptions path already allowed Write.
+
+**When there is a real design fork:**
+
+- Propose two or three approaches with trade-offs and a recommendation.
+- Wait for the user to pick or adjust before Chat design approval.
+
+**When there is no meaningful fork:**
+
+- Skip this round. Do not invent fake options.
+
+**MUST NOT:** Write `spec.md` during the approach round.
+
+## Chat design approval
+
+Present the design in short chat sections scaled to complexity. Ask for approval after sections, not only after a file exists.
+
+**MUST:**
+
+- Get approval of the design shape in chat before creating `spec.md`, unless the assumptions path applies.
+- Hold the Write step until the user approves, or until the assumptions path has recorded unsettled items.
+
+**MUST NOT:**
+
+- Write `spec.md` before chat approval or the assumptions path.
+- Open Write in the same turn as an unanswered design-section question.
+
+If a section is rejected, revise that section in chat and ask again. Do not create the file until the design shape is approved (or the assumptions path applies).
+
 ## Write spec.md
 
-Create `spec_docs/<slug>/` and write `spec.md` from [templates/spec.md](../templates/spec.md), filled to review-ready quality. Set `Progress: design`.
+Only after Chat design approval, or after the assumptions path recorded unsettled items. Create `spec_docs/<slug>/` and write `spec.md` from [templates/spec.md](../templates/spec.md), filled to review-ready quality. Set `Progress: design`.
 
 Follow [writing-style.md](../writing-style.md).
 
@@ -67,11 +117,45 @@ Make it elaborate. Iteration happens here; the tech docs translate behaviour alr
 
 **User journeys** is required. Cover every user-facing goal in at least one journey. When the feature has no user-facing flow, write one line: n/a, and why.
 
+### UI-primary screen depth
+
+A feature is **UI-primary** when any goal needs a user-visible change, including copy-only.
+
+When the feature is UI-primary, the written `spec.md` **MUST** cover:
+
+- Layout regions
+- Main interactions
+- Empty and error states
+- Glance versus control when both exist
+
+Scale how much layout detail you write to the size of the change. Still name empty or error states when they apply.
+
+**MUST NOT:** Put component props or wireframes in `spec.md`. Those belong in `ui.md` at promote.
+
+Non-UI features keep journeys as `n/a` with a reason, as above.
+
 Replace every `{{…}}` placeholder. Strip every HTML comment. Number goals `G1 (short name)`…. Use `[SUGGESTION: …]` for a concrete draft the user can accept, and remove the marker when they accept it. Record a settled choice under **Decisions**. Record a decision that needs a person under **Open questions**, and point at it from the text with `> **Open:** Q1 (short name)`. A long question list is normal at this gate. Set **Priority** to `high` when the answer would change the tech specs, the plan, or other goals; leave it `—` otherwise.
 
 **Notes** hold context that needs no action. **Concerns** hold items that need a decision or a change, each with what goes wrong if left.
 
 Omit **Glossary**, **Capabilities**, **Decisions**, **Open questions**, **Notes**, **Concerns**, and **Technical notes** when they would be empty. **Constraints** stays: write `n/a` on a line that does not apply. Nothing in **Non-goals** may be built in this spec.
+
+If the assumptions path was used, ensure every recorded assumption appears as an **Open questions** or **Decisions** item before you finish the file.
+
+## Self-review
+
+After writing `spec.md` and before asking for file review, check:
+
+1. Placeholders (`{{…}}`) or leftover HTML author comments.
+2. Contradictions between goals, non-goals, journeys, and decisions.
+3. Scope leaks into **Non-goals** (or the reverse).
+4. Bare ID citations (for example `G1` without `(short name)`).
+
+Fix cheap failures in the same turn. Call out failures that need a person in the review ask.
+
+## Bounds
+
+Do not create branches, worktrees, or commits unless the user explicitly asks in this conversation.
 
 ## Stop
 

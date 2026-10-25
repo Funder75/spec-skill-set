@@ -78,6 +78,8 @@ Source: {{…}}
 
 <!-- required. One subsection per journey. Steps are from the user's side, with no code names. A feature with no user-facing flow replaces this section with one line: "n/a — {{why}}". -->
 
+<!-- UI-primary (any goal needs a user-visible change, including copy-only): also cover screen depth in journeys or an adjacent short subsection — layout regions, main interactions, empty and error states, and glance versus control when both exist. Do not put component props or wireframes here; those belong in ui.md at promote. Scale layout detail to the change; still name empty or error states when they apply. -->
+
 ### {{Journey title}}
 
 Starting point: {{who, and what they want}}.
@@ -93,6 +95,15 @@ Goes wrong when:
 - {{failure, and the goal that prevents or handles it}}
 
 Covers: {{G1 (short name), …}}
+
+<!-- include when: UI-primary. Optional short block next to journeys; omit for non-UI features. -->
+
+### Screen depth (UI-primary)
+
+- **Layout regions:** {{…}}
+- **Main interactions:** {{…}}
+- **Empty / error:** {{…}}
+- **Glance vs control:** {{… or "n/a — only one surface"}}
 
 ## Constraints
 

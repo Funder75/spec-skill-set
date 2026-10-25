@@ -131,6 +131,14 @@ The tier selects the default row in **Verify tiers**. A phase that needs a stron
 | Create `itemService.ts` with no reason | Extend `Item.commands.ts` with `createItem` |
 | A new utils file for one helper used once | Inline the helper in the file that uses it |
 
+### Approach (guiding vs pasteable)
+
+| Bad | Good |
+| --- | ---- |
+| Approach lists only `src/a.ts` then `src/b.ts` with no shape | Approach names those paths, then a short signature or sketch for the ambiguous edge |
+| Approach pastes a full module ready to drop into the repo | Approach shows a 5–15 line sketch or do/do-not pair; Done when stays the binding check |
+| Approach is a 2–5 minute micro-step checklist as the default unit | Approach stays outcome-sized; micro-steps only when Project conventions require them |
+
 ### Phase tier
 
 | Bad | Good |

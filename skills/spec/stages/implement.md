@@ -58,7 +58,9 @@ Use these values in the progress overview (and on sub-tasks if present):
 
 Only one phase (or combinable group) may be `Started`, `Reviewing`, or `Blocked` at a time. After close, leave the next phase `Not started` until the user asks to continue.
 
-Ask before: a new dependency, a fork that changes the approach, a security or data-migration choice, git commit / push / PR, archiving, or setting a phase to `Deferred`.
+Ask before: a new dependency, a fork that changes the approach, a security or data-migration choice, git branch / worktree / commit / push / PR, archiving, or setting a phase to `Deferred`.
+
+**MUST NOT:** Create a branch, worktree, or commit unless the user explicitly asked in this conversation.
 
 ## Archive
 
