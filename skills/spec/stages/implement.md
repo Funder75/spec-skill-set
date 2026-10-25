@@ -1,14 +1,14 @@
 # Implement one phase, or archive
 
-Execute one phase (or one sub-task, or one combinable group) of `implementation-plan.md`. Prefer one active spec at a time unless the user is explicitly working on another.
+Execute one phase (or one sub-task, or one combinable group) of `<slug>.plan.md` (R3 (new names only)). Prefer one active spec at a time unless the user is explicitly working on another. Resolve only D1 (role map) names from [SKILL.md](../SKILL.md) › Spec docs; do not dual-read bare basenames or rename them (R4 (no auto migrate)).
 
 ## Preconditions
 
 1. Open `spec_docs/<slug>/`. If it is under `archive/`, stop unless they asked for a doc correction.
-2. `Progress` is `plan` or `implementing`, and `implementation-plan.md` exists with no `{{…}}` and no `[SUGGESTION:`. If not, stop and name the missing gate.
-3. Read `spec.md`, the plan's **progress overview**, and the **active phase** section. Read only the tech-doc sections that phase lists under **Read first**, not whole docs.
+2. `Progress` is `plan` or `implementing`, and `<slug>.plan.md` exists with no `{{…}}` and no `[SUGGESTION:`. If not, stop and name the missing gate.
+3. Read `<slug>.spec.md`, the plan's **progress overview**, and the **active phase** section. Read only the tech-doc sections that phase lists under **Read first**, not whole docs.
 
-On the first phase that leaves **Not started**, set `Progress: implementing` in `spec.md`. Do not rewrite the rest of the spec.
+On the first phase that leaves **Not started**, set `Progress: implementing` in `<slug>.spec.md`. Do not rewrite the rest of the spec.
 
 ## Phase selection
 
@@ -91,7 +91,7 @@ Do not invent a project-level cloud opt-in in `spec_docs/README.md`. Chat consen
 - After verify, the worker MUST update the plan on its checkout: Done-when checkboxes, **Close-out**, and status to `Reviewing`. The worker MUST NOT mark `Done`. Report-only to the parent (no plan edit) does not count as finished (R6 (worker writeback), D9 (done timing)).
 - Tell the user how to verify.
 
-If implementation shows `spec.md` scope, non-goals, or glossary are wrong, stop and update the spec, then the siblings that reference the change. Do not build around the mismatch.
+If implementation shows `<slug>.spec.md` scope, non-goals, or glossary are wrong, stop and update the spec, then the siblings that reference the change. Do not build around the mismatch.
 
 ## Phase status
 
@@ -154,8 +154,8 @@ The controller MUST NOT invent rulings that replace Ask-before for security or i
 
 When the user confirms the spec is done — including when they deliberately drop phases that are still `Not started` or `Deferred`:
 
-1. Note skipped or deferred phases in the plan, including anything left under **Follow-ups**.
-2. Set `Progress: archived` in `spec.md`.
-3. Move `spec_docs/<slug>/` to `spec_docs/archive/<slug>/`.
+1. Note skipped or deferred phases in `<slug>.plan.md`, including anything left under **Follow-ups**.
+2. Set `Progress: archived` in `<slug>.spec.md`.
+3. Move the whole folder `spec_docs/<slug>/` to `spec_docs/archive/<slug>/` (do not rename siblings as a side effect — R4 (no auto migrate)).
 
 Do not archive without explicit confirmation. If every phase is `Done`, or only `Done` plus `Deferred`, offer archive and wait. Do not re-archive. Do not read other archive folders.

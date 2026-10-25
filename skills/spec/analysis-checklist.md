@@ -11,16 +11,16 @@ Do not copy this file into `spec_docs/<slug>/`.
 | Check | Flag when |
 | ----- | --------- |
 | **Implementer test** | Phase 1 cannot be executed from the plan and its links alone |
-| **Progress line** | `spec.md` has no `Progress` line, or the line disagrees with the files (plan exists while `Progress` is `design`; folder is archived while `Progress` is not) |
-| **Required docs** | No `spec.md`. No `implementation-plan.md` once `Progress` is `plan` or later |
+| **Progress line** | `<slug>.spec.md` has no `Progress` line, or the line disagrees with the files (plan exists while `Progress` is `design`; folder is archived while `Progress` is not) |
+| **Required docs** | No `<slug>.spec.md`. No `<slug>.plan.md` once `Progress` is `plan` or later (R9 (helper doc cites)) |
 | **Skipped gate** | An implementation plan exists while tech specs were never promoted (`Progress` jumped from `design` to `plan`) |
-| **Business rules home** | Multi-step rules are scattered, and `business-logic.md` is missing with no `folded →` line pointing at **Technical notes › Rules** |
-| **Optional doc gap** | `contracts.md` (or legacy `data.md`) or `ui.md` is omitted, the doc index does not say `folded` or `not needed`, and the only detail is a plan snippet |
+| **Business rules home** | Multi-step rules are scattered, and `<slug>.logic.md` is missing with no `folded →` line pointing at **Technical notes › Rules** |
+| **Optional doc gap** | `<slug>.contracts.md` (or legacy `<slug>.data.md` / bare `data.md` until renamed) or `<slug>.ui.md` is omitted, the doc index does not say `folded` or `not needed`, and the only detail is a plan snippet |
 | **Failure modes** | User-facing flows lack empty, error, or permission handling, and there is no explicit n/a |
-| **Journeys** | `spec.md` has no **User journeys** section and no n/a line, or a user-facing goal appears in no journey |
-| **Thin spec** | `spec.md` leaves behaviour to be discovered at promote: missing edge cases, journeys, or decisions a reviewer must accept |
+| **Journeys** | `<slug>.spec.md` has no **User journeys** section and no n/a line, or a user-facing goal appears in no journey |
+| **Thin spec** | `<slug>.spec.md` leaves behaviour to be discovered at promote: missing edge cases, journeys, or decisions a reviewer must accept |
 | **Landing sites** | A tech-doc rule, type, or screen state names no file it is expected to change |
-| **Journey trace** | An acceptance scenario names no journey step and no `Journey: —`, or `ui.md` skips a screen-touching journey step |
+| **Journey trace** | An acceptance scenario names no journey step and no `Journey: —`, or `<slug>.ui.md` skips a screen-touching journey step |
 | **Acceptance scenarios** | A phase has no `A<phase>.<n>` Given / When / Then |
 | **Done when gaps** | A phase has deliverables and no testable Done when |
 | **Traceability** | A goal ID is in no phase **Covers** line, or **Covers** names an ID the spec does not define |
@@ -46,12 +46,12 @@ Do not copy this file into `spec_docs/<slug>/`.
 | Check | Flag when |
 | ----- | --------- |
 | **Scope** | Goals contradict non-goals, or a phase delivers a non-goal |
-| **Rules** | `business-logic.md` disagrees with `contracts.md` |
-| **Persistence** | Schema in `contracts.md` disagrees with the types in the same file |
-| **Tech doc decides** | A tech doc settles a behaviour `spec.md` does not decide, instead of pointing at a **Q** item |
-| **UI vs rules** | `ui.md` shows a flow the rules forbid |
-| **Plan vs siblings** | Deliverables contradict `spec.md` or a resolved decision |
-| **Spec drift** | `spec.md` scope, non-goals, or glossary no longer match a sibling |
+| **Rules** | `<slug>.logic.md` disagrees with `<slug>.contracts.md` |
+| **Persistence** | Schema in `<slug>.contracts.md` disagrees with the types in the same file |
+| **Tech doc decides** | A tech doc settles a behaviour `<slug>.spec.md` does not decide, instead of pointing at a **Q** item |
+| **UI vs rules** | `<slug>.ui.md` shows a flow the rules forbid |
+| **Plan vs siblings** | Deliverables contradict `<slug>.spec.md` or a resolved decision |
+| **Spec drift** | `<slug>.spec.md` scope, non-goals, or glossary no longer match a sibling |
 | **Work split vs phases** | The plan restates the work-split rationale instead of pointing at it by goal ID, or a phase **Covers** a goal the spec does not list and does not say why |
 | **Glossary** | The same term means different things across files |
 | **Resolved vs Open** | A **D** item and a **Q** item contradict, or two **D** items contradict |
@@ -76,10 +76,10 @@ Do not copy this file into `spec_docs/<slug>/`.
 | Check | Flag when |
 | ----- | --------- |
 | **Paths** | A deliverable path is wrong or renamed and the plan was not updated |
-| **Commands** | Names, payloads, or validation differ from `contracts.md` or the business rules |
-| **Schema** | Migrations differ from `contracts.md` |
-| **UI** | Components, routes, or copy differ from `ui.md` with no note in the plan |
-| **Behaviour** | Edge handling differs from the business-logic table |
+| **Commands** | Names, payloads, or validation differ from `<slug>.contracts.md` or the business rules |
+| **Schema** | Migrations differ from `<slug>.contracts.md` |
+| **UI** | Components, routes, or copy differ from `<slug>.ui.md` with no note in the plan |
+| **Behaviour** | Edge handling differs from the `<slug>.logic.md` table |
 | **Status lag** | The code finishes phase N and the plan still says `Not started` or `Started` |
 
 **Critical** when behaviour breaks a rule. **Warning** when the docs are stale. **Optimization** when the docs should catch up to a deliberate improvement.
@@ -94,7 +94,7 @@ Do not copy this file into `spec_docs/<slug>/`.
 | **Duplicate logic** | A command, helper, or component re-implements something already nearby |
 | **Undocumented growth** | Files in the change that the plan never mentions |
 | **Over-styled markup** | Markup the project's own styling rules would flag, when the phase touched UI |
-| **Thin doc** | `contracts.md`, `ui.md`, or `business-logic.md` only repeats `spec.md` or is a couple of filled rows — fold it back |
+| **Thin doc** | `<slug>.contracts.md`, `<slug>.ui.md`, or `<slug>.logic.md` only repeats `<slug>.spec.md` or is a couple of filled rows — fold it back |
 | **Doc restatement** | A sibling re-explains something another doc owns |
 
 ---
@@ -134,7 +134,7 @@ Optimizations are not blockers unless they hide a Critical or Warning issue.
 
 | Vague | Specific |
 | ----- | -------- |
-| Docs are inconsistent | `business-logic.md` says RESTRICT when children exist; `contracts.md` shows `ON DELETE CASCADE` |
+| Docs are inconsistent | `<slug>.logic.md` says RESTRICT when children exist; `<slug>.contracts.md` shows `ON DELETE CASCADE` |
 | Code doesn't match | The list command filters inactive rows; the visibility table says admins still see them, and the code has no admin branch |
 | File bloat | Phase 2 lists one file; the change also adds a single-use helper that is not in the plan |
 

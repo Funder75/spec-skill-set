@@ -1,6 +1,6 @@
 # Create spec
 
-Write or resume `spec_docs/<slug>/spec.md` only. Do not create technical specs or an implementation plan in this action.
+Write or resume `spec_docs/<slug>/<slug>.spec.md` only (R1 (filename pattern), R3 (new names only)). Do not create technical specs or an implementation plan in this action. Do not rename existing bare siblings (R4 (no auto migrate)).
 
 ## Bootstrap
 
@@ -13,9 +13,9 @@ If `spec_docs/` does not exist:
 
 ## Input
 
-Read the whole input before asking or writing. Free text, every referenced document, or a work-item id. Nothing is stored in an inbox. `spec.md` keeps a short **Source** note (where it came from).
+Read the whole input before asking or writing. Free text, every referenced document, or a work-item id. Nothing is stored in an inbox. `<slug>.spec.md` keeps a short **Source** note (where it came from).
 
-For a work-item id, read **Work items** under **Project conventions** in `spec_docs/README.md`. If that subsection is still the placeholder, ask how to fetch it. Store title, description, and acceptance criteria only. Map each acceptance criterion to a goal's **Source** line (for example `WI AC2`, or the id scheme this repo uses). A criterion with no goal is a gap: ask, or record a **Q** item. Do not paste the raw work-item payload into `spec.md`.
+For a work-item id, read **Work items** under **Project conventions** in `spec_docs/README.md`. If that subsection is still the placeholder, ask how to fetch it. Store title, description, and acceptance criteria only. Map each acceptance criterion to a goal's **Source** line (for example `WI AC2`, or the id scheme this repo uses). A criterion with no goal is a gap: ask, or record a **Q** item. Do not paste the raw work-item payload into `<slug>.spec.md`.
 
 ## Investigate
 
@@ -30,7 +30,7 @@ Record the paths this spec will change in the **Touched paths** table, with the 
 
 ## Analysis
 
-Before writing, work out how the input becomes a review-ready `spec.md`. Cover:
+Before writing, work out how the input becomes a review-ready `<slug>.spec.md`. Cover:
 
 - What the input already decides, and what it leaves open.
 - How today's code constrains v1: existing flows, APIs, and persistence.
@@ -40,7 +40,7 @@ Before writing, work out how the input becomes a review-ready `spec.md`. Cover:
 - A coarse work split: ordered slices, the goals each covers, and the main surface of each.
 - Decisions that still need a person, versus assumptions safe to record.
 
-Write the analysis in the working turn, specific enough that each section of `spec.md` can be filled from the input and the code you opened. If a section cannot, add a **Q** item and point at it with `> **Open:** Q1 (short name)` instead of inventing it. Do not paste the analysis into `spec.md` as its own section. Do not invent file-level deliverables.
+Write the analysis in the working turn, specific enough that each section of `<slug>.spec.md` can be filled from the input and the code you opened. If a section cannot, add a **Q** item and point at it with `> **Open:** Q1 (short name)` instead of inventing it. Do not paste the analysis into `<slug>.spec.md` as its own section. Do not invent file-level deliverables.
 
 ## Slug
 
@@ -60,18 +60,18 @@ Default assumptions when the user skips Q&A: v1 is the smallest shippable slice;
 
 - Ask only missing clarifying questions after Investigate and Analysis.
 - Ask exactly one clarifying question per turn while required answers are still missing.
-- Do not create `spec.md` while required answers are still missing, unless the user takes the assumptions path below.
+- Do not create `<slug>.spec.md` while required answers are still missing, unless the user takes the assumptions path below.
 
 **MUST NOT:**
 
 - Ask several clarifying questions in one turn.
-- Create `spec.md` in the same turn as an unanswered must-ask question.
+- Create `<slug>.spec.md` in the same turn as an unanswered must-ask question.
 
 ### Assumptions path
 
 If the user says to proceed with assumptions (from Clarify or from Chat design approval):
 
-1. Record those assumptions as **Open questions** or **Decisions** in `spec.md`.
+1. Record those assumptions as **Open questions** or **Decisions** in `<slug>.spec.md`.
 2. Unsettled forks that would change later docs stay **Priority** `high` open questions.
 3. Only then may you write the file. Skip any remaining Approach round or sectional approval turns.
 
@@ -88,7 +88,7 @@ Run after Clarify is complete. Finish this round before Chat design approval. Sk
 
 - Skip this round. Do not invent fake options.
 
-**MUST NOT:** Write `spec.md` during the approach round.
+**MUST NOT:** Write `<slug>.spec.md` during the approach round.
 
 ## Chat design approval
 
@@ -96,25 +96,25 @@ Present the design in short chat sections scaled to complexity. Ask for approval
 
 **MUST:**
 
-- Get approval of the design shape in chat before creating `spec.md`, unless the assumptions path applies.
+- Get approval of the design shape in chat before creating `<slug>.spec.md`, unless the assumptions path applies.
 - Hold the Write step until the user approves, or until the assumptions path has recorded unsettled items.
 
 **MUST NOT:**
 
-- Write `spec.md` before chat approval or the assumptions path.
+- Write `<slug>.spec.md` before chat approval or the assumptions path.
 - Open Write in the same turn as an unanswered design-section question.
 
 If a section is rejected, revise that section in chat and ask again. Do not create the file until the design shape is approved (or the assumptions path applies).
 
-## Write spec.md
+## Write `<slug>.spec.md`
 
-Only after Chat design approval, or after the assumptions path recorded unsettled items. Create `spec_docs/<slug>/` and write `spec.md` from [templates/spec.md](../templates/spec.md), filled to review-ready quality. Set `Progress: design`.
+Only after Chat design approval, or after the assumptions path recorded unsettled items. Create `spec_docs/<slug>/` and write `<slug>.spec.md` from [templates/spec.md](../templates/spec.md), filled to review-ready quality. Set `Progress: design`. Path is `spec_docs/<slug>/<slug>.spec.md` — never bare `spec.md` (G1 (slug prefix), R3 (new names only)).
 
 Follow [writing-style.md](../writing-style.md).
 
 The spec is semi-technical: what changes, why, v1 scope, non-goals, user journeys, edge cases, constraints, touched paths, and a coarse **Work split** (ordered slices, the goals each covers, and the main surface). No file-level deliverables, Done when, or acceptance scenarios — those belong to the implementation plan. No code sketches, per-field type tables, or component props — those belong to the tech docs.
 
-Make it elaborate. Iteration happens here; the tech docs translate behaviour already accepted. Every behaviour a reviewer must accept is decided here or is a **Q** item. A thin `spec.md` that leaves behaviour to be discovered at promote is a defect. Length is fine; keep it skimmable with the TL;DR bullets, **In short:** lines, and short table cells.
+Make it elaborate. Iteration happens here; the tech docs translate behaviour already accepted. Every behaviour a reviewer must accept is decided here or is a **Q** item. A thin `<slug>.spec.md` that leaves behaviour to be discovered at promote is a defect. Length is fine; keep it skimmable with the TL;DR bullets, **In short:** lines, and short table cells.
 
 **User journeys** is required. Cover every user-facing goal in at least one journey. When the feature has no user-facing flow, write one line: n/a, and why.
 
@@ -122,7 +122,7 @@ Make it elaborate. Iteration happens here; the tech docs translate behaviour alr
 
 A feature is **UI-primary** when any goal needs a user-visible change, including copy-only.
 
-When the feature is UI-primary, the written `spec.md` **MUST** cover:
+When the feature is UI-primary, the written `<slug>.spec.md` **MUST** cover:
 
 - Layout regions
 - Main interactions
@@ -131,7 +131,7 @@ When the feature is UI-primary, the written `spec.md` **MUST** cover:
 
 Scale how much layout detail you write to the size of the change. Still name empty or error states when they apply.
 
-**MUST NOT:** Put component props or wireframes in `spec.md`. Those belong in `ui.md` at promote.
+**MUST NOT:** Put component props or wireframes in `<slug>.spec.md`. Those belong in `<slug>.ui.md` at promote.
 
 Non-UI features keep journeys as `n/a` with a reason, as above.
 
@@ -145,7 +145,7 @@ If the assumptions path was used, ensure every recorded assumption appears as an
 
 ## Self-review
 
-After writing `spec.md` and before asking for file review, check:
+After writing `<slug>.spec.md` and before asking for file review, check:
 
 1. Placeholders (`{{…}}`) or leftover HTML author comments.
 2. Contradictions between goals, non-goals, journeys, and decisions.
@@ -160,4 +160,4 @@ Do not create branches, worktrees, or commits unless the user explicitly asks in
 
 ## Stop
 
-Present the spec and ask the user to review it. Iterate on `spec.md` alone until they promote. Do not add sibling docs during this loop.
+Present the spec and ask the user to review it. Iterate on `<slug>.spec.md` alone until they promote. Do not add sibling docs during this loop.

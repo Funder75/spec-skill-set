@@ -1,6 +1,6 @@
 # Writing style
 
-Applies to text written into `spec_docs/`: `spec.md`, the tech docs, `implementation-plan.md`, and the audit report in chat. It wins where it differs from the sentences in this skill. The skill's own text is written for the agent; do not copy its density.
+Applies to text written into `spec_docs/`: `<slug>.spec.md`, the tech docs (`<slug>.logic.md`, `<slug>.contracts.md`, `<slug>.ui.md`), `<slug>.plan.md`, and the audit report in chat (R9 (helper doc cites)). It wins where it differs from the sentences in this skill. The skill's own text is written for the agent; do not copy its density.
 
 ## Reader
 
@@ -62,5 +62,5 @@ Good:
 
 > **W2 — "Group" means two things**
 >
-> - **What's wrong:** `spec.md` uses "group" for a room. `ui.md` uses it for a collapsible table row.
-> - **Why it matters:** A phase that reads only `ui.md` will build the wrong filter.
+> - **What's wrong:** `<slug>.spec.md` uses "group" for a room. `<slug>.ui.md` uses it for a collapsible table row.
+> - **Why it matters:** A phase that reads only `<slug>.ui.md` will build the wrong filter.

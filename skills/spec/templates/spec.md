@@ -1,6 +1,6 @@
 <!-- Author guidance is in HTML comments. Strip every HTML comment when writing the spec doc. {{…}} is fill-in. Follow writing-style.md in the skill folder. -->
 
-<!-- This doc is written and reviewed before any tech doc. It is elaborate: goals, journeys, edge cases, constraints, and the decisions a reviewer must accept. Tech docs translate it. Code sketches, per-field type tables, and component props belong in the tech docs, not here. A long spec.md is fine; a hard-to-skim one is not. -->
+<!-- This doc is written and reviewed before any tech doc. It is elaborate: goals, journeys, edge cases, constraints, and the decisions a reviewer must accept. Tech docs translate it. Code sketches, per-field type tables, and component props belong in the tech docs, not here. A long {{feature-slug}}.spec.md is fine; a hard-to-skim one is not. Emitted filename is {{feature-slug}}.spec.md (R1 (filename pattern)). -->
 
 # {{Feature title}}
 
@@ -24,11 +24,11 @@
 
 | Doc | Read for | Present? |
 | --- | -------- | -------- |
-| This file | Scope, goals, journeys, constraints, work split | yes |
-| business-logic.md | Rules, workflows, state transitions | pending |
-| contracts.md | Types, API contracts, state ownership, storage | pending |
-| ui.md | Layout, interaction, states, copy | pending |
-| implementation-plan.md | Phases and phase status | pending |
+| This file (`{{feature-slug}}.spec.md`) | Scope, goals, journeys, constraints, work split | yes |
+| {{feature-slug}}.logic.md | Rules, workflows, state transitions | pending |
+| {{feature-slug}}.contracts.md | Types, API contracts, state ownership, storage | pending |
+| {{feature-slug}}.ui.md | Layout, interaction, states, copy | pending |
+| {{feature-slug}}.plan.md | Phases and phase status | pending |
 
 ## Source
 
@@ -78,7 +78,7 @@ Source: {{…}}
 
 <!-- required. One subsection per journey. Steps are from the user's side, with no code names. A feature with no user-facing flow replaces this section with one line: "n/a — {{why}}". -->
 
-<!-- UI-primary (any goal needs a user-visible change, including copy-only): also cover screen depth in journeys or an adjacent short subsection — layout regions, main interactions, empty and error states, and glance versus control when both exist. Do not put component props or wireframes here; those belong in ui.md at promote. Scale layout detail to the change; still name empty or error states when they apply. -->
+<!-- UI-primary (any goal needs a user-visible change, including copy-only): also cover screen depth in journeys or an adjacent short subsection — layout regions, main interactions, empty and error states, and glance versus control when both exist. Do not put component props or wireframes here; those belong in {{feature-slug}}.ui.md at promote. Scale layout detail to the change; still name empty or error states when they apply. -->
 
 ### {{Journey title}}
 

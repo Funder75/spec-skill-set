@@ -1,12 +1,12 @@
 <!-- Author guidance is in HTML comments. Strip every HTML comment when writing the doc. {{…}} is fill-in. Follow writing-style.md in the skill folder. -->
 
-<!-- Write this after reading each module in spec.md Touched paths. Each rule names the file it is expected to change, and the existing symbol when there is one. Each workflow step and error case names the function that handles it, when that function exists or is about to be added. Rules are binding; paths are advisory. A behaviour spec.md did not decide is a Q item there, pointed at with > **Open:** Q1 (short name). Do not fill the gap here. -->
+<!-- Seed basename business-logic.md stays on disk (R6). Emitted filename is {{feature-slug}}.logic.md (R2 (short roles only)). Write this after reading each module in {{feature-slug}}.spec.md Touched paths. Each rule names the file it is expected to change, and the existing symbol when there is one. Each workflow step and error case names the function that handles it, when that function exists or is about to be added. Rules are binding; paths are advisory. A behaviour {{feature-slug}}.spec.md did not decide is a Q item there, pointed at with > **Open:** Q1 (short name). Do not fill the gap here. -->
 
 # {{Feature title}} — business logic
 
 > Created because: {{one line — for example "6 validation rules and a 3-state transition"}}
 
-Rules for **{{feature-slug}}**. [spec.md](./spec.md) owns scope, non-goals, glossary, and decisions; cite them in full form (`see D3 (short name)`).
+Rules for **{{feature-slug}}**. [{{feature-slug}}.spec.md](./{{feature-slug}}.spec.md) owns scope, non-goals, glossary, and decisions; cite them in full form (`see D3 (short name)`).
 
 ## TL;DR
 

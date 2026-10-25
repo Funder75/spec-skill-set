@@ -1,12 +1,12 @@
 <!-- Author guidance is in HTML comments. Strip every HTML comment when writing the doc. {{…}} is fill-in. Follow writing-style.md in the skill folder. -->
 
-<!-- Write this after reading each module in spec.md Touched paths. Each type, command, and contract names the file it is expected to change, and the existing symbol when there is one. A new symbol names the file it will be added to, following that package's folder layout. Follow the patterns already in those files. Field tables are binding; paths and sketches are advisory. A behaviour spec.md did not decide is a Q item there, pointed at with > **Open:** Q1 (short name). Do not fill the gap here. -->
+<!-- Seed basename contracts.md stays on disk (R6). Emitted filename is {{feature-slug}}.contracts.md. Write this after reading each module in {{feature-slug}}.spec.md Touched paths. Each type, command, and contract names the file it is expected to change, and the existing symbol when there is one. A new symbol names the file it will be added to, following that package's folder layout. Follow the patterns already in those files. Field tables are binding; paths and sketches are advisory. A behaviour {{feature-slug}}.spec.md did not decide is a Q item there, pointed at with > **Open:** Q1 (short name). Do not fill the gap here. -->
 
 # {{Feature title}} — contracts
 
 > Created because: {{one line}}
 
-Types, API contracts, state ownership, and storage for **{{feature-slug}}**. [spec.md](./spec.md) owns scope and decisions; cite them in full form (`see D3 (short name)`).
+Types, API contracts, state ownership, and storage for **{{feature-slug}}**. [{{feature-slug}}.spec.md](./{{feature-slug}}.spec.md) owns scope and decisions; cite them in full form (`see D3 (short name)`).
 
 Read **Stack notes for spec docs** in `spec_docs/README.md` before filling this file.
 

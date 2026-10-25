@@ -1,17 +1,17 @@
 # Create implementation plan
 
-Write `spec_docs/<slug>/implementation-plan.md` from the reviewed spec and tech docs. This is the execution contract: phases, the **Depends on** and **Combinable with** columns, Done when, acceptance scenarios, and the only phase status.
+Write `spec_docs/<slug>/<slug>.plan.md` from the reviewed spec and tech docs (G3 (plan extension), R1 (filename pattern), R3 (new names only)). This is the execution contract: phases, the **Depends on** and **Combinable with** columns, Done when, acceptance scenarios, and the only phase status. Phase status, Done when, Close-out, tier, Ask-before, and acceptance scenarios live in the markdown body only — do not add Cursor YAML `todos` or other Plan Mode frontmatter (R5 (plan body authority)). Do not rename existing bare siblings (R4 (no auto migrate)).
 
 ## Preconditions
 
 - The user asked to promote to an implementation plan, or confirmed that step after `/spec next`.
 - `Progress` is `tech`. If it is still `design`, ask whether to write tech specs first. Do not skip that gate.
-- `spec.md` has no `{{…}}` left and no `[SUGGESTION:`. If a suggestion is still there, the user has not accepted it — stop and ask.
+- `<slug>.spec.md` has no `{{…}}` left and no `[SUGGESTION:`. If a suggestion is still there, the user has not accepted it — stop and ask.
 - Read [design-quality.md](../design-quality.md) before drafting. Do not read it on other actions.
 
 ## What to write
 
-Follow [writing-style.md](../writing-style.md). Start from [templates/implementation-plan.md](../templates/implementation-plan.md). Phases may refine the spec's **Work split**. Point at it by goal ID in **Covers**. Do not copy its rationale into the plan.
+Follow [writing-style.md](../writing-style.md). Start from the seed [templates/implementation-plan.md](../templates/implementation-plan.md) (R6 (template seeds stay)); emit as `<slug>.plan.md`. Phases may refine the spec's **Work split**. Point at it by goal ID in **Covers**. Do not copy its rationale into the plan.
 
 Each phase uses the same block:
 
@@ -38,9 +38,9 @@ Rules:
 - Phases start at **Not started**.
 - **Depends on** and **Combinable with** in the progress overview are the order gate. `—` means none. A Mermaid graph is optional, and only when there are more than four phases; the table stays the source of truth.
 - **Read first** links each tech-doc section or **Technical notes** anchor the phase needs, not whole docs. Do not restate them.
-- Each acceptance scenario names the `spec.md` journey step it checks, or `Journey: —` for a rule with no journey step. A journey step no scenario checks is a gap.
+- Each acceptance scenario names the `<slug>.spec.md` journey step it checks, or `Journey: —` for a rule with no journey step. A journey step no scenario checks is a gap.
 - Replace every `{{…}}` placeholder. Strip every HTML comment.
-- Omit empty **Prerequisites**, **Follow-ups**, **Risks**, and **Decisions**. A plan decision continues the `spec.md` ID sequence and does not repeat a decision already recorded there. Open questions stay in `spec.md`.
+- Omit empty **Prerequisites**, **Follow-ups**, **Risks**, and **Decisions**. A plan decision continues the `<slug>.spec.md` ID sequence and does not repeat a decision already recorded there. Open questions stay in `<slug>.spec.md`.
 - Risks only when they change approach, sequencing, or testing.
 
 ### Approach contract
@@ -58,6 +58,7 @@ Rules:
 - Ship pasteable full implementation blocks meant to be copied into the repo without further design.
 - Require TDD unless **Project conventions** say so.
 - Default phases to 2–5 minute micro-steps.
+- Add Cursor YAML `todos` (or other Plan Mode frontmatter) as a second status store (R5 (plan body authority)).
 
 ### Bounds
 
@@ -65,11 +66,11 @@ Do not create branches, worktrees, or commits unless the user explicitly asks in
 
 ## Ready to implement
 
-Walk the checklist in [design-quality.md](../design-quality.md). Fix gaps, or add a **Q** item in `spec.md` and point at it with `> **Open:** Q1 (short name)`. A question may remain only if its **Blocks** line does not include phase 1.
+Walk the checklist in [design-quality.md](../design-quality.md). Fix gaps, or add a **Q** item in `<slug>.spec.md` and point at it with `> **Open:** Q1 (short name)`. A question may remain only if its **Blocks** line does not include phase 1.
 
-## Update spec.md
+## Update `<slug>.spec.md`
 
-Do not rewrite the spec. Set `Progress: plan` and add the plan to the doc index.
+Do not rewrite the spec. Set `Progress: plan` and add `<slug>.plan.md` to the doc index.
 
 ## Stop
 

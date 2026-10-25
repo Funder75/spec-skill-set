@@ -1,6 +1,6 @@
 # Design quality
 
-Judgment bar for an implementation plan. Read only while writing or revising `implementation-plan.md`. The short checklist also lives in [stages/plan.md](stages/plan.md).
+Judgment bar for an implementation plan. Read only while writing or revising `<slug>.plan.md` (R9 (helper doc cites)). The short checklist also lives in [stages/plan.md](stages/plan.md).
 
 Do not copy this file into `spec_docs/<slug>/`. Spec folders use the templates.
 
@@ -25,7 +25,7 @@ Before handing the folder to an implement session:
 | **Concrete paths** | Deliverables name real modules discovered while exploring |
 | **New files justified** | Every proposed new doc or module has a one-line reason. Default is extend |
 | **Risks are selective** | Risks only list items that change approach, sequencing, or testing |
-| **Spec and siblings agree** | No scope, glossary, or non-goal drift between `spec.md` and the other docs |
+| **Spec and siblings agree** | No scope, glossary, or non-goal drift between `<slug>.spec.md` and the other docs |
 
 A **Q** item may remain only if its **Blocks** line does not include phase 1.
 
@@ -167,4 +167,4 @@ The tier selects the default row in **Verify tiers**. A phase that needs a stron
 2. Prefer one sentence over a padded subsection. Prefer no section over an empty one.
 3. Default a new file to "no" until there is a concrete reason.
 4. Re-read as someone starting phase 1. Anything you would ask in chat becomes a doc fix or a **Q** item.
-5. Keep glossary terms the same in `spec.md`, the tech docs, and the plan. If `spec.md` changes later, update the siblings that reference the change before calling the edit done.
+5. Keep glossary terms the same in `<slug>.spec.md`, the tech docs, and `<slug>.plan.md`. If `<slug>.spec.md` changes later, update the siblings that reference the change before calling the edit done.

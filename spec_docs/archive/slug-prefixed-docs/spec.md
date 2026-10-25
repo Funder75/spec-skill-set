@@ -1,7 +1,7 @@
 # Slug-prefixed spec doc filenames
 
 **Slug:** `slug-prefixed-docs`
-**Progress:** plan
+**Progress:** archived
 **Work item:** —
 **Depends on:** —
 

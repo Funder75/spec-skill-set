@@ -8,8 +8,8 @@ Phases for [spec.md](./spec.md).
 
 | Phase | Status | Name | Tier | Depends on | Combinable with |
 | ----- | ---- | ------ | ---- | ---------- | --------------- |
-| **1** | Not started | Skill path rewrite | Medium | — | — |
-| **2** | Not started | Rename recipe and README | Low | 1 | — |
+| **1** | Done | Skill path rewrite | Medium | — | — |
+| **2** | Done | Rename recipe and README | Low | 1 | — |
 
 ## Phase 1 — Skill path rewrite
 
@@ -116,17 +116,17 @@ Phases for [spec.md](./spec.md).
 
 ### Done when
 
-- [ ] Medium tier verify passes (Project conventions in `spec_docs/README.md`)
-- [ ] `rg` over `skills/spec/stages/`, `SKILL.md`, `writing-style.md`, `design-quality.md`, and `analysis-checklist.md` shows no instruction to create or require bare `business-logic.md` or `implementation-plan.md` as emitted siblings
-- [ ] Template seed files under `skills/spec/templates/` are still the unprefixed basenames on disk
-- [ ] A1.1–A1.7 pass
-- [ ] Progress gates, phase status vocabulary, and ID schemes are unchanged
+- [x] Medium tier verify passes (Project conventions in `spec_docs/README.md`)
+- [x] `rg` over `skills/spec/stages/`, `SKILL.md`, `writing-style.md`, `design-quality.md`, and `analysis-checklist.md` shows no instruction to create or require bare `business-logic.md` or `implementation-plan.md` as emitted siblings
+- [x] Template seed files under `skills/spec/templates/` are still the unprefixed basenames on disk
+- [x] A1.1–A1.7 pass
+- [x] Progress gates, phase status vocabulary, and ID schemes are unchanged
 
 ### Close-out
 
-- Verified:
-- Deviations:
-- Follow-ups:
+- Verified: Medium (Low diff of deliverables + `rg` full-form IDs G1–G4, R1–R7, R9 in named skill surfaces). Bare-sibling `rg` clean for create/require instructions; only seed-path links and an explicit “Never emit bare `business-logic.md`” remain. Template seeds on disk still `spec.md`, `business-logic.md`, `contracts.md`, `ui.md`, `implementation-plan.md`, `spec-docs-readme.md`. A1.1 create → `<slug>.spec.md`; A1.2 promote → short roles; A1.3 plan → `<slug>.plan.md` body only / no Cursor todos; A1.4 implement+archive use D1 names and move folder; A1.5 slug-then-role filenames; A1.6 no bare-folder migrate path; A1.7 no stray emitted basenames. Progress gates / phase status vocabulary / ID schemes untouched.
+- Deviations: none
+- Follow-ups: Phase 2 — README rename recipe and live `spec_docs/README.md` path table (G5 / R8).
 
 ## Phase 2 — Rename recipe and README
 
@@ -182,15 +182,15 @@ Phases for [spec.md](./spec.md).
 
 ### Done when
 
-- [ ] Low tier verify passes (Project conventions in `spec_docs/README.md`)
-- [ ] A2.1–A2.3 pass
-- [ ] Template README and live README both contain the one-folder recipe and agree on the map
+- [x] Low tier verify passes (Project conventions in `spec_docs/README.md`)
+- [x] A2.1–A2.3 pass
+- [x] Template README and live README both contain the one-folder recipe and agree on the map
 
 ### Close-out
 
-- Verified:
-- Deviations:
-- Follow-ups:
+- Verified: Low — deliverables vs Done when; recipe and path tables match between `skills/spec/templates/spec-docs-readme.md` and `spec_docs/README.md` (D1 map including `data.md` → `<slug>.data.md`). A2.1 one-folder rename steps + link fix; A2.2 forbids bulk/agent migrate of every folder; A2.3 live README path table and How to use use slug-prefixed names. Template Project conventions `{{…}}` / seed HTML comments remain by design (bootstrap), not phase defects.
+- Deviations: none
+- Follow-ups: none
 
 ## Risks
 
