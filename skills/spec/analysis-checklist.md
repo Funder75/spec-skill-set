@@ -11,7 +11,7 @@ Do not copy this file into `spec_docs/<slug>/`.
 | Check | Flag when |
 | ----- | --------- |
 | **Implementer test** | Phase 1 cannot be executed from the plan and its links alone |
-| **Progress line** | `<slug>.spec.md` has no `Progress` line, or the line disagrees with the files (plan exists while `Progress` is `design`; folder is archived while `Progress` is not) |
+| **Progress line** | `<slug>.spec.md` body has no `Progress` line, or the line disagrees with the files (plan exists while `Progress` is `design`; folder is archived while `Progress` is not). Do not require Linear FKs in the body — those live in YAML frontmatter |
 | **Required docs** | No `<slug>.spec.md`. No `<slug>.plan.md` once `Progress` is `plan` or later (R9 (helper doc cites)) |
 | **Skipped gate** | An implementation plan exists while tech specs were never promoted (`Progress` jumped from `design` to `plan`) |
 | **Business rules home** | Multi-step rules are scattered, and `<slug>.logic.md` is missing with no `folded →` line pointing at **Technical notes › Rules** |

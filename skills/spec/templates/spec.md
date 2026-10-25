@@ -2,14 +2,16 @@
 
 <!-- This doc is written and reviewed before any tech doc. It is elaborate: goals, journeys, edge cases, constraints, and the decisions a reviewer must accept. Tech docs translate it. Code sketches, per-field type tables, and component props belong in the tech docs, not here. A long {{feature-slug}}.spec.md is fine; a hard-to-skim one is not. Emitted filename is {{feature-slug}}.spec.md (R1 (filename pattern)). -->
 
+---
+work_item: {{id, or "n/a"}}
+tracker_spec_url: n/a
+document_id: n/a
+document_url: n/a
+---
+
 # {{Feature title}}
 
-**Slug:** `{{feature-slug}}`
 **Progress:** design
-**Work item:** {{id, or "n/a"}}
-**Tracker Spec URL:** {{URI after Linear returns it, or "—"}}
-**Document id:** {{id when Document exists, or "—"}}
-**Document URL:** {{URI when Document exists, or "—"}}
 **Depends on:** {{`spec_docs/<slug>`, a named external deliverable, or "—"}}
 
 ## TL;DR

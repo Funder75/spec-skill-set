@@ -81,7 +81,9 @@ Explicit verbs skip the "what next?" question. Read the matching stage file and 
 | implement / continue | One phase, or one combinable group | [stages/implement.md](stages/implement.md) |
 | archive | Move the folder after explicit confirmation | [stages/implement.md](stages/implement.md) |
 | audit / review spec | Read-only report in chat | [stages/audit.md](stages/audit.md) |
-| `/spec linear sync` / create or repair Linear tracker links | Shared Linear write-back; explicit create/repair | [stages/linear-sync.md](stages/linear-sync.md) |
+| `linear sync` / `sync with linear` / `sync to linear` / create or repair Linear tracker links | Explicit Linear create/repair (not a freeform stage name) | [stages/linear-sync.md](stages/linear-sync.md) |
+
+Match intent, not exact word order: any clear ask to sync this slug with Linear routes to that stage. Do not treat “sync with Linear” as an unknown named stage.
 
 Ambiguous or conflicting requests: ask.
 
@@ -116,7 +118,7 @@ If `spec_docs/` does not exist:
 
 ## Work items
 
-When the input is a work-item id, follow **Project conventions** for how to fetch it. Keep the title and description in the source note, and map acceptance criteria onto the goals. Do not paste the raw work-item payload into `<slug>.spec.md` or the reply. After create-spec sets `Work item`, link-back and other Linear writes follow [stages/linear-sync.md](stages/linear-sync.md) — do not invent a second sync doctrine (R20 (routing entry)).
+When the input is a work-item id, follow **Project conventions** for how to fetch it. Keep the title and description in the source note, and map acceptance criteria onto the goals. Do not paste the raw work-item payload into `<slug>.spec.md` or the reply. After create-spec sets frontmatter `work_item`, link-back and other Linear writes follow [stages/linear-sync.md](stages/linear-sync.md) — do not invent a second sync doctrine (R20 (routing entry)). Durable Linear foreign keys (`work_item`, `tracker_spec_url`, `document_id`, `document_url`) live in `<slug>.spec.md` YAML frontmatter only; `Progress` and `Depends on` stay in the body.
 
 ## Bounds
 

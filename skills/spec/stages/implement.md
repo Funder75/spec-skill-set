@@ -86,8 +86,8 @@ Keep this table and the Phase brief field list the source of truth for Tracker P
 
 Prefer create/refresh when the plan is written ([plan.md](plan.md) › Tracker Phases). If the active unit still has `Tracker phase: n/a` at or just before first implement on that unit, run [linear-sync.md](linear-sync.md) › Tracker Phase create when write-back is allowed (R4 (freeze before plan) fallback).
 
-- **Allowed.** Plan file exists (`<slug>.plan.md` or bare `implementation-plan.md`), `Work item` is a real id, conventions + Linear MCP ok → create missing Tracker Phase(s) for this unit only; write returned id(s); body from Phase brief / Env checklist fields.
-- **`Work item: n/a`.** Skip; no Linear discovery on this routine hook (R22 (reference gate)).
+- **Allowed.** Plan file exists (`<slug>.plan.md` or bare `implementation-plan.md`), frontmatter `work_item` is a real id, conventions + Linear MCP ok → create missing Tracker Phase(s) for this unit only; write returned id(s); body from Phase brief / Env checklist fields.
+- **`work_item: n/a` (or missing).** Skip; no Linear discovery on this routine hook (R22 (reference gate)).
 - **No plan file.** Impossible here (preconditions require a plan); elsewhere Tracker Phases stay a no-op (R5 (thin noop)).
 - **MCP / conventions missing.** Warn once; skip write-back; continue implement (R1 (conventions gate), R21 (mcp session)).
 
@@ -132,7 +132,7 @@ When a phase (or combinable unit) status changes in the plan, run [linear-sync.m
 - Update **only** that unit’s Tracker Phase by its stored id. Combined phases that share one id → one update.
 - On a real status delta, append a Tracker Spec progress-log comment; no-op → none (R13 (progress log)).
 - MUST NOT prompt to confirm Linear on every phase Done. MUST NOT run full `/spec linear sync` for a routine status change.
-- `Tracker phase: n/a` or `Work item: n/a` → skip that write (R22 (reference gate)). MCP / map missing → warn once; skip; continue implement (R1 (conventions gate), R21 (mcp session)).
+- `Tracker phase: n/a` or frontmatter `work_item: n/a` (or missing) → skip that write (R22 (reference gate)). MCP / map missing → warn once; skip; continue implement (R1 (conventions gate), R21 (mcp session)).
 - Linear MUST NOT drive plan status or Progress (G7 (repo canonical)).
 
 ## Review gate

@@ -5,7 +5,7 @@ Planning documents for this repo. One folder per feature spec. The spec workflow
 | Path | Role |
 | ---- | ---- |
 | `<slug>/` | Active spec. Start at `<slug>.spec.md` |
-| `<slug>/<slug>.spec.md` | Scope, gates, and the coarse work split. The `Progress` line is the gate |
+| `<slug>/<slug>.spec.md` | Scope, gates, and the coarse work split. The body `Progress` line is the gate; Linear FKs (`work_item`, URLs, Document ids) live in YAML frontmatter |
 | `<slug>/<slug>.logic.md` | Rules, workflows, state transitions (when needed) |
 | `<slug>/<slug>.contracts.md` | Types, API contracts, state ownership, storage (when needed) |
 | `<slug>/<slug>.ui.md` | Layout, interaction, states, copy (when needed) |
@@ -24,7 +24,7 @@ Work moves through three reviewed documents, then implementation (R7 (skill surf
 
 `Progress` in `<slug>.spec.md` is the gate: `design`, `tech`, `plan`, `implementing`, or `archived`. Phase status (`Not started` through `Done`, plus `Deferred` and `Blocked`) lives only in `<slug>.plan.md`.
 
-Invoke the user-level **spec** skill (`/spec`) and say what to do. Examples: create a spec from a note or a work item, promote to tech specs, promote to an implementation plan, implement the next phase, archive.
+Invoke the user-level **spec** skill (`/spec`) and say what to do. Examples: create a spec from a note or a work item, promote to tech specs, promote to an implementation plan, implement the next phase, archive, sync with Linear.
 
 Do not edit the skill to record progress.
 
