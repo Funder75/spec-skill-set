@@ -15,7 +15,7 @@ If `spec_docs/` does not exist:
 
 Read the whole input before asking or writing. Free text, every referenced document, or a work-item id. Nothing is stored in an inbox. `<slug>.spec.md` keeps a short **Source** note (where it came from).
 
-For a work-item id, read **Work items** under **Project conventions** in `spec_docs/README.md`. If that subsection is still the placeholder, ask how to fetch it. Store title, description, and acceptance criteria only. Map each acceptance criterion to a goal's **Source** line (for example `WI AC2`, or the id scheme this repo uses). A criterion with no goal is a gap: ask, or record a **Q** item. Do not paste the raw work-item payload into `<slug>.spec.md`.
+For a work-item id, read **Work items** under **Project conventions** in `spec_docs/README.md` (R1 (conventions gate)). If that subsection is still the placeholder, ask how to fetch it. Do not invent a team or project. When conventions name Linear MCP `get_issue`, fetch with that tool only while Linear MCP is usable in this session (R21 (mcp session)). Store title, description, and acceptance criteria only. Map each acceptance criterion to a goal's **Source** line (for example `WI AC2`, or the id scheme this repo uses). A criterion with no goal is a gap: ask, or record a **Q** item. Do not paste the raw work-item payload into `<slug>.spec.md` (R2 (no body rewrite)).
 
 ## Investigate
 
@@ -142,6 +142,16 @@ Replace every `{{…}}` placeholder. Strip every HTML comment. Number goals `G1 
 Omit **Glossary**, **Capabilities**, **Decisions**, **Open questions**, **Notes**, **Concerns**, and **Technical notes** when they would be empty. **Constraints** stays: write `n/a` on a line that does not apply. Nothing in **Non-goals** may be built in this spec.
 
 If the assumptions path was used, ensure every recorded assumption appears as an **Open questions** or **Decisions** item before you finish the file.
+
+When the input was a Linear work-item id and fetch succeeded, set **Work item** to that id. Leave **Tracker Spec URL**, **Document id**, and **Document URL** as `—` until Linear returns them.
+
+### Link-back after Work item
+
+After `<slug>.spec.md` is written with `Work item` set (not `n/a`), run [linear-sync.md](linear-sync.md) › Link-back when write-back is allowed (G1 (create from linear), R3 (first link back)). Then run [linear-sync.md](linear-sync.md) › Document › Create on first link (G5 (document mirror), D15 (document trigger)).
+
+- **Allowed.** Conventions for write-back are filled and Linear MCP is usable → follow Link-back: `save_comment` with `spec_docs/<slug>/` path text; optional `addLabels` for the design-stage label; `links` only with a real URI; then write **Tracker Spec URL** into `<slug>.spec.md` after Linear returns it. Then create the Document mirror (TL;DR + goals/AC summary + do-not-edit banner) and write **Document id** / **Document URL** after Linear returns them.
+- **Not allowed.** MCP or required conventions missing → warn once; skip write-back only (including Document); still keep the `<slug>.spec.md` write (R1 (conventions gate), R21 (mcp session)). Do not invent a team, project, bare-path `links`, or half-link. Do not fail the create solely because Linear could not sync.
+- **MUST NOT.** Rewrite the Linear issue description or set it to the full spec (R2 (no body rewrite)). Do not paste full `spec.md` or secrets into the Document (R19 (no secrets)).
 
 ## Self-review
 

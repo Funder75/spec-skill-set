@@ -27,6 +27,17 @@ Create-spec runs dialogue and chat approval before writing `spec.md`. Plans use 
 
 For the full workflow, gates, and project conventions, see [`spec_docs/README.md`](spec_docs/README.md).
 
+## Linear
+
+Optional tracker integration for linked `spec_docs/` folders. The repo stays canonical; Linear holds links, status, Tracker Phases, and a Document mirror.
+
+- **Connect Linear MCP in the IDE.** Tracker write-back (create-from fetch, link-back, Tracker Phases, status, Document, `/spec linear sync`) runs only when Linear MCP works in the current agent session (D19 (mcp session)). Cursor’s Linear product assign / `@Cursor` is kickoff, not MCP auth.
+- **Fill Project conventions.** Under `spec_docs/README.md` › Work items, set Linear project, team, fetch blurb, and Progress / phase-status maps (plus optional design label and default `[repo=…]`). Until those are filled, the skill warns once and skips write-back rather than inventing a team.
+- **Create-from and sync locally.** Prefer a local IDE session with Linear MCP for `/spec create from …` and `/spec linear sync`. Do not expect a Linear-started cloud run alone to sync tracker fields back to Linear.
+- **Cloud kickoff.** Use native `@Cursor` / assign on a Tracker Phase that already has brief-quality text. The skill does not ship a second Cloud Agent launcher. After cloud work merges, catch up Linear from an MCP-capable session.
+- **Do not edit Linear as binding AC.** Issue descriptions and the Document mirror are not the source of truth. Edit `spec.md` in the repo; regenerate the Document from there when TL;DR or goals change.
+- **Cloud Linear MCP.** Cloud Agents use a separate MCP sign-in from the desktop app. Linear MCP OAuth for cloud is often unavailable; treat cloud as kickoff-only for tracker writes unless that session clearly has working Linear MCP.
+
 ## Contribute
 
 ### Local development against a project

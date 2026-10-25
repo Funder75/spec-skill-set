@@ -1,7 +1,7 @@
 # Linear integration
 
 **Slug:** `linear-integration`
-**Progress:** plan
+**Progress:** archived
 **Work item:** n/a
 **Depends on:** `spec_docs/archive/multi-subagent` (phase brief and cloud contract)
 

@@ -41,6 +41,10 @@ flowchart LR
 
 <!-- required. Repeat this block for every phase. Same sections each time. Goal, Read first, Deliverables, Done when, Tier, and Ask-before feed the serial-SDD phase brief (no new columns). -->
 
+**Tracker phase:** n/a
+
+<!-- Filled after Linear returns an id (or stays n/a). Combinable phases in one dispatch unit share the same value. -->
+
 **Goal:** {{one outcome — what exists when this phase is complete}}
 
 **Covers:** {{G1 (short name), R2 (short name), …}}

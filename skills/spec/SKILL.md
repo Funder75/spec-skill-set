@@ -81,6 +81,7 @@ Explicit verbs skip the "what next?" question. Read the matching stage file and 
 | implement / continue | One phase, or one combinable group | [stages/implement.md](stages/implement.md) |
 | archive | Move the folder after explicit confirmation | [stages/implement.md](stages/implement.md) |
 | audit / review spec | Read-only report in chat | [stages/audit.md](stages/audit.md) |
+| `/spec linear sync` / create or repair Linear tracker links | Shared Linear write-back; explicit create/repair | [stages/linear-sync.md](stages/linear-sync.md) |
 
 Ambiguous or conflicting requests: ask.
 
@@ -115,7 +116,7 @@ If `spec_docs/` does not exist:
 
 ## Work items
 
-When the input is a work-item id, follow **Project conventions** for how to fetch it. Keep the title and description in the source note, and map acceptance criteria onto the goals. Do not paste the raw work-item payload into `<slug>.spec.md` or the reply.
+When the input is a work-item id, follow **Project conventions** for how to fetch it. Keep the title and description in the source note, and map acceptance criteria onto the goals. Do not paste the raw work-item payload into `<slug>.spec.md` or the reply. After create-spec sets `Work item`, link-back and other Linear writes follow [stages/linear-sync.md](stages/linear-sync.md) — do not invent a second sync doctrine (R20 (routing entry)).
 
 ## Bounds
 

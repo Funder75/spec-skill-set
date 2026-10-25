@@ -19,6 +19,7 @@ Each phase uses the same block:
 | ------- | ------- |
 | **Goal** | One outcome |
 | **Covers** | Goal and rule IDs this phase satisfies, in full form |
+| **Tracker phase** | `<id> \| n/a` — default `n/a`; shared across a combinable unit |
 | **Read first** | Links to the tech-doc sections this phase needs. The implementer reads only these |
 | **Not in this phase** | Adjacent work the implementer must leave alone |
 | **Deliverables** | Concrete files: `extend`, `new`, or `remove`. `new` needs a one-line reason. Prefer `extend` |
@@ -71,6 +72,32 @@ Walk the checklist in [design-quality.md](../design-quality.md). Fix gaps, or ad
 ## Update `<slug>.spec.md`
 
 Do not rewrite the spec. Set `Progress: plan` and add `<slug>.plan.md` to the doc index.
+
+When `Progress` changes to `plan` (this promote) or any later gate change lands from this stage’s path, run [linear-sync.md](linear-sync.md) › Status (selective) › Progress → Tracker Spec when write-back is allowed (G3 (status mirror), R11 (status mirror), R12 (selective tracker writes)). Update **only** the Tracker Spec by its stored `Work item` id. On a real Progress delta, append a progress-log comment; no-op → none (R13 (progress log)). MUST NOT run full explicit sync for a routine gate change. `Work item: n/a` → skip (R22 (reference gate)). MCP / map missing → warn once; skip write-back (R1 (conventions gate), R21 (mcp session)). Linear MUST NOT drive Progress (G7 (repo canonical)).
+
+## Tracker Phases after plan write or edit
+
+After the plan file is written or a dispatch-unit change lands (phase added, removed, renumbered, renamed, or combinable grouping changed), run [linear-sync.md](linear-sync.md) › Tracker Phase create / update / cancel when write-back is allowed (G2 (tracker phases), R4 (freeze before plan)).
+
+**Plan file.** This stage emits `<slug>.plan.md`. Treat “plan exists” as that file **or** bare `implementation-plan.md` already in the folder (R4 (no auto migrate)). Do not auto-rename. Without either file, Tracker Phase work is a no-op (R5 (thin noop)) — this hook only runs after a plan write, so that case does not apply here.
+
+**Every phase packet** MUST include `Tracker phase: <id> | n/a` (template default `n/a`). Combinable phases in one dispatch unit share one value (R6 (repo-stored phase identity)).
+
+### When write-back is allowed
+
+`Work item` is a real id (not `n/a`), Work items conventions for create are filled, and Linear MCP is usable:
+
+1. Build dispatch units from the progress overview (one phase, or one combinable group).
+2. For each unit whose phases still say `Tracker phase: n/a` → create one Tracker Phase (`parentId` = Tracker Spec id) and write the returned id onto every phase in that unit.
+3. For each unit that already has a stored id → update that id in place when body source fields changed. Preserve the id through renames and renumbering; never title-search (R8 (direct and selective update)).
+4. When a unit with a stored id is removed → cancel + reason comment, then remove the repo field (R9 (cancel removed)). Leave unreferenced Linear work alone (R7 (unreferenced leave)).
+
+### When write-back is not allowed
+
+- **`Work item: n/a`.** Skip all Tracker Phase writes on this routine hook. Do not call Linear discovery (R22 (reference gate)). Explicit `/spec linear sync` remains available for create/repair ([linear-sync.md](linear-sync.md) › Explicit sync).
+- **MCP or conventions missing.** Warn once; skip write-back; keep the plan file as written (R1 (conventions gate), R21 (mcp session)).
+
+Do not create Tracker Phases before the plan exists. Do not invent a skill Cloud Agent launcher or auto-assign Cursor (R16 (human gated launch)). Routine plan hooks stay selective — they MUST NOT run full explicit sync (R8 (direct and selective update), R12 (selective tracker writes)).
 
 ## Stop
 

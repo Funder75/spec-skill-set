@@ -84,7 +84,15 @@ The skill reads this section when it needs a project fact. If a subsection is st
 
 ### Work items
 
-{{Where a work-item id comes from, and how to fetch it. Keep the title, description, and acceptance criteria. Map each acceptance criterion into a goal's Source line, for example `WI AC2`.}}
+Schema the skill reads for Linear (fill at init-project or by hand). Keep the title, description, and acceptance criteria on fetch. Map each acceptance criterion into a goal's Source line, for example `WI AC2`.
+
+- **Linear project:** {{id | n/a}}
+- **Team:** {{name or id}}
+- **Fetch:** {{use Linear MCP `get_issue` by id or URL}}
+- **Tracker Spec Progress → state/label map:** {{design → …; tech → …; plan → …; implementing → …; archived → …}}
+- **Tracker Phase status → state map:** {{Not started → …; Started → …; Reviewing → …; Done → …; Deferred → …; Blocked → …}}
+- **Optional design-stage label:** {{label name/id, or omit}}
+- **Optional default `[repo=…]`:** {{owner/name the cloud agent should use, or omit}}
 
 ### Verify tiers
 

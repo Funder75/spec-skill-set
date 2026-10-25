@@ -8,7 +8,7 @@ Execute one phase (or one sub-task, or one combinable group) of `<slug>.plan.md`
 2. `Progress` is `plan` or `implementing`, and `<slug>.plan.md` exists with no `{{…}}` and no `[SUGGESTION:`. If not, stop and name the missing gate.
 3. Read `<slug>.spec.md`, the plan's **progress overview**, and the **active phase** section. Read only the tech-doc sections that phase lists under **Read first**, not whole docs.
 
-On the first phase that leaves **Not started**, set `Progress: implementing` in `<slug>.spec.md`. Do not rewrite the rest of the spec.
+On the first phase that leaves **Not started**, set `Progress: implementing` in `<slug>.spec.md`. Do not rewrite the rest of the spec. When that Progress change lands, run [linear-sync.md](linear-sync.md) › Status (selective) › Progress → Tracker Spec when write-back is allowed — Tracker Spec only; not a full sync (R11 (status mirror), R12 (selective tracker writes)).
 
 ## Phase selection
 
@@ -42,7 +42,7 @@ If the rating turns out wrong, update the label in the progress overview and the
 
 ### Phase brief
 
-**In short:** Before each dispatch, the parent builds a chat-only phase brief from the active phase packet. Cloud adds an env checklist. The worker reads the brief and **Read first** only — not the full plan.
+**In short:** Before each dispatch, the parent builds a chat-only phase brief from the active phase packet. Cloud adds an env checklist. The worker reads the brief and **Read first** only — not the full plan. Tracker Phase bodies in Linear reuse these same fields ([linear-sync.md](linear-sync.md) › Tracker Phase body).
 
 Before dispatching an implementer (local subagent or cloud paste), the parent MUST assemble a phase brief that covers at least:
 
@@ -80,6 +80,19 @@ When the user opted into a cloud agent for the unit, or the run already is a Cur
 
 Do not invent a project-level cloud opt-in in `spec_docs/README.md`. Chat consent (or already-in-cloud) is enough.
 
+Keep this table and the Phase brief field list the source of truth for Tracker Phase body sections in [linear-sync.md](linear-sync.md) (R15 (cloud ready body)). When either side changes, update the other.
+
+### Tracker Phase fallback create
+
+Prefer create/refresh when the plan is written ([plan.md](plan.md) › Tracker Phases). If the active unit still has `Tracker phase: n/a` at or just before first implement on that unit, run [linear-sync.md](linear-sync.md) › Tracker Phase create when write-back is allowed (R4 (freeze before plan) fallback).
+
+- **Allowed.** Plan file exists (`<slug>.plan.md` or bare `implementation-plan.md`), `Work item` is a real id, conventions + Linear MCP ok → create missing Tracker Phase(s) for this unit only; write returned id(s); body from Phase brief / Env checklist fields.
+- **`Work item: n/a`.** Skip; no Linear discovery on this routine hook (R22 (reference gate)).
+- **No plan file.** Impossible here (preconditions require a plan); elsewhere Tracker Phases stay a no-op (R5 (thin noop)).
+- **MCP / conventions missing.** Warn once; skip write-back; continue implement (R1 (conventions gate), R21 (mcp session)).
+
+Do not auto-assign Cursor.
+
 ## Session checklist
 
 - Scoped to one phase, one sub-task, or one combinable group.
@@ -111,6 +124,16 @@ Only one phase (or combinable group) may be `Started`, `Reviewing`, or `Blocked`
 Ask before: a new dependency, a fork that changes the approach, a security or data-migration choice, cloud agent, implementation branch, worktree, commit / push / PR, archiving, or setting a phase to `Deferred`. Cloud, branch, and worktree are distinct asks — one does not imply another. Chat consent is enough; there is no project-level SCM opt-in. When the run already is a Cursor Cloud Agent, cloud consent is implied; extra branch / worktree / commit still need an ask unless that runner's normal branch story applies.
 
 **MUST NOT:** Create a branch, worktree, or commit unless the user explicitly asked in this conversation. Default serial SDD uses the shared checkout.
+
+### Tracker Phase status mirror
+
+When a phase (or combinable unit) status changes in the plan, run [linear-sync.md](linear-sync.md) › Status (selective) › Phase status → Tracker Phase when write-back is allowed (G3 (status mirror), R11 (status mirror), R12 (selective tracker writes)).
+
+- Update **only** that unit’s Tracker Phase by its stored id. Combined phases that share one id → one update.
+- On a real status delta, append a Tracker Spec progress-log comment; no-op → none (R13 (progress log)).
+- MUST NOT prompt to confirm Linear on every phase Done. MUST NOT run full `/spec linear sync` for a routine status change.
+- `Tracker phase: n/a` or `Work item: n/a` → skip that write (R22 (reference gate)). MCP / map missing → warn once; skip; continue implement (R1 (conventions gate), R21 (mcp session)).
+- Linear MUST NOT drive plan status or Progress (G7 (repo canonical)).
 
 ## Review gate
 
@@ -157,5 +180,6 @@ When the user confirms the spec is done — including when they deliberately dro
 1. Note skipped or deferred phases in `<slug>.plan.md`, including anything left under **Follow-ups**.
 2. Set `Progress: archived` in `<slug>.spec.md`.
 3. Move the whole folder `spec_docs/<slug>/` to `spec_docs/archive/<slug>/` (do not rename siblings as a side effect — R4 (no auto migrate)).
+4. **Archive gate (Linear).** Before marking the Tracker Spec Done, run [linear-sync.md](linear-sync.md) › Status (selective) › Archive gate (R18 (archive gate)). Tracker Spec Done only when every referenced Tracker Phase is Done or Deferred; otherwise ask. Do not silently complete the Tracker Spec. When the gate allows (or the user confirms), update only the Tracker Spec via selective Progress → Tracker Spec — not a full explicit sync.
 
 Do not archive without explicit confirmation. If every phase is `Done`, or only `Done` plus `Deferred`, offer archive and wait. Do not re-archive. Do not read other archive folders.

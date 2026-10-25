@@ -6,7 +6,10 @@
 
 **Slug:** `{{feature-slug}}`
 **Progress:** design
-**Work item:** {{id, or "—"}}
+**Work item:** {{id, or "n/a"}}
+**Tracker Spec URL:** {{URI after Linear returns it, or "—"}}
+**Document id:** {{id when Document exists, or "—"}}
+**Document URL:** {{URI when Document exists, or "—"}}
 **Depends on:** {{`spec_docs/<slug>`, a named external deliverable, or "—"}}
 
 ## TL;DR

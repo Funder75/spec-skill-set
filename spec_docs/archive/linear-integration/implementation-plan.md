@@ -10,10 +10,10 @@ Work-split items 2 and 4’s cloud-ready body are one phase (Tracker Phase descr
 
 | Phase | Status | Name | Tier | Depends on | Combinable with |
 | ----- | ---- | ------ | ---- | ---------- | --------------- |
-| **1** | Not started | Conventions and create-from link-back | Medium | — | — |
-| **2** | Not started | Tracker Phases and cloud-ready bodies | High | 1 | — |
-| **3** | Not started | Selective status updates, explicit sync, archive | High | 2 | 4 |
-| **4** | Not started | Document mirror, conflict stop, README | Medium | 1 | 3 |
+| **1** | Done | Conventions and create-from link-back | Medium | — | — |
+| **2** | Done | Tracker Phases and cloud-ready bodies | High | 1 | — |
+| **3** | Done | Selective status updates, explicit sync, archive | High | 2 | 4 |
+| **4** | Done | Document mirror, conflict stop, README | Medium | 1 | 3 |
 
 ```mermaid
 flowchart LR
@@ -105,17 +105,22 @@ save_issue(id, links: [{url: "spec_docs/foo/"}])
 
 ### Done when
 
-- [ ] Tier verify passes (Project conventions in `spec_docs/README.md`)
-- [ ] A1.1–A1.3 pass
-- [ ] Create-spec still maps Linear AC onto goals’ `Source:` lines and does not paste the raw payload into `spec.md`
-- [ ] Tracker Spec URL is written into `spec.md` only after Linear returns it; no bare-path `links`
-- [ ] No HTML author comments or `{{…}}` left in touched skill/template files
+- [x] Tier verify passes (Project conventions in `spec_docs/README.md`)
+- [x] A1.1–A1.3 pass
+- [x] Create-spec still maps Linear AC onto goals’ `Source:` lines and does not paste the raw payload into `spec.md`
+- [x] Tracker Spec URL is written into `spec.md` only after Linear returns it; no bare-path `links`
+- [x] No HTML author comments or `{{…}}` left in touched skill/template files
 
 ### Close-out
 
 - Verified:
-- Deviations:
-- Follow-ups:
+  - Low: Diffed deliverables against Done when / A1.1–A1.3; no HTML author comments in new/edited skill prose; templates keep intentional `{{…}}` fill-ins.
+  - Medium: `rg -F` for R1 (conventions gate), R2 (no body rewrite), R3 (first link back), R20 (routing entry), R21 (mcp session), R22 (reference gate), G1 (create from linear), G7 (repo canonical) — each present in the named stage/skill where it lands. Outcomes: all matched.
+  - A1.1: create-spec sets Work item, calls linear-sync Link-back (comment path, URL after return, no bare-path links, no description rewrite).
+  - A1.2: missing MCP/conventions → warn once, skip write-back only, no invent team/half-link; `spec.md` write still allowed.
+  - A1.3: Infer row `/spec linear sync` → `stages/linear-sync.md`.
+- Deviations: None.
+- Follow-ups: Full explicit-sync create/repair (phase 3); Tracker Phase / Document / Conflict stubs remain pointers until phases 2–4; live Project conventions fill stays init-project.
 
 ## Phase 2 — Tracker Phases and cloud-ready bodies
 
@@ -217,17 +222,31 @@ save_issue(id, links: [{url: "spec_docs/foo/"}])
 
 ### Done when
 
-- [ ] Tier verify passes (Project conventions in `spec_docs/README.md`)
-- [ ] A2.1–A2.8 pass
-- [ ] Tracker Phase body field list stays aligned with `stages/implement.md` › Phase brief / Env checklist
-- [ ] Tracker Phases are never created while `implementation-plan.md` is missing
-- [ ] Unlinked folders never call Linear discovery
+- [x] Tier verify passes (Project conventions in `spec_docs/README.md`)
+- [x] A2.1–A2.8 pass
+- [x] Tracker Phase body field list stays aligned with `stages/implement.md` › Phase brief / Env checklist
+- [x] Tracker Phases are never created while `implementation-plan.md` is missing
+- [x] Unlinked folders never call Linear discovery
 
 ### Close-out
 
 - Verified:
-- Deviations:
-- Follow-ups:
+  - High deciding factor (repo-stored Tracker Phase id is identity): create writes returned id immediately; update/cancel address that id only; never title-search or `list_issues` rediscovery; combinable unit shares one id on every phase; cancel+comment before removing the field; routine hooks skip when `Work item: n/a`.
+  - Low: Diffed deliverables against Done when / A2.1–A2.8; stages have no leftover HTML author comments; template keeps intentional `{{…}}` / HTML comments and adds `Tracker phase: n/a`.
+  - Medium: `rg -F` for R4–R10, R15, R16, R22, G2, G4, G6 — each present in the named stage/template where it lands. Outcomes: all matched.
+  - High dry-read: `linear-sync` ordered Guards (unlinked → no plan → MCP) before Create/Update/Cancel; plan hook and implement fallback both require Guards path via linear-sync; Create cannot run without plan file + linked Work item; Cancel steps require comment then cancel then field remove.
+  - A2.1: plan after-write hook creates missing Tracker Phases, stores returned ids, body from brief fields.
+  - A2.2: no plan file → Tracker Phase no-op (R5); plan exists = `<slug>.plan.md` or bare `implementation-plan.md`.
+  - A2.3: update by stored id only; unreferenced leave; no duplicate on rename/renumber.
+  - A2.4: cancel + reason comment before removing repo field.
+  - A2.5: canon banner + Done when bounds; MUST NOT skill Cloud Agent launcher / invent scope.
+  - A2.6: `Work item: n/a` → skip routine Tracker Phase writes; no Linear discovery.
+  - A2.7: missing MCP/conventions → warn once, skip write-back.
+  - A2.8: combinable group → same `Tracker phase:` id on every phase in the unit.
+  - Body table in linear-sync cites implement Phase brief / Env checklist; implement notes mutual alignment.
+  - Unlinked folders: Guards + plan/implement hooks forbid discovery when Work item is n/a.
+- Deviations: None.
+- Follow-ups: Status selective update + progress comments + full explicit-sync create/repair (phase 3); Document mirror / conflict / README (phase 4); live Project conventions fill stays init-project.
 
 ## Phase 3 — Selective status updates, explicit sync, and archive gate
 
@@ -301,16 +320,26 @@ save_issue(id, links: [{url: "spec_docs/foo/"}])
 
 ### Done when
 
-- [ ] Tier verify passes (Project conventions in `spec_docs/README.md`)
-- [ ] A3.1–A3.5 pass
-- [ ] No per-Done Linear confirm prompt remains in implement status hooks
-- [ ] Progress comments are append-only (no edit-in-place path)
+- [x] Tier verify passes (Project conventions in `spec_docs/README.md`)
+- [x] A3.1–A3.5 pass
+- [x] No per-Done Linear confirm prompt remains in implement status hooks
+- [x] Progress comments are append-only (no edit-in-place path)
 
 ### Close-out
 
 - Verified:
-- Deviations:
-- Follow-ups:
+  - High deciding factor (selective updates only): gate/Progress → Tracker Spec only; phase status → that Tracker Phase only; append-only progress comments on real deltas; Explicit sync is create/repair and never a routine prerequisite; archive asks before Tracker Spec Done if any referenced Tracker Phase is still open.
+  - Low: Diffed deliverables against Done when / A3.1–A3.5; only intentional progress-marker HTML in linear-sync; no leftover author comments or fill-in placeholders in touched stages.
+  - Medium: `rg -F` for R8 (direct and selective update), R11 (status mirror), R12 (selective tracker writes), R13 (progress log), R18 (archive gate), G3 (status mirror), G7 (repo canonical) — each present in the named stage where it lands. Outcomes: all matched (R8 in linear-sync + plan; implement cites selective Status path).
+  - High dry-read: Status Guards (unlinked/`n/a` → MCP/maps → selective-only) before Progress → Tracker Spec, Phase status → Tracker Phase, Progress-log, Archive gate; Explicit sync is a separate entry that reuses Tracker Phase Create and is forbidden as a routine side effect; implement/plan hooks call Status only.
+  - A3.1: implement status hook updates only that Tracker Phase; MUST NOT per-Done Linear confirm; MUST NOT full sync.
+  - A3.2: real delta → new `save_comment` with `<!-- spec-sync-progress: slug=… -->`; no-op → none; never edit prior progress comments.
+  - A3.3: Linear never writes plan status or Progress (linear-sync + implement + plan).
+  - A3.4: Explicit sync creates `n/a`, updates referenced, repairs invalid, asks for missing project/team/maps/ownership; no title-search / `list_issues` ownership guess; reuses phase-2 Create path.
+  - A3.5: archive gate asks when a referenced Tracker Phase is still open; no silent Tracker Spec Done.
+  - SKILL Infer already routes `/spec linear sync` → linear-sync (no extra pointer needed).
+- Deviations: None.
+- Follow-ups: Document mirror / conflict / plugin README (phase 4); tech-specs `Progress: tech` selective Tracker Spec hook not in this phase’s deliverables (plan + implement cover plan/implementing/archive); live Project conventions fill stays init-project.
 
 ## Phase 4 — Document mirror, conflict policy, and operator README
 
@@ -381,17 +410,25 @@ save_issue(id, links: [{url: "spec_docs/foo/"}])
 
 ### Done when
 
-- [ ] Tier verify passes (Project conventions in `spec_docs/README.md`)
-- [ ] A4.1–A4.4 pass
-- [ ] Document, Tracker Phase, and comment payloads stay summaries — no secrets or full private dumps
-- [ ] Missing Linear MCP still warns/skips write-back without failing an implement unit solely for sync
-- [ ] No body-hash fingerprint field is required in `spec.md`
+- [x] Tier verify passes (Project conventions in `spec_docs/README.md`)
+- [x] A4.1–A4.4 pass
+- [x] Document, Tracker Phase, and comment payloads stay summaries — no secrets or full private dumps
+- [x] Missing Linear MCP still warns/skips write-back without failing an implement unit solely for sync
+- [x] No body-hash fingerprint field is required in `spec.md`
 
 ### Close-out
 
 - Verified:
-- Deviations:
-- Follow-ups:
+  - Low: Diffed `linear-sync.md` Document/Conflict, create-spec Link-back → Document, plugin `README.md` Linear section against Done when / A4.1–A4.4; no HTML author comments in touched skill prose.
+  - Medium: `rg -F` for R14 (conflict stop), R17 (document mirror), R19 (no secrets), R21 (mcp session), R22 (reference gate), G5 (document mirror), D15 (document trigger), D16 (no linear edits), D19 (mcp session), D20 (conflict choices) — present in landing files.
+  - A4.1: Link-back then Document create; persist Document id/URL after Linear returns.
+  - A4.2: Regenerate on TL;DR/goals change only; status-only skips Document.
+  - A4.3: Mirror banner + D20 (conflict choices); no required body-hash.
+  - A4.4: README states local MCP write-back vs `@Cursor` kickoff; cloud alone must not be assumed to sync.
+  - R19 (no secrets): Document content is summary-only; create-spec MUST NOT paste full spec/secrets.
+  - Missing MCP: warn/skip; create-spec must not fail solely for sync.
+- Deviations: None.
+- Follow-ups: Live Project conventions fill stays init-project; Q1 (auto detect) remains open (policy-only conflict surface).
 
 ## Risks
 
