@@ -96,7 +96,7 @@ The tier selects the default row in **Verify tiers**. A phase that needs a stron
 - Write a one-line reason naming the deciding factor, for example `High — overlay cleanup order across router navigation`.
 - A combinable group takes the highest tier among its members. A sub-task takes its phase's tier.
 - Tier is not a reason to split. Use [Phase sizing](#phase-sizing). A phase that is High because it bundles an unrelated hard part already meets the unrelated-surfaces split rule.
-- Read **Complexity hotspots** in `spec_docs/README.md` when that subsection exists. It names project areas the generic factors cannot see.
+- Read **Complexity hotspots** in `spec_docs/README.md` when that subsection has filled bullets. It names project areas the generic factors cannot see. An empty list means none yet — use the generic rubric.
 
 ---
 

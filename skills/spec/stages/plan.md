@@ -34,7 +34,7 @@ Rules:
 
 - As few phases as safely possible. Split only when a phase would span unrelated surfaces, cannot pass verify midway, or is honestly easier to review in two passes. More than about five phases needs a one-line reason under the progress overview. Detail: [design-quality.md](../design-quality.md).
 - Phase size stays outcome-based. Do not default to 2–5 minute micro-steps.
-- Set each phase's **Tier** with [Phase tier](../design-quality.md#phase-tier). Rate this phase, not the feature, and not by file count. The label in the progress overview matches the phase block. Read **Complexity hotspots** in `spec_docs/README.md` when that subsection exists and is filled in. If it is missing or still a placeholder, use the generic rubric and do not ask.
+- Set each phase's **Tier** with [Phase tier](../design-quality.md#phase-tier). Rate this phase, not the feature, and not by file count. The label in the progress overview matches the phase block. Read **Complexity hotspots** in `spec_docs/README.md` when that subsection has filled bullets. If it is missing, empty, or still a placeholder, use the generic rubric and do not ask.
 - The tier selects the default commands in **Verify tiers**. If that subsection is still the placeholder, ask. Do not invent a build pipeline. A phase that needs a stronger check names that command in **Done when** and keeps its tier.
 - Phases start at **Not started**.
 - **Depends on** and **Combinable with** in the progress overview are the order gate. `—` means none. A Mermaid graph is optional, and only when there are more than four phases; the table stays the source of truth.

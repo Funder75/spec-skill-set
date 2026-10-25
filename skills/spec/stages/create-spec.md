@@ -7,9 +7,9 @@ Write or resume `spec_docs/<slug>/<slug>.spec.md` only (R1 (filename pattern), R
 If `spec_docs/` does not exist:
 
 1. Copy [templates/spec-docs-readme.md](../templates/spec-docs-readme.md) to `spec_docs/README.md` and add empty `spec_docs/archive/.gitkeep`.
-2. Ask in chat whether to fill **Project conventions**. List every placeholder group from that section of the template: work items, verify tiers, complexity hotspots, stack notes, other commands. Complete this ask (and any opt-in write) before Investigate, Clarify, or other stage work from the original `/spec` intent.
+2. Ask in chat whether to fill **Project conventions** now. Say the interview covers work items (tracker), verify tiers, complexity hotspots, stack notes, and other commands — one explained question at a time, and any answer may stay a placeholder. Complete this ask (and any opt-in interview) before Investigate, Clarify, or other stage work from the original `/spec` intent.
 3. On explicit no, ignore, or a reply that continues the original action with no yes and no convention answers: leave the README unchanged and resume the original intent. Do not search the repo to fill conventions.
-4. On explicit yes, or a reply that answers one or more listed placeholders: treat as opt-in. Apply the user's chat answers first. Draft remaining items from obvious project facts when safe (read only what is needed). Leave unclear items as `{{…}}` or ask one follow-up. Do not invent secrets, tokens, private URLs, or facts that contradict files already opened. Write only **Project conventions** in `spec_docs/README.md` — strip HTML author comments as the template intends; do not edit other README sections or the template. Then resume the original intent.
+4. On explicit yes, or a reply that already answers interview questions: treat as opt-in. Run [fill-conventions.md](fill-conventions.md). Do not invent a second fill path. Then resume the original intent.
 
 ## Input
 

@@ -61,7 +61,15 @@ The skill reads this section when it needs a project fact. If a subsection is st
 
 ### Work items
 
-Schema the skill reads for Linear (fill at init-project or by hand). Keep the title, description, and acceptance criteria on fetch. Map each acceptance criterion into a goal's Source line, for example `WI AC2`.
+<!--
+Bootstrap asks None vs Linear (see stages/fill-conventions.md).
+None → replace this subsection with short prose: no work-item system; specs from chat / free text.
+Linear → keep the fields below (names are stable for linear-sync). On fetch, keep title,
+description, and acceptance criteria; map each criterion to a goal Source line (e.g. WI AC2).
+Hand-fill either shape the same way.
+-->
+
+{{None: no work-item system prose | Linear: fill the fields below}}
 
 - **Linear project:** {{id | n/a}}
 - **Team:** {{name or id}}
@@ -83,7 +91,11 @@ Schema the skill reads for Linear (fill at init-project or by hand). Keep the ti
 
 ### Complexity hotspots
 
-<!-- include when: this repo has areas the generic tier rubric cannot rate. Omit the subsection when there are none. The planner reads this when setting a phase tier. A missing or placeholder subsection is not a question. -->
+<!--
+Areas the generic tier rubric cannot rate. Always keep this subsection. Empty list = none yet
+(easy to extend later). The planner reads filled bullets when setting a phase tier; an empty
+or still-placeholder list is not a question — use the generic rubric.
+-->
 
 - {{area — why a phase that touches it is harder}}
 
