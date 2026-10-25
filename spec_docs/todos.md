@@ -4,14 +4,6 @@ Ideas for before moving into specs.
 
 Once promoted to a spec - we should remove it entirely from here.
 
-## Readme file for this project still needs TLC
-
-Missing:
-- Docs about the spec_docs folder.
-- Better docs on how to write specs - the iterations, process etc.
-- Investigate the spec_docs/archived folder and see if we are missing some documentation
-- A list of tips for using the system
-
 ## Create GHA for updating the plugin on the market place
 
 Investigate
