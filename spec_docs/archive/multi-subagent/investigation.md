@@ -1,6 +1,6 @@
 # Investigation: multi-subagent / serial phase implementers
 
-**Status:** investigation complete — ready to promote to a spec (not yet binding)  
+**Status:** archived — promoted and implemented as [spec.md](./spec.md) (Oct 2026)  
 **Source todo:** `spec_docs/todos.md` — "Use a multiple sub agent process"  
 **Date:** 25 Oct 2026  
 **Direction (settled in discussion):** Superpowers-style **serial** SDD — fresh subagent (or equivalent fresh context) **per phase**, required review subagent after each unit, never parallel implementers. One-phase / combinable-as-one stay in the parent. Primary win is **quality / context hygiene**, not wall-clock fan-out. Cloud prep = phase brief + env checklist (Linear kickoff later, separate).

@@ -29,6 +29,8 @@ Before handing the folder to an implement session:
 
 A **Q** item may remain only if its **Blocks** line does not include phase 1.
 
+Multi-phase serial implement expects a brief-sized phase packet (linked **Read first** plus **Done when**) so the orchestrator can build the chat-only phase brief without the full plan.
+
 ---
 
 ## Phase sizing

@@ -20,7 +20,7 @@ One skill for the spec workflow. Never edit this skill, its stages, or its templ
 6. [design-quality.md](design-quality.md) only while writing or revising an implementation plan.
 7. [analysis-checklist.md](analysis-checklist.md) only during an explicit audit.
 
-Do not spawn subagents. Do not read `spec_docs/archive/` unless the user asks about an archived spec.
+Subagents only for serial implement under [stages/implement.md](stages/implement.md) › Serial SDD. Create, promote, and audit MUST NOT spawn subagents. Do not read `spec_docs/archive/` unless the user asks about an archived spec.
 
 ## Progress
 
@@ -101,6 +101,6 @@ When the input is a work-item id, follow **Project conventions** for how to fetc
 
 ## Bounds
 
-- **No surprise SCM.** Do not create branches, worktrees, or commits unless the user explicitly asks in that conversation. Create, promote, and implement do not add a worktree step.
+- **No surprise SCM.** Do not create branches, worktrees, or commits unless the user explicitly asks in that conversation. Create, promote, and implement do not add a worktree step. Asking for an implementation branch does not imply a worktree, and the reverse does not hold. Default is the shared checkout. Cloud consent is a chat ask, or implied when the run already is a Cursor Cloud Agent; extra branches, worktrees, or commits still need an ask.
 - **One skill.** Adaptations stay in this skill tree. Do not add peer skills for brainstorming, planning, or TDD for this workflow.
 - **No auto pipeline.** After design-file approval, do not auto-invoke a separate implementation pipeline.

@@ -1,7 +1,7 @@
 # Serial subagent implement (SDD)
 
 **Slug:** `multi-subagent`
-**Progress:** tech
+**Progress:** archived
 **Work item:** —
 **Depends on:** —
 
@@ -20,11 +20,11 @@
 | [business-logic.md](./business-logic.md) | Orchestrator rules, stop/resume, review gate | yes |
 | [contracts.md](./contracts.md) | Phase brief shape and env checklist fields | yes |
 | ui.md | Layout, interaction, states, copy | not needed |
-| implementation-plan.md | Phases and phase status | pending |
+| [implementation-plan.md](./implementation-plan.md) | Phases and phase status | yes |
 
 ## Source
 
-> Investigation `spec_docs/investigations/multi-subagent.md` (25 Oct 2026), from todo "Use a multiple sub agent process". Direction settled there: Superpowers-style serial subagent-driven development (SDD), not parallel. Primary win is quality and context hygiene. Cloud prep is the same phase brief plus an env checklist; Linear kickoff stays a separate later spec.
+> Investigation [investigation.md](./investigation.md) (25 Oct 2026), from todo "Use a multiple sub agent process". Direction settled there: Superpowers-style serial subagent-driven development (SDD), not parallel. Primary win is quality and context hygiene. Cloud prep is the same phase brief plus an env checklist; Linear kickoff stays a separate later spec.
 
 ## Problem and current behaviour
 

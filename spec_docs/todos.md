@@ -13,17 +13,6 @@ Find a way to to create small specs by skipping steps / files in the spec creati
 Investigation:
 How can we do this in a good way. One way could be to make an analysis either before creating the first spec doc or after. So add a pre- or post- analysis to the create spec process that evaluates the need for spec depth. This could result in giving the programmer some options.
 
-## Use a multiple sub agent process
-
-Superpowers have the ability process the impllemtation plan using parralel sub processors.
-For some design this may be a good way, for others not. We have create a system that enables this.
-
-In general we also need to prepare this system for using in cloud agents.
-
-Investigate how superpowers does this.
-
-**Investigation (25 Oct 2026):** [investigations/multi-subagent.md](./investigations/multi-subagent.md) — Direction settled: serial Superpowers-style SDD (fresh context per phase, required review subagent); one-phase stays in parent; parallel implementers rejected; Combinable stays same-session; cloud = brief + env (Linear later). Gap is policy flip + phase brief, not a parallel runner. Ready to promote to a spec.
-
 ## Integrate with Linear
 
 Goal:
@@ -45,8 +34,10 @@ When working with several specs, it is hard to see which spec an open file belon
 
 We could solve this by using the slug name as the first part of the spec:
 [slug].spec.md
-[slug].business-plan.md
+[slug].business-logic.md
 ...
+
+We should see if we can shorten / abbreviate the long files for easier tab reading.
 
 We may also benefit from using the cursors built in plan format as the implementation plan. I think all we need to do is use the .plan.md extension. In that case this fits with the above.
 

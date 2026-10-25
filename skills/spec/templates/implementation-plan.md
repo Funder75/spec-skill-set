@@ -39,7 +39,7 @@ flowchart LR
 
 ## Phase {{n}} — {{name}}
 
-<!-- required. Repeat this block for every phase. Same sections each time. -->
+<!-- required. Repeat this block for every phase. Same sections each time. Goal, Read first, Deliverables, Done when, Tier, and Ask-before feed the serial-SDD phase brief (no new columns). -->
 
 **Goal:** {{one outcome — what exists when this phase is complete}}
 
