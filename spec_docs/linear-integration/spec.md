@@ -1,7 +1,7 @@
 # Linear integration
 
 **Slug:** `linear-integration`
-**Progress:** design
+**Progress:** tech
 **Work item:** —
 **Depends on:** `spec_docs/archive/multi-subagent` (phase brief and cloud contract)
 
@@ -17,8 +17,8 @@
 | Doc | Read for | Present? |
 | --- | -------- | -------- |
 | This file | Scope, goals, journeys, constraints, work split | yes |
-| business-logic.md | Sync rules, freeze gates, conflict handling | pending |
-| contracts.md | Markers, conventions schema, Document fields | pending |
+| [business-logic.md](./business-logic.md) | Sync rules, freeze gates, conflict handling | yes |
+| [contracts.md](./contracts.md) | Markers, conventions schema, Document fields | yes |
 | ui.md | Layout, interaction, states, copy | not needed |
 | implementation-plan.md | Phases and phase status | pending |
 
@@ -70,7 +70,7 @@ Source: todos subtasks; investigation M2+
 - Unmarked children are human-owned: sync MUST NOT delete, cancel, or rewrite them.
 - Prefer create/refresh during plan review or when the plan’s phase list changes; fallback is at or just before first implement. Least user work: auto when conventions are present.
 - Removed phases: cancel the marked child and comment — never silent delete.
-- Nesting under an optional Implementation container is allowed; default layout is open: Q2 (nest default).
+- Phase children hang flat under the parent by default (D10 (flat children)). Nesting under a marked Implementation container remains allowed later if conventions add it.
 
 ### G3 (status mirror) — Linear status follows repo Progress and plan phase status
 
@@ -87,9 +87,9 @@ Source: todos status sync
 
 Source: todos cloud agent; multi-subagent G7 (cloud ready brief) deferred here
 
-- Marked phase children include brief-quality text: repo paths, phase identity, Done when summary, stop-after-this-unit, env checklist cues, and `[repo=…]` when conventions define a default.
+- Marked phase children include brief-quality text: repo paths, phase identity, Done when summary, stop-after-this-unit, env checklist cues, and `[repo=…]` from the single conventions default when set (D14 (default repo)).
 - The child states that the repo is canonical and the agent must not invent scope from the Linear description beyond Done when.
-- v1 uses Cursor’s native assign / `@Cursor` path. The skill MAY offer “mark ready to delegate.” Auto-assigning Cursor to every child is out of v1 unless Q5 (auto delegate) chooses otherwise later.
+- v1 uses Cursor’s native assign / `@Cursor` path. The skill MAY offer “mark ready to delegate.” Auto-assigning Cursor is always human-gated in v1 (D13 (human gated)).
 - The skill MUST NOT add a second Cloud Agent launcher API in v1.
 - Linear-started cloud inherits cloud consent per multi-subagent G6 (scm consent); extra branch / worktree / commit still need an ask unless that runner’s normal story applies.
 
@@ -117,13 +117,13 @@ Source: investigation S1
 - Goals, journeys, plan Approach, Done when, and other binding design content are authoritative under `spec_docs/<slug>/`.
 - Linear holds tracker fields: ids, links, status, marked children, sticky comments, optional Document mirror.
 - Create-spec may import a Linear snapshot once. Later Linear AC edits do not win over `spec.md`.
-- Conflict when a human edits the Linear issue body after link: warn in Cursor and stop before overwriting mirrored surfaces until the person chooses — see D6 (conflict stop) and Q1 (body conflict) if refinements are needed.
+- Conflict when a human edits the Linear issue body after link: warn in Cursor and stop before overwriting mirrored surfaces until the person chooses — D6 (conflict stop), confirmed by D9 (keep conflict stop).
 
 ## Non-goals
 
 - Bidirectional prose sync between Linear descriptions and `spec.md` (D3 (reject bidirectional)).
 - Skill-owned Cloud Agent SDK/API launcher (later only if native path fails).
-- Auto-delegate of every phase child to Cursor in v1 (Q5 (auto delegate)).
+- Auto-delegate of every phase child to Cursor in v1 (D13 (human gated)).
 - Mirroring Done-when checkboxes or full plan Approach into Linear.
 - Owning, deleting, or reshaping unmarked / human Linear children.
 - Linear Project / initiative sync across many specs (later).
@@ -183,7 +183,7 @@ Starting point: Serial SDD (or a single-phase implement) updates plan phase stat
 
 1. As phases move `Started` / `Reviewing` / `Done` / `Blocked`, marked Linear children follow the conventions map.
 2. Parent Progress updates when gates change; sticky comment refreshes.
-3. On archive, parent reaches a terminal state per conventions; Deferred children follow the map (Q3 (archive rollup)).
+3. On archive, parent becomes Done only when every marked child is Done or Deferred; otherwise the skill asks (D11 (archive gate)). Deferred children follow the conventions map.
 
 End state: Linear board matches repo status without a confirm prompt each time.
 
@@ -237,14 +237,14 @@ Covers: G5 (document mirror), G7 (repo canonical)
 
 ## Notes
 
-- **Init project.** Linear team, project, state/label map, and Work-items MCP instructions belong in `spec_docs/README.md` Project conventions. This spec defines what the skill reads; the init-project todo owns the fill UX.
+- **Init project.** Linear team id, Work-items MCP fetch blurb, and Progress/phase state map belong in `spec_docs/README.md` Project conventions (D12 (minimal conventions)). Optional default `[repo=…]` for cloud children is D14 (default repo). This spec defines what the skill reads; the init-project todo owns the fill UX.
 - **Multi-subagent dependency.** Cloud kickoff text must stay aligned with the phase brief field list in implement stage / archived multi-subagent contracts.
 - **Investigation kept.** [investigation.md](./investigation.md) stays as background; binding choices live in Decisions below.
 
 ## Concerns
 
 - **Dual canon social failure.** People will still edit Linear bodies. If left without D6 (conflict stop): agents ship the wrong scope — G7 (repo canonical).
-- **State map mismatch.** Teams use different workflow names. If left hard-coded: sync fails or mislabels — conventions schema in contracts; Q4 (conventions schema).
+- **State map mismatch.** Teams use different workflow names. If left hard-coded: sync fails or mislabels — minimal conventions fields in D12 (minimal conventions).
 - **Document feels authoritative.** Rich mirrors invite edits. If left unlabeled: drift returns — G5 (document mirror).
 - **Status across cloud branches.** Plan on the agent checkout may not be visible until merge. If left unstated: Linear lags or lies — note in implement sync; same class as multi-subagent status desync.
 
@@ -272,6 +272,7 @@ Create-from stays the existing dialogue plus thin write-back (comment, link, lab
 | `skills/spec/stages/create-spec.md` | Create | Link-back after Work item set |
 | `skills/spec/stages/plan.md` | Plan | Trigger child sync when plan exists |
 | `skills/spec/stages/implement.md` | Implement | Status sync; cloud-ready child refresh |
+| `skills/spec/stages/linear-sync.md` | Sync helper | Shared link-back, children, status, Document, reconcile |
 | `skills/spec/templates/spec-docs-readme.md` | Conventions | Linear / Work items schema slots |
 | `skills/spec/templates/spec.md` | Template | Only if Work item / link notes need it |
 
@@ -340,52 +341,72 @@ Create-from stays the existing dialogue plus thin write-back (comment, link, lab
 - **Why:** Enough to review intent without full dual prose; regenerable.
 - **Rejected:** Comment-only (A); near-full `spec.md` mirror (C).
 
+### D9 (keep conflict stop) — No refinement beyond D6 (conflict stop)
+
+- **Date:** 25 Oct 2026 · **Area:** multi-player
+- **Why:** Warn-and-stop already matches G7 (repo canonical); softer or harder options add edge cases without clearer wins.
+- **Rejected:** Warn-only while regenerating Document (B); refuse all description updates after link (C).
+
+### D10 (flat children) — Phase children hang directly under the parent
+
+- **Date:** 25 Oct 2026 · **Area:** structure
+- **Why:** Simplest board shape; matches “one child per dispatch unit” without an extra container ticket.
+- **Rejected:** Nest under Implementation container by default (B); make nest vs flat a conventions flag in v1 (C).
+
+### D11 (archive gate) — Parent Done only when every marked child is Done or Deferred
+
+- **Date:** 25 Oct 2026 · **Area:** archive
+- **Why:** Avoids marking the parent Done while phase work is still open or canceled without intent; ask when the board is incomplete.
+- **Rejected:** Always Done parent and map Deferred alone (A); leave all terminal states to conventions examples only (C).
+
+### D12 (minimal conventions) — Linear conventions are team, fetch blurb, and state map
+
+- **Date:** 25 Oct 2026 · **Area:** conventions
+- **Why:** Enough for create-from and status mirror; richer knobs wait until a real need shows up.
+- **Rejected:** Richer schema (project, labels, Document toggle, nest flag) as v1 required fields (B). Optional default `[repo=…]` is separate: D14 (default repo).
+
+### D13 (human gated) — Cursor assign / `@Cursor` stays human-gated in v1
+
+- **Date:** 25 Oct 2026 · **Area:** cloud
+- **Why:** Least surprise; native kickoff already works once a human marks the child ready.
+- **Rejected:** Conventions opt-in auto-delegate (B); skill-only “delegate this child” command as the sole path (C).
+
+### D14 (default repo) — One optional conventions default for `[repo=…]` on all children
+
+- **Date:** 25 Oct 2026 · **Area:** cloud
+- **Why:** One remote covers this project and most adopters; no path heuristics or per-spec field in v1.
+- **Rejected:** Per-spec override in `spec.md` (B); omit `[repo=…]` even when a conventions default exists (C as the only path).
+
+### D15 (document trigger) — Create Document on first link; regenerate when TL;DR or goals change
+
+- **Date:** 25 Oct 2026 · **Area:** Document mirror
+- **Why:** Linear-only readers get a mirror without an extra ask; keep it current when binding summary surfaces change; avoid regenerating on every status tick.
+- **Rejected:** Create only when the user asks; auto on first link with no later regenerate; regenerate on every gate including status-only.
+
+### D16 (conflict fingerprint) — Hash the parent description at link time; compare before overwrite
+
+- **Date:** 25 Oct 2026 · **Area:** multi-player
+- **Why:** One string compare is enough for D6 (conflict stop). Least moving parts that still detect real body edits.
+- **Rejected:** Compare Linear `updatedAt` to last skill write (status, assignee, and labels also bump it → false conflicts). Embed a marker in the issue body and detect drift around it (touches the description against G1 (create from linear); fragile if a human deletes the marker).
+- **How:** At first link, hash the parent `description` and store that fingerprint (location still Q1 (sync state store)). Before Document regenerate or any body overwrite, re-fetch, re-hash, and compare. Match → proceed. Mismatch → R14 (conflict stop). On person resolve, refresh the stored hash to the current body.
+
 ## Open questions
 
-### Q1 (body conflict) — Any refinement beyond warn-and-stop for post-link body edits?
+### Q1 (sync state store) — Where sticky comment id, Document id, and conflict fingerprint live across sessions
 
-- **Priority:** — · **Blocks:** — · **Owner:** Dan
-- **Options:**
-  - **A.** Keep D6 (conflict stop) as-is.
-  - **B.** Warn only; allow Document regenerate while leaving issue description untouched.
-  - **C.** Stronger: refuse all Linear description updates from the skill after link.
+- **Priority:** high
+- **Blocks:** contracts persistence; sticky edit-in-place reliability; R13 (sticky progress); D16 (conflict fingerprint) storage
+- **Options:** Find-by-marker only in Linear (no repo store) · cache ids under `Work item` / Notes in `spec.md` · small sync sidecar file in the folder
+- **What must survive a new Cursor session:**
 
-### Q2 (nest default) — Default board shape for phase children?
+  - **Sticky comment id.** Needed so status sync edits one progress comment in place (R13 (sticky progress)). The sticky already carries an HTML marker, so `list_comments` + marker match can rediscover it. A cached id is only a shortcut.
+  - **Document id.** Needed so regenerate updates the same Linear Document (R17 (document mirror), D15 (document trigger)). Documents are not child issues; rediscovery means listing Documents for the parent (or by title convention) and matching a mirror marker/title. Less reliable than comment markers unless the title/marker contract is strict.
+  - **Conflict fingerprint.** The description hash from D16 (conflict fingerprint). It cannot live only inside the issue body (that would move when a human edits). It must live in the sticky, a repo field, or a sidecar — somewhere the skill owns and humans do not casually rewrite.
 
-- **Priority:** high · **Blocks:** plan / contracts for child parentId · **Owner:** Dan
-- **Options:**
-  - **A.** Flat: phase children hang directly under the parent issue.
-  - **B.** Nest under a marked Implementation container child.
-  - **C.** Configurable in Project conventions (default A or B).
+- **Option tradeoffs:**
 
-### Q3 (archive rollup) — Parent and Deferred children on archive?
+  - **Find-by-marker only.** No new repo file. Sticky id is free via marker. Document id needs a durable title/marker search. Fingerprint must hitch a ride on something Linear-owned the skill controls (best fit: a machine line inside the sticky comment that status updates preserve). Extra MCP list calls each sync; Document rediscovery is the weak spot.
+  - **Cache in `spec.md`.** Put ids/hash under `Work item` or Notes. One file humans already open. Risks clutter and accidental human edits to machine fields; binds sync plumbing to the design doc.
+  - **Sync sidecar** (e.g. `spec_docs/<slug>/.linear-sync.json` or similar). Clear home for ids + hash; easy to update without touching design prose. New file to teach, ignore, and keep out of human review noise.
 
-- **Priority:** — · **Blocks:** archive sync rules · **Owner:** Dan
-- **Options:**
-  - **A.** Parent Done; Deferred children Canceled (or Done + `deferred` label).
-  - **B.** Parent Done only when every marked child is Done or Deferred; else ask.
-  - **C.** Leave Linear terminal states entirely to conventions with examples only.
-
-### Q4 (conventions schema) — Exact Project conventions fields for Linear?
-
-- **Priority:** high · **Blocks:** create-from and status map · **Owner:** Dan
-- **Options:**
-  - **A.** Minimal: team id, Work-items fetch blurb, state map for Progress + phase statuses.
-  - **B.** Richer: default project, label names, Document toggle, `[repo=…]`, Implementation nest flag.
-  - Draft the field table in contracts at promote; prefer B if init-project can fill it.
-
-### Q5 (auto delegate) — Opt-in auto-assign Cursor on Ready children?
-
-- **Priority:** — · **Blocks:** — · **Owner:** Dan
-- **Options:**
-  - **A.** Always human-gated in v1 (recommended).
-  - **B.** Conventions opt-in auto-`delegate`.
-  - **C.** Per-command “delegate this child” only.
-
-### Q6 (multi repo) — How to choose `[repo=…]` when Touched paths span packages?
-
-- **Priority:** — · **Blocks:** — · **Owner:** Dan
-- **Options:**
-  - **A.** Single default repo in conventions.
-  - **B.** Per-spec override field in `spec.md`.
-  - **C.** Omit `[repo=…]` unless conventions set one.
+- **Notes:** Marked children stay find-by-marker in Linear either way (G2 (phase children)). The real choice is Document id + fingerprint. Lean recommendation for least complexity with D16 (conflict fingerprint): find sticky and children by marker; keep the description hash (and Document id if list-by-issue is awkward) in the sticky’s machine block or a tiny sidecar — not in binding `spec.md` prose.

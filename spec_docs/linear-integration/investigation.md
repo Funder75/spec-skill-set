@@ -1,6 +1,6 @@
 # Investigation: Linear integration
 
-Status: promoted — see [spec.md](./spec.md) (`Progress: design`).
+Status: promoted — see [spec.md](./spec.md) (`Progress: tech`).
 Source: was `todos.md` › Integrate with Linear (removed on promote).
 Date: 2026-10-25 (updated after [multi-subagent](../archive/multi-subagent/spec.md) landed).
 

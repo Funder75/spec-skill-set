@@ -43,3 +43,12 @@ When asking list the placeholders so the user can also write some of the things 
 Missing:
 - Docs about the spec_docs folder.
 - Better docs on how to write specs - the iterations, process etc.
+
+## Create GHA for updating the plugin on the market place
+
+Investigate
+
+## Still to much info for small specs
+
+Take a look at the init-readme-fill - I think is a good example of where there the specs are too bloated. 
+We should investigate this and see if we could learn from this anything that could help shorten future processes.

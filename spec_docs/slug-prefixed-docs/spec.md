@@ -1,7 +1,7 @@
 # Slug-prefixed spec doc filenames
 
 **Slug:** `slug-prefixed-docs`
-**Progress:** design
+**Progress:** tech
 **Work item:** —
 **Depends on:** —
 
@@ -17,7 +17,7 @@
 | Doc | Read for | Present? |
 | --- | -------- | -------- |
 | This file | Scope, goals, journeys, constraints, work split | yes |
-| business-logic.md | Rules, workflows, state transitions | pending |
+| [business-logic.md](./business-logic.md) | Rules, workflows, resolution and migration | yes |
 | contracts.md | Types, API contracts, state ownership, storage | not needed |
 | ui.md | Layout, interaction, states, copy | not needed |
 | implementation-plan.md | Phases and phase status | pending |
@@ -156,17 +156,17 @@ Covers: G1 (slug prefix), G2 (short roles), G3 (plan extension), G4 (skill resol
 
 Starting point: An older folder still has `spec.md` and siblings with bare names.
 
-1. The developer keeps working that folder, or follows the documented rename recipe when ready.
-2. The skill does not rename those files as a side effect of `/spec` actions.
+1. The developer keeps editing those files by hand, or follows the documented rename recipe when ready.
+2. The skill does not rename those files as a side effect of `/spec` actions, and does nothing special when only bare basenames are present (D4 (nothing on bare)).
 3. After a manual rename, relative links inside the folder match the new map.
 
-End state: Old folders stay valid until migrated; migration is intentional and local.
+End state: Bare names stay usable by hand; migration is intentional and local. `/spec` on that folder may miss files until renamed — accepted minor side effect.
 
 Goes wrong when:
 
 - An agent rewrites every archive folder on first touch — forbidden by G5 (rename recipe).
 
-Covers: G5 (rename recipe)
+Covers: G5 (rename recipe), D4 (nothing on bare)
 
 ## Constraints
 
@@ -257,6 +257,12 @@ Do not mirror phase status into Cursor `todos`. The implementation plan body rem
 - **Date:** 2026-10-25 · **Area:** migration
 - **Why:** Silent renames across active and archive specs are risky and out of the smallest shippable slice.
 - **Rejected:** Migrating all active folders in v1; dual-read compatibility forever.
+
+### D4 (nothing on bare) — `/spec` does nothing special on unmigrated folders
+
+- **Date:** 2026-10-25 · **Area:** migration / resolve
+- **Why:** We are starting from scratch after the skill ships. Bare basenames stay openable and editable by hand; a dedicated stop or “unsupported until rename” path is not worth the Preconditions surface. Minor side effects (e.g. stages looking for new names and not finding them) are acceptable.
+- **Rejected:** Stop and point at the rename recipe (option A); document `/spec` as unsupported until renamed (option B); dual-read of bare and prefixed names (non-goal).
 
 ## Open questions
 

@@ -1,7 +1,7 @@
 # Fill Project conventions on init
 
 **Slug:** `init-readme-fill`
-**Progress:** design
+**Progress:** archived
 **Work item:** —
 **Depends on:** —
 
@@ -17,10 +17,10 @@
 | Doc | Read for | Present? |
 | --- | -------- | -------- |
 | This file | Scope, goals, journeys, constraints, work split | yes |
-| business-logic.md | Rules, workflows, state transitions | not needed |
+| business-logic.md | Rules, workflows, state transitions | folded → [Technical notes › Rules](#rules) |
 | contracts.md | Types, API contracts, state ownership, storage | not needed |
 | ui.md | Layout, interaction, states, copy | not needed |
-| implementation-plan.md | Phases and phase status | pending |
+| implementation-plan.md | Phases and phase status | yes |
 
 ## Source
 
@@ -90,8 +90,8 @@ Starting point: A programmer runs a `/spec` action in a repo with no `spec_docs/
 
 1. The skill bootstraps: writes `spec_docs/README.md` from the template and adds `archive/.gitkeep`.
 2. The agent asks whether to fill **Project conventions**, and lists each placeholder.
-3. The programmer says no, or says yes and may paste answers for some placeholders.
-4. On no, the README stays with placeholders. On yes, the agent fills conventions (chat answers first, then drafts) and continues the original `/spec` intent.
+3. The programmer says no, says yes (and may paste answers), or answers some placeholders without saying yes.
+4. On no or ignore, the README stays with placeholders. On yes or substantive placeholder answers, the agent fills conventions (chat answers first, then drafts) and continues the original `/spec` intent.
 
 End state: Bootstrap files exist. Conventions are either still placeholders or filled per the reply.
 
@@ -145,14 +145,94 @@ Do not search the whole repo on decline. On opt-in, read only what is needed to 
 
 ## Technical notes (folded)
 
+**In short:** Skill instruction text only. Rules land in both Bootstrap sections. No types or UI.
+
 ### Rules
 
-- **R1 (ask after copy).** Bootstrap MUST copy the README and archive keep-file before asking about fill.
-- **R2 (decline preserves).** On decline or no reply treated as decline, Bootstrap MUST NOT rewrite **Project conventions**.
-- **R3 (list all).** The ask MUST name each conventions placeholder group from the template (work items, verify tiers, complexity hotspots, stack notes, other commands).
-- **R4 (chat wins).** When the user opts in, values they stated in chat MUST override agent drafts for the same item.
-- **R5 (conventions only).** Fill MUST change only **Project conventions** in `spec_docs/README.md`, not other README sections.
-- **R6 (no silent fill).** Bootstrap MUST NOT fill conventions without an explicit opt-in in that session.
+### R1 (ask after copy)
+
+**Lands in:** `skills/spec/SKILL.md` › Bootstrap; `skills/spec/stages/create-spec.md` › Bootstrap
+
+- Bootstrap MUST write `spec_docs/README.md` from the template and add `spec_docs/archive/.gitkeep` before any fill ask.
+
+> **Preserve:** Today’s copy-first order.
+
+### R2 (decline preserves)
+
+**Lands in:** same Bootstrap sections as R1 (ask after copy)
+
+- On explicit decline, ignore, or a reply that continues the original action with no convention answers and no yes, Bootstrap MUST NOT rewrite **Project conventions**. Substantive answers to listed placeholders count as opt-in (D3 (answers alone opt-in)), not decline.
+
+> **Preserve:** Placeholder README after decline (today’s outcome).
+
+### R3 (list all)
+
+**Lands in:** same Bootstrap sections as R1 (ask after copy)
+
+- The ask MUST name each conventions placeholder group from `skills/spec/templates/spec-docs-readme.md` › **Project conventions**: work items, verify tiers, complexity hotspots, stack notes, other commands.
+
+### R4 (chat wins)
+
+**Lands in:** same Bootstrap sections as R1 (ask after copy)
+
+- When the user opts in, values they stated in chat MUST override agent drafts for the same item.
+
+### R5 (conventions only)
+
+**Lands in:** same Bootstrap sections as R1 (ask after copy)
+
+- Fill MUST change only **Project conventions** in `spec_docs/README.md`. It MUST NOT edit other README sections or the template file.
+
+### R6 (no silent fill)
+
+**Lands in:** same Bootstrap sections as R1 (ask after copy)
+
+- Bootstrap MUST NOT fill conventions without opt-in in that session. Opt-in is an explicit yes, or a reply that answers one or more listed placeholders (D3 (answers alone opt-in)). Silence, ignore, bare continue of the original action, and explicit no are not opt-in.
+
+### R7 (ask before continue)
+
+**Lands in:** same Bootstrap sections as R1 (ask after copy)
+
+- After the copy steps, Bootstrap MUST complete the fill ask (and any opt-in write) before Investigate, Clarify, or other stage work from the original `/spec` intent.
+
+### R8 (safe draft)
+
+**Lands in:** same Bootstrap sections as R1 (ask after copy)
+
+- On opt-in, the agent MUST NOT invent secrets, tokens, or private URLs. When a value is unclear, it MUST leave that item as `{{…}}` or ask one follow-up. It MUST NOT invent facts that contradict files already opened for the draft.
+
+### R9 (keep bootstraps aligned)
+
+**Lands in:** `skills/spec/SKILL.md` › Bootstrap; `skills/spec/stages/create-spec.md` › Bootstrap
+
+- The ask-and-fill steps in both Bootstrap sections MUST stay the same ordered behaviour. A change in one MUST be mirrored in the other.
+
+### Workflow — bootstrap ask and optional fill
+
+**In short:** Copy, ask with the placeholder list, then decline or fill, then resume the original action.
+
+1. Detect missing `spec_docs/` and run today’s copy steps (R1 (ask after copy)).
+2. Ask in chat whether to fill **Project conventions**, listing every placeholder group (R3 (list all), R6 (no silent fill)).
+3. On decline, ignore, or continue with no yes and no convention answers: leave the README unchanged; resume the original intent (R2 (decline preserves), R7 (ask before continue)).
+4. On yes or answers to listed placeholders: apply chat answers first, draft the rest from project facts when safe, write only **Project conventions**, strip author comments as the template intends, then resume (R4 (chat wins), R5 (conventions only), R6 (no silent fill), R8 (safe draft), D3 (answers alone opt-in)).
+
+Goes wrong when:
+
+- **User never answers the fill ask.** Treat as decline (R2 (decline preserves)).
+- **Partial answers without clear yes.** Treat as opt-in; fill named items, draft or leave the rest (D3 (answers alone opt-in)).
+- **Draft cannot infer a subsection.** Leave `{{…}}` or one follow-up; omit complexity hotspots when the template allows and there are none (R8 (safe draft), G3 (optional fill)).
+
+### Contracts
+
+not needed — no types, API, or storage.
+
+### UI
+
+not needed — chat copy only; no product surface.
+
+## Open questions
+
+none
 
 ## Decisions
 
@@ -167,3 +247,10 @@ Do not search the whole repo on decline. On opt-in, read only what is needed to 
 - **Date:** 2026-10-25 · **Area:** docs
 - **Why:** Skill-markdown-only change; no types or UI.
 - **Rejected:** Full promote-to-tech gate for this feature
+
+### D3 (answers alone opt-in) — Substantive placeholder answers without yes count as opt-in
+
+- **Date:** 2026-10-25 · **Area:** behaviour
+- **Why:** If the user already answered listed placeholders, requiring a separate yes only adds friction; treat those answers as consent to write them (and draft or leave the rest).
+- **Rejected:** Confirm before write (B); ignore answers until explicit yes (C)
+- **Locks:** R2 (decline preserves), R6 (no silent fill)
