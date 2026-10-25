@@ -28,29 +28,6 @@ Invoke the user-level **spec** skill (`/spec`) and say what to do. Examples: cre
 
 Do not edit the skill to record progress.
 
-## Rename an existing folder
-
-**In short:** A person renames one folder onto the slug-prefixed map and fixes links. Do not bulk-migrate.
-
-Older folders may still use bare basenames (`spec.md`, `business-logic.md`, `implementation-plan.md`, and so on). New `/spec` work uses the prefixed names above. Leave bare folders as they are until someone runs this recipe on that folder only (R8 (rename recipe)).
-
-1. Pick one folder under `spec_docs/<slug>/` (or `archive/<slug>/`). Do not rename every active or archive folder in one pass, and do not ask an agent to do that.
-2. Rename each sibling that exists to the map below. Skip roles the folder never had.
-
-| Old basename | New basename |
-| ------------ | ------------ |
-| `spec.md` | `<slug>.spec.md` |
-| `business-logic.md` | `<slug>.logic.md` |
-| `contracts.md` | `<slug>.contracts.md` |
-| `ui.md` | `<slug>.ui.md` |
-| `implementation-plan.md` | `<slug>.plan.md` |
-| `data.md` | `<slug>.data.md` (legacy contracts alias only) |
-
-3. Fix relative links and Doc index rows inside that folder so they point at the new filenames.
-4. Stop. Repeat later for another folder if needed.
-
-The skill does not rename files during create, promote, implement, or archive.
-
 ## Reading these docs
 
 | Marker | Meaning |
