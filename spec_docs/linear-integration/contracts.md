@@ -9,19 +9,22 @@ Read **Stack notes for spec docs** in `spec_docs/README.md` before filling this 
 ## TL;DR
 
 - Conventions hold team, fetch blurb, state map, and optional default `[repo=…]`.
-- Durable HTML markers identify sticky comments and marked children for idempotent sync.
+- Durable HTML markers identify marked children and progress-log comments; Document id and conflict hash live in `spec.md`.
 - Child bodies reuse the implement phase-brief field list for native Cursor kickoff.
+- Tracker write-back needs Linear MCP in-session; plugin root `README.md` documents local sync vs Linear kickoff.
 
 ## Summary of changes
 
 | Layer | Change | Lands in | Persisted? |
 | ----- | ------ | -------- | ---------- |
 | Conventions schema | Linear Work items slots | `templates/spec-docs-readme.md` | yes (project README) |
-| Sync markers | Child + sticky HTML comments | Linear issue/comment bodies | yes (in Linear) |
+| Sync markers | Child + progress-log HTML comments | Linear issue/comment bodies | yes (in Linear) |
+| Sync ids in spec | Document id + conflict fingerprint | `spec.md` (near Work item) | yes (repo) |
 | Child brief body | Brief-quality markdown on children | Linear child `description` | yes (in Linear) |
 | Document mirror | TL;DR + goals/AC summary | Linear Document on parent | yes (in Linear) |
 | Skill routing | `linear sync` + stage hooks | `SKILL.md`, stage files | no (skill text) |
 | Sync helper stage | Shared sync doctrine | `stages/linear-sync.md` (new) | no (skill text) |
+| Plugin operator docs | Linear local MCP vs `@Cursor` kickoff | root `README.md` | no (plugin docs) |
 
 ## Existing types reused
 
@@ -80,21 +83,30 @@ Durable identity so re-sync is idempotent (G2 (phase children)). One marker line
 - **Unmanaged:** any child without this marker (R7 (unmanaged leave)).
 - Paths are advisory; the comment shape is binding.
 
-### Sticky progress marker
+### Progress-log marker
 
-**Lands in:** Linear parent comment `body`; doctrine in `stages/linear-sync.md`
+**Lands in:** Linear parent comment `body` on each new progress comment; doctrine in `stages/linear-sync.md`
 
 | Field | Type | Required | Validation | Source |
 | ----- | ---- | -------- | ---------- | ------ |
 | `slug` | kebab-case string | yes | Matches folder slug | Spec folder |
 
 ```text
-<!-- spec-sync-sticky: slug=linear-integration -->
+<!-- spec-sync-progress: slug=linear-integration -->
 ```
 
-Find via `list_comments` on the parent; update with `save_comment` + `id` when found (R13 (sticky progress)).
+Create a new comment with `save_comment` (no `id`) on each real Progress / marked-child status change (R13 (progress log), D18 (append progress)). Do not edit prior progress comments. Marker identifies skill-authored timeline entries; it is not used for edit-in-place.
 
-> **Open:** Q1 (sync state store) — whether a repo-side id cache is also required.
+### Sync ids in `spec.md`
+
+**Lands in:** linked `spec.md` near `Work item` (exact shape left to template / implement)
+
+| Field | Type | Required after link | Purpose |
+| ----- | ---- | ------------------- | ------- |
+| Document mirror id | string | yes when Document exists | Regenerate same Document (D15, D17) |
+| Conflict fingerprint | string (hash) | yes after first link | D16 (conflict fingerprint) compare |
+
+Machine fields only — not binding design (D17 (ids in spec)).
 
 ### Document mirror content
 
@@ -155,7 +167,7 @@ Binding sections (G4 (cloud ready children)); field meanings match implement Pha
 | ---- | -------- | --------- | ------- |
 | Link-back | `linear-sync.md` › Link-back | R1–R3 | Linear comment / links / labels |
 | Sync children | `linear-sync.md` › Child sync | R4–R10, R15 | Marked Linear children |
-| Sync status | `linear-sync.md` › Status sync | R11–R13 | Parent/child state; sticky |
+| Sync status | `linear-sync.md` › Status sync | R11–R13 | Parent/child state; progress comment |
 | Regenerate Document | `linear-sync.md` › Document mirror | R14, R17 | Linear Document |
 | Reconcile | `linear-sync.md` › Reconcile | R8 | Propose + apply structure fixes |
 | Conflict check | `linear-sync.md` › Conflict check | R14 | Chat only until person chooses |
@@ -207,7 +219,7 @@ First successful link after create-spec sets `Work item`.
 **Side effects:**
 
 - Parent/child `state` / labels via conventions
-- Sticky comment create or in-place edit
+- New progress comment on real status delta (D18 (append progress)); never edit prior progress comments
 
 ### Reconcile
 
@@ -233,19 +245,19 @@ Explicit `/spec linear sync`. Diffs markers vs plan; shows create / cancel / ren
 
 ### Linear MCP `save_comment`
 
-- **Kind:** API · **Lands in:** `stages/linear-sync.md` › Link-back / sticky
-- **Request:** Create: `issueId` + `body`. Update sticky: `id` + `body`
-- **Response:** Comment id
-- **Boundary validation:** Sticky body includes sticky marker
-- **Errors:** Missing comment on update → create new sticky once
+- **Kind:** API · **Lands in:** `stages/linear-sync.md` › Link-back / progress log
+- **Request:** Create only: `issueId` + `body` (progress marker + what changed). Do not pass `id` to edit prior progress comments (D18 (append progress))
+- **Response:** Comment id (not stored in repo)
+- **Boundary validation:** Progress body includes progress-log marker
+- **Errors:** Create failure → report in chat; do not invent edit-in-place fallback
 
 ### Linear MCP `list_comments`
 
-- **Kind:** API · **Lands in:** `stages/linear-sync.md` › sticky / reconcile discovery
+- **Kind:** API · **Lands in:** `stages/linear-sync.md` › optional discovery / human timeline
 - **Request:** `issueId` on parent (and on children when scanning markers if needed)
-- **Response:** Comment list; match sticky marker in `body`
+- **Response:** Comment list; progress markers identify skill timeline entries
 - **Boundary validation:** —
-- **Errors:** Empty list → create sticky on next status sync
+- **Errors:** — (progress log does not require prior comments to exist)
 
 ### Linear MCP `save_document` / `get_document`
 
@@ -260,8 +272,8 @@ Explicit `/spec linear sync`. Diffs markers vs plan; shows create / cancel / ren
 - **Kind:** Product path (not skill API) · **Lands in:** child body contract only
 - **Request:** Human (or triage) assigns Cursor or comments `@Cursor` on the marked child
 - **Response:** Cloud agent run (product-owned)
-- **Boundary validation:** Skill MUST NOT call a second launcher; MUST NOT auto-`delegate` in v1 (R16 (human gated launch))
-- **Errors:** Stale Linear AC as scope — forbidden by canon banner on child
+- **Boundary validation:** Skill MUST NOT call a second launcher; MUST NOT auto-`delegate` in v1 (R16 (human gated launch)). Product Linear integration is not Linear MCP (D19 (mcp session), R21 (mcp session)).
+- **Errors:** Stale Linear AC as scope — forbidden by canon banner on child. Tracker write-back deferred to an MCP-capable session.
 
 ## State ownership and lifecycle
 
@@ -271,10 +283,11 @@ Explicit `/spec linear sync`. Diffs markers vs plan; shows create / cancel / ren
 | Progress gate | `spec.md` | Always | Gate crossings | — | yes (repo) |
 | Phase statuses | `implementation-plan.md` | Implement / SDD | Each unit | — | yes (repo) |
 | Marked children | Linear + markers | Child sync | Plan/list change | Cancel on unit remove | yes (Linear) |
-| Sticky comment | Linear + marker | Status sync | Each status sync | — | yes (Linear) |
-| Document mirror | Linear Document | Document path | Regenerate | — | yes (Linear) |
+| Progress comments | Linear (append-only) | Status sync on real delta | Each Progress / child status change | — | yes (Linear) |
+| Document mirror | Linear Document | Document path | Regenerate via id in `spec.md` | — | yes (Linear) |
+| Document mirror id | `spec.md` | After Document create | On recreate (rare) | Clear on unlink | yes (repo) |
 | Conventions maps | Project README | Before write-back | Init-project fill | — | yes (repo) |
-| Conflict fingerprint | Skill (hash of parent description) | After link (D16) | On person resolve / re-link | On person resolve | Store location > **Open:** Q1 |
+| Conflict fingerprint | `spec.md` (hash of parent description) | After link (D16, D17) | On person resolve / re-link | On person resolve | yes (repo) |
 
 Repo remains canonical for binding design. Linear holds tracker fields only (G7 (repo canonical)).
 
@@ -291,6 +304,15 @@ Repo remains canonical for binding design. Linear holds tracker fields only (G7 
 | Work items › state maps | maps | Progress + phase → Linear |
 | Work items › optional label / repo | string | Design label; `[repo=…]` |
 
+### Sync ids (`spec.md`)
+
+**Lands in:** linked `spec.md` near `Work item` (D17 (ids in spec))
+
+| Column / path | Type | Purpose |
+| ------------- | ---- | ------- |
+| Document mirror id | string | Update same Linear Document on regenerate |
+| Conflict fingerprint | string | Body-hash tripwire for R14 (conflict stop) |
+
 ### Access control
 
 - Anyone who can run the skill and whose Linear integration can create/update issues in the configured team (Users and context in `spec.md`).
@@ -299,12 +321,14 @@ Repo remains canonical for binding design. Linear holds tracker fields only (G7 
 ### Migration
 
 1. Template gains Linear schema slots; existing READMEs keep placeholder until init-project or a human fills them.
-2. No automatic backfill of historical Linear children.
-3. Rollback: leave conventions blank; skill asks and skips write-back (R1 (conventions gate)).
+2. Linked specs gain Document id + fingerprint fields on first link / Document create.
+3. No automatic backfill of historical Linear children.
+4. Rollback: leave conventions blank; skill asks and skips write-back (R1 (conventions gate)).
 
 ## Rollout and compatibility
 
-- v1 assumes Linear MCP in the agent session. No webhooks or background sync (Non-goals).
+- v1 assumes Linear MCP in the agent session that performs write-back. No webhooks or background sync (Non-goals). Linear-started cloud without working Linear MCP is kickoff-only for tracker fields (D19 (mcp session), R21 (mcp session)).
+- Plugin root `README.md` MUST document the local-sync vs Linear-kickoff operator model when this feature ships.
 - Folders without `Work item` are untouched by sync.
 - Thin / planless specs: parent sync only; no children (G6 (thin noop)).
 - Child body field list MUST stay aligned with `stages/implement.md` phase brief when that contract changes (Notes › Multi-subagent dependency).

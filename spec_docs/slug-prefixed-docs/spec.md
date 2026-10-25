@@ -1,7 +1,7 @@
 # Slug-prefixed spec doc filenames
 
 **Slug:** `slug-prefixed-docs`
-**Progress:** tech
+**Progress:** plan
 **Work item:** —
 **Depends on:** —
 
@@ -20,7 +20,7 @@
 | [business-logic.md](./business-logic.md) | Rules, workflows, resolution and migration | yes |
 | contracts.md | Types, API contracts, state ownership, storage | not needed |
 | ui.md | Layout, interaction, states, copy | not needed |
-| implementation-plan.md | Phases and phase status | pending |
+| [implementation-plan.md](./implementation-plan.md) | Phases and phase status | yes |
 
 ## Source
 

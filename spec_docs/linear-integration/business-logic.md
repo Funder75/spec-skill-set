@@ -7,8 +7,8 @@ Rules for **linear-integration**. [spec.md](./spec.md) owns scope, non-goals, gl
 ## TL;DR
 
 - Linear is a tracker and one-way mirror. The repo stays binding after the folder exists.
-- Marked phase children and status sync only when a plan exists and conventions are filled.
-- Conflict stop and human-gated Cursor assign keep dual canon and surprise launch out of v1.
+- Marked phase children and status sync only when a plan exists, conventions are filled, and Linear MCP works in the session.
+- Conflict stop, human-gated Cursor assign, and MCP-session skip keep dual canon, surprise launch, and false cloud sync out of v1.
 
 ## Rules
 
@@ -17,7 +17,7 @@ Rules for **linear-integration**. [spec.md](./spec.md) owns scope, non-goals, gl
 **Lands in:** `skills/spec/stages/create-spec.md` › Input / Write; new `skills/spec/stages/linear-sync.md` › Preconditions
 
 - Before any Linear write-back, the skill MUST read **Work items** under **Project conventions** and require the Linear fields in [contracts.md](./contracts.md) (see D12 (minimal conventions)).
-- If Linear MCP or those conventions are missing, the skill MUST ask once and MUST NOT invent a team, state map, or silent half-link (G1 (create from linear)).
+- If Linear MCP or those conventions are missing, the skill MUST ask once and MUST NOT invent a team, state map, or silent half-link (G1 (create from linear), D19 (mcp session), R21 (mcp session)).
 - Create-spec MAY still write `spec.md` with `Work item` set after a successful fetch; only the write-back path stops.
 
 ### R2 (no body rewrite)
@@ -100,22 +100,21 @@ Rules for **linear-integration**. [spec.md](./spec.md) owns scope, non-goals, gl
 - The skill MUST NOT require a confirm prompt on every phase Done.
 - Gate review asks in chat MAY add a comment. They MUST NOT invent a Linear approval workflow (G3 (status mirror)).
 
-### R13 (sticky progress)
+### R13 (progress log)
 
 **Lands in:** `skills/spec/stages/linear-sync.md` › Status sync
 
-- The parent MUST keep one sticky progress comment. When its id is known, sync MUST edit it in place via `save_comment` with `id` (G3 (status mirror)).
-- Sync MUST NOT flood a new progress comment on every status change when an existing sticky can be updated.
-
-> **Open:** Q1 (sync state store)
+- When Progress or a marked child’s plan status actually changes, sync MUST post a **new** parent comment summarizing what changed (G3 (status mirror), D18 (append progress)).
+- Sync MUST NOT edit prior progress comments in place.
+- Sync MUST NOT post a progress comment on a no-op reconcile (no Progress / marked-child status delta).
 
 ### R14 (conflict stop)
 
 **Lands in:** `skills/spec/stages/linear-sync.md` › Conflict check
 
 - After link, if a human has edited the parent Linear issue body, the skill MUST warn in Cursor and MUST stop before overwriting mirrored surfaces until the person chooses (D6 (conflict stop), D9 (keep conflict stop), G7 (repo canonical)).
-- Detection uses the stored description hash from D16 (conflict fingerprint). Storage of that hash remains Q1 (sync state store).
-- Conflict stop applies before Document regenerate and before any optional description touch. It does not block status-only or sticky-comment updates that leave the issue body alone.
+- Detection uses the description hash from D16 (conflict fingerprint), stored in `spec.md` per D17 (ids in spec).
+- Conflict stop applies before Document regenerate and before any optional description touch. It does not block status-only updates or new progress comments that leave the issue body alone.
 
 ### R15 (cloud ready body)
 
@@ -133,6 +132,7 @@ Rules for **linear-integration**. [spec.md](./spec.md) owns scope, non-goals, gl
 - The skill MUST NOT auto-assign or auto-`delegate` Cursor on marked children (D13 (human gated)).
 - The skill MAY offer “mark ready to delegate” (status/label only). It MUST NOT add a second Cloud Agent launcher API.
 - Linear-started cloud inherits cloud consent per multi-subagent G6 (scm consent). Extra branch, worktree, or commit still needs an ask unless that runner’s normal story applies.
+- Linear-started cloud MUST NOT be treated as having performed Linear tracker write-back. Catch-up follows D19 (mcp session) / R21 (mcp session).
 
 ### R17 (document mirror)
 
@@ -164,16 +164,26 @@ Rules for **linear-integration**. [spec.md](./spec.md) owns scope, non-goals, gl
 - The Infer table MUST recognize `/spec linear sync` (or equivalent reconcile wording) and route to `stages/linear-sync.md` reconcile.
 - Stage hooks in create-spec, plan, implement, and archive MUST call the shared sync rules rather than inventing a second doctrine.
 
+### R21 (mcp session)
+
+**Lands in:** `skills/spec/stages/linear-sync.md` › Preconditions; plugin root `README.md`
+
+- Tracker write-back (link-back, children, status, Document, reconcile) and create-from Linear fetch MUST run only when Linear MCP is usable in the current agent session (D19 (mcp session)).
+- Cursor’s Linear product integration (assign / `@Cursor`) MUST NOT be treated as Linear MCP auth. Cloud MCP sign-in is separate from the desktop IDE.
+- When Linear MCP is missing or unauthorized, the skill MUST follow R1 (conventions gate): ask once and skip write-back. It MUST NOT invent a second Linear API or fail the implement unit solely because Linear could not sync.
+- Implement MUST document this operator model in the plugin root `README.md` (Notes › Plugin README in `spec.md`).
+
 ## Actors and entry points
 
 | Entry point | User action | System response | Handled by |
 | ----------- | ----------- | --------------- | ---------- |
 | Create from issue | `/spec create from TEAM-123` | Fetch, write `spec.md`, link-back | `create-spec.md` + `linear-sync.md` |
 | Plan written | Promote / plan edit | Child sync when plan exists | `plan.md` + `linear-sync.md` |
-| Phase status change | Implement / SDD continue | Child + parent status; sticky | `implement.md` + `linear-sync.md` |
+| Phase status change | Implement / SDD continue | Child + parent status; progress comment | `implement.md` + `linear-sync.md` |
 | Reconcile | `/spec linear sync` | Diff markers; create/cancel/rename | `linear-sync.md` › Reconcile |
 | Archive | User confirms archive | Archive gate; parent Done if allowed | `implement.md` › Archive + sync |
-| Native cloud | Human assigns / `@Cursor` | Agent reads child brief body | Cursor product (not skill launcher) |
+| Native cloud | Human assigns / `@Cursor` | Agent reads child brief body; no tracker write-back assumed | Cursor product (not skill launcher); D19 (mcp session) |
+| Local catch-up | IDE session with Linear MCP after cloud / plan change | Status, children, Document sync | `linear-sync.md` |
 
 ## Workflows
 
@@ -191,7 +201,7 @@ sequenceDiagram
     Create->>Create: write spec.md Work item
     Create->>Sync: link-back if conventions OK
     Sync->>Linear: save_comment / links / addLabels
-    Note over Sync: Document path per Q2
+    Note over Sync: Document path per D15; store ids in spec.md
 ```
 
 1. Fetch issue via conventions → Linear MCP — `create-spec.md` › Input
@@ -200,6 +210,7 @@ sequenceDiagram
 4. Post link-back comment and/or `links`; optional design label — R3 (first link back)
 5. Do not rewrite issue description — R2 (no body rewrite)
 6. Document create/update — R17 (document mirror); D15 (document trigger)
+7. Persist Document id + conflict fingerprint in `spec.md` — D17 (ids in spec)
 
 ### Phase child sync
 
@@ -223,18 +234,18 @@ sequenceDiagram
 5. Cancel + comment for removed units — R9 (cancel removed)
 6. Refresh brief-quality bodies — R15 (cloud ready body)
 
-### Status sync and sticky comment
+### Status sync and progress log
 
 1. Map `Progress` → parent state/labels via conventions — R11 (status mirror)
 2. Map each marked child’s plan status → Linear state — R11 (status mirror)
-3. Find or create sticky progress comment; edit in place when id known — R13 (sticky progress)
+3. If Progress or a marked-child status actually changed: post a new progress comment — R13 (progress log)
 4. Skip per-Done confirm — R12 (auto tracker writes)
 
 ### Conflict stop before mirror overwrite
 
 1. Before Document regenerate (or any body overwrite), run conflict check — R14 (conflict stop), D16 (conflict fingerprint)
 2. If human body edit detected: warn in chat; stop mirror overwrite until the person chooses
-3. Status and sticky updates that do not touch the issue body MAY continue
+3. Status updates and new progress comments that do not touch the issue body MAY continue
 
 ### Archive gate
 
@@ -252,10 +263,10 @@ sequenceDiagram
 | From (Progress) | Event | Guard | To (Linear parent) | Side effect |
 | --------------- | ----- | ----- | ------------------ | ----------- |
 | — | First link | Conventions present | design-stage state/label | Link-back comment / links |
-| `design` | Promote tech | Linked | tech map entry | Sticky refresh |
+| `design` | Promote tech | Linked | tech map entry | Progress comment |
 | `tech` | Promote plan | Linked | plan map entry | Child sync may start |
 | `plan` / `implementing` | Gate / phase updates | Linked | implementing map entry | Child status sync |
-| any | Archive confirmed | All marked Done/Deferred | Done | Sticky refresh |
+| any | Archive confirmed | All marked Done/Deferred | Done | Progress comment |
 | any | Archive incomplete board | Marked work open | — | Ask; no silent Done |
 
 ### Plan phase status → marked child
@@ -263,11 +274,11 @@ sequenceDiagram
 | From | Event | Guard | To | Side effect |
 | ---- | ----- | ----- | -- | ----------- |
 | `Not started` | Sync | Marker match | conventions: not started | — |
-| any | Unit `Started` | Marker match | conventions: started | Sticky refresh |
-| `Started` | Worker → `Reviewing` | Marker match | conventions: reviewing | Sticky refresh |
-| `Reviewing` | Parent → `Done` | Marker match | conventions: done | Sticky refresh |
+| any | Unit `Started` | Marker match | conventions: started | Progress comment |
+| `Started` | Worker → `Reviewing` | Marker match | conventions: reviewing | Progress comment |
+| `Reviewing` | Parent → `Done` | Marker match | conventions: done | Progress comment |
 | any | → `Deferred` | Marker match | conventions: deferred | Comment optional |
-| any | → `Blocked` | Marker match | conventions: blocked | Sticky notes reason |
+| any | → `Blocked` | Marker match | conventions: blocked | Progress comment notes reason |
 | marked exists | Unit removed from plan | Marker match | Canceled | Cancel comment; R9 |
 
 Exact Linear state *names* live in Project conventions (D12 (minimal conventions)). The table above is the repo-side event model.
@@ -277,6 +288,7 @@ Exact Linear state *names* live in Project conventions (D12 (minimal conventions
 | Rule | Condition | Behaviour | Handled by | User message |
 | ---- | --------- | --------- | ---------- | ------------ |
 | R1 (conventions gate) | MCP or Linear conventions missing | Stop write-back; ask once | `linear-sync.md` › Preconditions | Ask to fill conventions / connect MCP |
+| R21 (mcp session) | Cloud / session without working Linear MCP | Skip write-back; implement may continue | Preconditions + README | Point at local IDE sync / plugin README |
 | R2 (no body rewrite) | Tempted to paste full spec into Linear | Reject | Link-back | — |
 | R4 (freeze before plan) | Child sync before plan exists | No-op children | Child sync | — |
 | R5 (thin noop) | No `implementation-plan.md` | No-op children | Child sync | — |
