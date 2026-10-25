@@ -1,6 +1,6 @@
 # Design quality
 
-Judgment bar for an implementation plan. Read only while writing or revising `implementation-plan.md`. The short checklist also lives in [stages/plan.md](stages/plan.md).
+Judgment bar for an implementation plan. Read only while writing or revising `<slug>.plan.md` (R9 (helper doc cites)). The short checklist also lives in [stages/plan.md](stages/plan.md).
 
 Do not copy this file into `spec_docs/<slug>/`. Spec folders use the templates.
 
@@ -25,9 +25,11 @@ Before handing the folder to an implement session:
 | **Concrete paths** | Deliverables name real modules discovered while exploring |
 | **New files justified** | Every proposed new doc or module has a one-line reason. Default is extend |
 | **Risks are selective** | Risks only list items that change approach, sequencing, or testing |
-| **Spec and siblings agree** | No scope, glossary, or non-goal drift between `spec.md` and the other docs |
+| **Spec and siblings agree** | No scope, glossary, or non-goal drift between `<slug>.spec.md` and the other docs |
 
 A **Q** item may remain only if its **Blocks** line does not include phase 1.
+
+Multi-phase serial implement expects a brief-sized phase packet (linked **Read first** plus **Done when**) so the orchestrator can build the chat-only phase brief without the full plan.
 
 ---
 
@@ -94,7 +96,7 @@ The tier selects the default row in **Verify tiers**. A phase that needs a stron
 - Write a one-line reason naming the deciding factor, for example `High — overlay cleanup order across router navigation`.
 - A combinable group takes the highest tier among its members. A sub-task takes its phase's tier.
 - Tier is not a reason to split. Use [Phase sizing](#phase-sizing). A phase that is High because it bundles an unrelated hard part already meets the unrelated-surfaces split rule.
-- Read **Complexity hotspots** in `spec_docs/README.md` when that subsection exists. It names project areas the generic factors cannot see.
+- Read **Complexity hotspots** in `spec_docs/README.md` when that subsection has filled bullets. It names project areas the generic factors cannot see. An empty list means none yet — use the generic rubric.
 
 ---
 
@@ -131,6 +133,14 @@ The tier selects the default row in **Verify tiers**. A phase that needs a stron
 | Create `itemService.ts` with no reason | Extend `Item.commands.ts` with `createItem` |
 | A new utils file for one helper used once | Inline the helper in the file that uses it |
 
+### Approach (guiding vs pasteable)
+
+| Bad | Good |
+| --- | ---- |
+| Approach lists only `src/a.ts` then `src/b.ts` with no shape | Approach names those paths, then a short signature or sketch for the ambiguous edge |
+| Approach pastes a full module ready to drop into the repo | Approach shows a 5–15 line sketch or do/do-not pair; Done when stays the binding check |
+| Approach is a 2–5 minute micro-step checklist as the default unit | Approach stays outcome-sized; micro-steps only when Project conventions require them |
+
 ### Phase tier
 
 | Bad | Good |
@@ -157,4 +167,4 @@ The tier selects the default row in **Verify tiers**. A phase that needs a stron
 2. Prefer one sentence over a padded subsection. Prefer no section over an empty one.
 3. Default a new file to "no" until there is a concrete reason.
 4. Re-read as someone starting phase 1. Anything you would ask in chat becomes a doc fix or a **Q** item.
-5. Keep glossary terms the same in `spec.md`, the tech docs, and the plan. If `spec.md` changes later, update the siblings that reference the change before calling the edit done.
+5. Keep glossary terms the same in `<slug>.spec.md`, the tech docs, and `<slug>.plan.md`. If `<slug>.spec.md` changes later, update the siblings that reference the change before calling the edit done.

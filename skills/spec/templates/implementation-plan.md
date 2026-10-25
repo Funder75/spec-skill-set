@@ -1,8 +1,8 @@
-<!-- Author guidance is in HTML comments. Strip every HTML comment when writing the plan. {{…}} is fill-in. Follow writing-style.md in the skill folder. -->
+<!-- Author guidance is in HTML comments. Strip every HTML comment when writing the plan. {{…}} is fill-in. Follow writing-style.md in the skill folder. Seed basename implementation-plan.md stays on disk (R6). Emitted filename is {{feature-slug}}.plan.md (G3 (plan extension), R5 (plan body authority)). Phase status lives in this markdown body only — no Cursor YAML todos frontmatter. When Depth is lite, this plan is typically a single phase. -->
 
 # {{Feature title}} — implementation plan
 
-Phases for [spec.md](./spec.md).
+Phases for [{{feature-slug}}.spec.md](./{{feature-slug}}.spec.md).
 
 **Status values:** `Not started` · `Started` · `Reviewing` · `Done` · `Deferred` · `Blocked`
 
@@ -39,7 +39,11 @@ flowchart LR
 
 ## Phase {{n}} — {{name}}
 
-<!-- required. Repeat this block for every phase. Same sections each time. -->
+<!-- required. Repeat this block for every phase. Same sections each time. Goal, Read first, Deliverables, Done when, Tier, and Ask-before feed the serial-SDD phase brief (no new columns). -->
+
+**Tracker phase:** n/a
+
+<!-- Filled after Linear returns an id (or stays n/a). Combinable phases in one dispatch unit share the same value. -->
 
 **Goal:** {{one outcome — what exists when this phase is complete}}
 
@@ -47,9 +51,9 @@ flowchart LR
 
 **Read first:**
 
-<!-- The tech-doc sections this phase needs, each as a link to its heading. The implementer reads these, spec.md, and this phase — nothing else from the tech docs. -->
+<!-- The tech-doc sections this phase needs, each as a link to its heading. The implementer reads these, {{feature-slug}}.spec.md, and this phase — nothing else from the tech docs. -->
 
-- {{[contracts.md › TypeName](./contracts.md#typename)}}
+- {{[{{feature-slug}}.contracts.md › TypeName](./{{feature-slug}}.contracts.md#typename)}}
 
 **Tier:** {{Low / Medium / High}} — {{deciding factor, one line}}
 
@@ -79,7 +83,7 @@ flowchart LR
 
 ### Acceptance scenarios
 
-<!-- required. Binding. Behaviour only. Trace each scenario to the spec.md journey step it checks, or write "Journey: —" when it checks a rule with no journey step. -->
+<!-- required. Binding. Behaviour only. Trace each scenario to the {{feature-slug}}.spec.md journey step it checks, or write "Journey: —" when it checks a rule with no journey step. -->
 
 - **A{{n}}.1 — {{short title}}**
   - Journey: {{journey title}}, step {{n}}
@@ -119,7 +123,7 @@ flowchart LR
 
 ## Decisions
 
-<!-- include when: a decision made while planning or implementing is not already in spec.md. Continue the spec.md ID sequence. Do not reuse an ID. No index table. -->
+<!-- include when: a decision made while planning or implementing is not already in {{feature-slug}}.spec.md. Continue the {{feature-slug}}.spec.md ID sequence. Do not reuse an ID. No index table. -->
 
 ### D{{n}} ({{short name}}) — {{decision in one line}}
 

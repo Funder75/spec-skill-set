@@ -1,12 +1,12 @@
 <!-- Author guidance is in HTML comments. Strip every HTML comment when writing the doc. {{…}} is fill-in. Follow writing-style.md in the skill folder. -->
 
-<!-- Write this after reading each module in spec.md Touched paths. Each surface and screen state names the component file it is expected to change, and the existing component when there is one. Follow the patterns already in those files. Interactions and states are binding; paths and wireframes are advisory. A behaviour spec.md did not decide is a Q item there, pointed at with > **Open:** Q1 (short name). Do not fill the gap here. -->
+<!-- Seed basename ui.md stays on disk (R6). Emitted filename is {{feature-slug}}.ui.md. Write this after reading each module in {{feature-slug}}.spec.md Touched paths. Each surface and screen state names the component file it is expected to change, and the existing component when there is one. Follow the patterns already in those files. Interactions and states are binding; paths and wireframes are advisory. A behaviour {{feature-slug}}.spec.md did not decide is a Q item there, pointed at with > **Open:** Q1 (short name). Do not fill the gap here. -->
 
 # {{Feature title}} — UI
 
 > Created because: {{one line}}
 
-Layout and interaction for **{{feature-slug}}**. [spec.md](./spec.md) owns scope, journeys, and decisions; cite them in full form (`see D3 (short name)`).
+Layout and interaction for **{{feature-slug}}**. [{{feature-slug}}.spec.md](./{{feature-slug}}.spec.md) owns scope, journeys, and decisions; cite them in full form (`see D3 (short name)`).
 
 Read **Stack notes for spec docs** in `spec_docs/README.md` before filling this file. Do not guess component props.
 
