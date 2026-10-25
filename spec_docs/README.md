@@ -5,17 +5,25 @@ Planning documents for this repo. One folder per feature spec. The spec workflow
 | Path | Role |
 | ---- | ---- |
 | `<slug>/` | Active spec. Start at `<slug>.spec.md` |
-| `<slug>/<slug>.spec.md` | Scope, gates, and the coarse work split. The body `Progress` line is the gate; Linear FKs (`work_item`, URLs, Document ids) live in YAML frontmatter |
+| `<slug>/<slug>.spec.md` | Scope, gates, and the coarse work split. Body lines: `Progress` (gate) and `Depth` (full / standard / lite). Linear FKs (`work_item`, URLs, Document ids) live in YAML frontmatter |
 | `<slug>/<slug>.logic.md` | Rules, workflows, state transitions (when needed) |
 | `<slug>/<slug>.contracts.md` | Types, API contracts, state ownership, storage (when needed) |
 | `<slug>/<slug>.ui.md` | Layout, interaction, states, copy (when needed) |
-| `<slug>/<slug>.plan.md` | Phases and the only phase status. Added after technical specs are reviewed |
+| `<slug>/<slug>.plan.md` | Phases and the only phase status. Always emitted; for lite, written in the same create session as a thin 1-phase plan |
 | `<slug>/<slug>.data.md` | Legacy data doc (same as contracts) after a hand rename of bare `data.md` |
 | `archive/<slug>/` | Finished specs |
 
 ## How to use
 
-Work moves through three reviewed documents, then implementation (R7 (skill surface complete)):
+`Depth` in `<slug>.spec.md` chooses how many documents and review gates you walk:
+
+| Depth | Path |
+| ----- | ---- |
+| **lite** | One approval → `<slug>.spec.md` with tech folded or `not needed` + thin `<slug>.plan.md` (`Progress: plan`). Then implement. Say `create … as lite` to skip the Depth ask. |
+| **standard** | Design → fold tech / `not needed` (`Progress: tech`) → thin plan → implement. |
+| **full** | Design → tech siblings when needed → plan → implement (default for older folders with no Depth line). |
+
+Full path (R7 (skill surface complete)):
 
 1. **Spec design** — `<slug>.spec.md` only (`Progress: design`). Iterate here.
 2. **Technical specs** — `<slug>.logic.md`, `<slug>.contracts.md`, and `<slug>.ui.md` when that concern needs its own file. Older folders may still have bare `data.md` until a person renames; after rename it is `<slug>.data.md` (same doc as contracts). Otherwise the notes stay in `<slug>.spec.md` under **Technical notes** (`Progress: tech`).
@@ -24,7 +32,7 @@ Work moves through three reviewed documents, then implementation (R7 (skill surf
 
 `Progress` in `<slug>.spec.md` is the gate: `design`, `tech`, `plan`, `implementing`, or `archived`. Phase status (`Not started` through `Done`, plus `Deferred` and `Blocked`) lives only in `<slug>.plan.md`.
 
-Invoke the user-level **spec** skill (`/spec`) and say what to do. Examples: create a spec from a note or a work item, promote to tech specs, promote to an implementation plan, implement the next phase, archive, sync with Linear.
+Invoke the user-level **spec** skill (`/spec`) and say what to do. Examples: create a spec from a note or a work item (optionally `as lite`), promote to tech specs, promote to an implementation plan, implement the next phase, archive, sync with Linear.
 
 Do not edit the skill to record progress.
 

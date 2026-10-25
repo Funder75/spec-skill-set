@@ -173,15 +173,17 @@ When a plan phase (or combinable dispatch unit) status changes and write-back is
 On a **real** Progress or referenced Tracker Phase status delta (R13 (progress log), D18 (append progress)):
 
 1. `save_comment` on the Tracker Spec with **no** `id` (create a new comment only).
-2. Body MUST include the marker and a short summary of what changed:
+2. Body MUST open with the human-readable lead-in, then a short summary of what changed. The lead-in marks skill-authored timeline entries (not tracker-object identity):
 
 ```text
-<!-- spec-sync-progress: slug=<folder-slug> -->
+**Spec progress**
+
 …
 ```
 
-3. MUST NOT edit prior progress comments in place (never pass `id` to `save_comment` for a progress entry).
-4. MUST NOT post a progress comment on a no-op (same Progress / same Tracker Phase state re-applied, including a no-op explicit sync with no status delta).
+3. MUST NOT use an HTML comment marker (for example `<!-- spec-sync-progress: … -->`) as the visible heading.
+4. MUST NOT edit prior progress comments in place (never pass `id` to `save_comment` for a progress entry). Existing comments that still open with the old HTML marker MAY be rewritten once to this lead-in when the person asks to fix them; that one-time rewrite does not change the append-only rule for routine sync.
+5. MUST NOT post a progress comment on a no-op (same Progress / same Tracker Phase state re-applied, including a no-op explicit sync with no status delta).
 
 ### Archive gate
 

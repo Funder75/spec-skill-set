@@ -20,7 +20,7 @@ On the first phase that leaves **Not started**, set `Progress: implementing` in 
 
 When starting an allowed phase, set it to `Started`.
 
-Before writing code, tell the user the phase, its tier, and the reason, so they can switch model or effort. A combinable group uses the highest tier among its members. A sub-task uses its phase's tier.
+Before writing code, tell the user the phase, its tier, and the reason, so they can switch model or effort. A combinable group uses the highest tier among its members. A sub-task uses its phase's tier. When `Depth: lite` and the phase has no explicit tier reason that raises it, prefer **Low**.
 
 Match the session to the tier:
 

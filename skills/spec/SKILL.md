@@ -30,6 +30,22 @@ Each `spec_docs/<slug>/<slug>.spec.md` carries the folder's gate (G1 (slug prefi
 
 Set it only when a gate is crossed. Phase status lives only in that folder's `<slug>.plan.md` (G3 (plan extension)).
 
+## Depth
+
+Each `<slug>.spec.md` also carries how deep the folder goes (body line next to Progress, not frontmatter):
+
+`Depth: full | standard | lite`
+
+Missing Depth on an older folder → treat as `full`. Set Depth once at create (after Analysis); change it only when the user asks. Depth chooses process and which siblings are expected — not a second skill.
+
+| Depth | Create | Tech docs | Plan | Progress path |
+| ----- | ------ | --------- | ---- | ------------- |
+| **lite** | Assumptions by default; one chat approval for the whole packet | Fold into **Technical notes** or mark `not needed` at create — never emit tech siblings | Thin 1-phase `<slug>.plan.md` in the same create session | Ends at `Progress: plan` |
+| **standard** | Normal Clarify; Approach only if a real fork | Promote folds / `not needed` only; siblings unusual | Separate promote; few phases | `design` → `tech` → `plan` |
+| **full** | Elaborate create-spec as today | Tech-specs siblings when needed | Full plan stage | Unchanged |
+
+Always emit `<slug>.plan.md` (implement and Linear require it). Lite does not embed the plan in `<slug>.spec.md`.
+
 ## Spec docs
 
 `{{…}}` is fill-in. HTML comments in the templates are author guidance — strip them when writing the doc.
@@ -66,7 +82,7 @@ IDs: `G` goals, `R` rules, `A<phase>.<n>` acceptance scenarios, `D` decisions, `
 If the message is only `spec`, `/spec`, or `/spec help` — no slug and no action — stop. Do not bootstrap, do not open a stage file, and do not start a spec.
 
 - `spec_docs/README.md` exists → point the user at that file. Do not restate it.
-- It does not exist → explain what this skill does: the lifecycle (`<slug>.spec.md` → tech specs → `<slug>.plan.md` → one phase → archive) and the actions in the table below.
+- It does not exist → explain what this skill does: the lifecycle (`<slug>.spec.md` → tech specs → `<slug>.plan.md` → one phase → archive), that **Depth** (`full` / `standard` / `lite`) shortens gates for smaller work, and the actions in the table below.
 
 ## Infer, otherwise ask
 
@@ -74,10 +90,10 @@ Explicit verbs skip the "what next?" question. Read the matching stage file and 
 
 | User said | Action | Stage file |
 | --------- | ------ | ---------- |
-| create spec from … / name it … | Write or resume `<slug>.spec.md` only | [stages/create-spec.md](stages/create-spec.md) |
-| promote to tech specs | Technical docs only. Set `Progress: tech` | [stages/tech-specs.md](stages/tech-specs.md) |
-| promote to implementation plan | Plan only. If `Progress` is `design`, ask before skipping tech | [stages/plan.md](stages/plan.md) |
-| next | Read `Progress`, name the next gate, and ask to continue. Do not open a stage file until they confirm | — |
+| create spec from … / name it … / create … as lite\|standard\|full | Write or resume `<slug>.spec.md` (lite also writes thin plan). Explicit `as lite\|standard\|full` sets Depth without the Depth round ask | [stages/create-spec.md](stages/create-spec.md) |
+| promote to tech specs | Technical docs only. Set `Progress: tech`. No-op when `Depth: lite` | [stages/tech-specs.md](stages/tech-specs.md) |
+| promote to implementation plan | Plan only. Gate skip depends on Depth (see [stages/plan.md](stages/plan.md)) | [stages/plan.md](stages/plan.md) |
+| next | Read `Progress` and `Depth`, name the next gate, and ask to continue. Do not open a stage file until they confirm | — |
 | implement / continue | One phase, or one combinable group | [stages/implement.md](stages/implement.md) |
 | archive | Move the folder after explicit confirmation | [stages/implement.md](stages/implement.md) |
 | audit / review spec | Read-only report in chat | [stages/audit.md](stages/audit.md) |
@@ -93,13 +109,14 @@ Editing an earlier doc is allowed at any later gate. If scope, non-goals, or glo
 
 ## Stage detection
 
-First match, from the `Progress` line:
+First match, from the `Progress` line (and `Depth` when present):
 
 - `spec_docs/` missing, and the user asked for an action (not help) → bootstrap in [stages/create-spec.md](stages/create-spec.md), then continue from the user's intent.
-- No `spec_docs/<slug>/` and the user supplied input → create spec (`Progress: design`).
-- `design` → next offer: promote to tech specs.
+- No `spec_docs/<slug>/` and the user supplied input → create spec (`Progress: design`, or `plan` when Depth is lite and the thin plan is written in the same session).
+- `design` and `Depth: lite` with no plan yet → finish the lite create packet (spec + folded tech + thin plan), not a separate tech promote.
+- `design` and Depth is `standard` or `full` (or missing) → next offer: promote to tech specs (standard expects fold / `not needed` only).
 - `tech` → next offer: create the implementation plan.
-- `plan` or `implementing`, with a phase open → next offer: implement the active or next phase.
+- `plan` or `implementing`, with a phase open → next offer: implement the active or next phase. When Depth is lite and the plan exists, never offer promote-to-tech.
 - Every phase `Done`, or only `Done` plus `Deferred` → offer archive.
 - `archived`, or the path is under `spec_docs/archive/` → report archived; stop unless they ask for a doc correction.
 
@@ -118,7 +135,7 @@ If `spec_docs/` does not exist:
 
 ## Work items
 
-When the input is a work-item id, follow **Project conventions** for how to fetch it. Keep the title and description in the source note, and map acceptance criteria onto the goals. Do not paste the raw work-item payload into `<slug>.spec.md` or the reply. After create-spec sets frontmatter `work_item`, link-back and other Linear writes follow [stages/linear-sync.md](stages/linear-sync.md) — do not invent a second sync doctrine (R20 (routing entry)). Durable Linear foreign keys (`work_item`, `tracker_spec_url`, `document_id`, `document_url`) live in `<slug>.spec.md` YAML frontmatter only; `Progress` and `Depends on` stay in the body.
+When the input is a work-item id, follow **Project conventions** for how to fetch it. Keep the title and description in the source note, and map acceptance criteria onto the goals. Do not paste the raw work-item payload into `<slug>.spec.md` or the reply. After create-spec sets frontmatter `work_item`, link-back and other Linear writes follow [stages/linear-sync.md](stages/linear-sync.md) — do not invent a second sync doctrine (R20 (routing entry)). Durable Linear foreign keys (`work_item`, `tracker_spec_url`, `document_id`, `document_url`) live in `<slug>.spec.md` YAML frontmatter only; `Progress`, `Depth`, and `Depends on` stay in the body.
 
 ## Bounds
 

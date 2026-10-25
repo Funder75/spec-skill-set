@@ -5,13 +5,16 @@ Write `spec_docs/<slug>/<slug>.plan.md` from the reviewed spec and tech docs (G3
 ## Preconditions
 
 - The user asked to promote to an implementation plan, or confirmed that step after `/spec next`.
-- `Progress` is `tech`. If it is still `design`, ask whether to write tech specs first. Do not skip that gate.
+- Read `Depth` from `<slug>.spec.md` (missing → treat as `full`).
+- **Depth: lite** — Create already wrote the thin plan. If `<slug>.plan.md` exists, resume or edit it only; do not regenerate from scratch without asking. If it is missing (interrupted create), write the thin 1-phase plan now, ensure tech rows are folded / `not needed`, and set `Progress: plan`.
+- **Depth: standard** — `Progress` should be `tech` with doc index rows folded or `not needed` (no pressure for siblings). If still `design`, run a fold-tech step first in this session (set index + **Technical notes** as needed, `Progress: tech`), then write the plan — do not leave tech as `pending`. Prefer few phases.
+- **Depth: full** (or missing) — `Progress` is `tech`. If it is still `design`, ask whether to write tech specs first. Do not skip that gate.
 - `<slug>.spec.md` has no `{{…}}` left and no `[SUGGESTION:`. If a suggestion is still there, the user has not accepted it — stop and ask.
 - Read [design-quality.md](../design-quality.md) before drafting. Do not read it on other actions.
 
 ## What to write
 
-Follow [writing-style.md](../writing-style.md). Start from the seed [templates/implementation-plan.md](../templates/implementation-plan.md) (R6 (template seeds stay)); emit as `<slug>.plan.md`. Phases may refine the spec's **Work split**. Point at it by goal ID in **Covers**. Do not copy its rationale into the plan.
+Follow [writing-style.md](../writing-style.md). Start from the seed [templates/implementation-plan.md](../templates/implementation-plan.md) (R6 (template seeds stay)); emit as `<slug>.plan.md`. Phases may refine the spec's **Work split**. Point at it by goal ID in **Covers**. Do not copy its rationale into the plan. When Depth is lite or standard, keep the plan thin (lite: typically one phase).
 
 Each phase uses the same block:
 

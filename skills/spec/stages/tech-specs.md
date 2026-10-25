@@ -5,6 +5,8 @@ Create the technical docs for `spec_docs/<slug>/` using the D1 (role map) names 
 ## Preconditions
 
 - The user asked to promote to tech specs, or confirmed that step after `/spec next`.
+- Read `Depth` from `<slug>.spec.md` (missing → treat as `full`).
+- **Depth: lite** — Tech was folded (or marked `not needed`) at create. Do not promote. Tell the user tech siblings are out of scope for lite; next step is implement (or edit the existing thin plan). Stop unless they explicitly ask to raise Depth first.
 - `Progress` is `design`. If it is already `tech` or later, resume missing docs. Do not wipe existing files.
 - If `<slug>.spec.md` is still a draft the user has not accepted, ask before generating siblings.
 
@@ -12,7 +14,11 @@ Create the technical docs for `spec_docs/<slug>/` using the D1 (role map) names 
 
 Read `<slug>.spec.md`. Then read each module in **Touched paths** — enough to know where each rule, type, and screen state lands and which existing symbols and patterns it extends. Do not stop once a file can be named. Before `<slug>.contracts.md` or `<slug>.ui.md`, read **Stack notes for spec docs** under **Project conventions**. If that block is missing or still a placeholder, ask. Do not bake a UI library or a database into the doc.
 
-Create a sibling only when that concern needs its own file. Emit the D1 name; start from the seed template (R6 (template seeds stay)):
+**Depth: standard** — Prefer fold into **Technical notes** or `not needed`. Emit a sibling only when the concern clearly cannot fit folded notes (rare). Do not pressure the user into three tech files.
+
+**Depth: full** — Create a sibling when that concern needs its own file, as below.
+
+Emit the D1 name; start from the seed template (R6 (template seeds stay)):
 
 | Emit as | Start from | Include when |
 | ------- | ---------- | ------------ |

@@ -12,10 +12,11 @@ Do not copy this file into `spec_docs/<slug>/`.
 | ----- | --------- |
 | **Implementer test** | Phase 1 cannot be executed from the plan and its links alone |
 | **Progress line** | `<slug>.spec.md` body has no `Progress` line, or the line disagrees with the files (plan exists while `Progress` is `design`; folder is archived while `Progress` is not). Do not require Linear FKs in the body — those live in YAML frontmatter |
+| **Depth line** | New work under active `spec_docs/<slug>/` (not archive) has no `Depth` line. Warning only. Missing Depth → treat as `full` for the rest of the audit |
 | **Required docs** | No `<slug>.spec.md`. No `<slug>.plan.md` once `Progress` is `plan` or later (R9 (helper doc cites)) |
-| **Skipped gate** | An implementation plan exists while tech specs were never promoted (`Progress` jumped from `design` to `plan`) |
+| **Skipped gate** | An implementation plan exists while tech was never recorded as promoted, folded, or `not needed`, **and** Depth is missing or `full`. Do **not** flag when `Depth: lite` (create writes the thin plan with folded / `not needed` tech) or when `Depth: standard` and the doc index shows folded / `not needed` with `Progress: tech` or later |
 | **Business rules home** | Multi-step rules are scattered, and `<slug>.logic.md` is missing with no `folded →` line pointing at **Technical notes › Rules** |
-| **Optional doc gap** | `<slug>.contracts.md` (or legacy `<slug>.data.md` / bare `data.md` until renamed) or `<slug>.ui.md` is omitted, the doc index does not say `folded` or `not needed`, and the only detail is a plan snippet |
+| **Optional doc gap** | `<slug>.contracts.md` (or legacy `<slug>.data.md` / bare `data.md` until renamed) or `<slug>.ui.md` is omitted, the doc index does not say `folded` or `not needed`, and the only detail is a plan snippet. Do **not** flag when Depth is `lite` or `standard` and the index already says `folded` or `not needed` |
 | **Failure modes** | User-facing flows lack empty, error, or permission handling, and there is no explicit n/a |
 | **Journeys** | `<slug>.spec.md` has no **User journeys** section and no n/a line, or a user-facing goal appears in no journey |
 | **Thin spec** | `<slug>.spec.md` leaves behaviour to be discovered at promote: missing edge cases, journeys, or decisions a reviewer must accept |
@@ -142,7 +143,7 @@ Optimizations are not blockers unless they hide a Critical or Warning issue.
 
 ## Reviewer habits
 
-1. Read `Progress` first. That decides how deep to go. Do not open `spec_docs/archive/` unless asked.
+1. Read `Progress` and `Depth` first (missing Depth → `full`). That decides how deep to go and which skipped-gate rules apply. Do not open `spec_docs/archive/` unless asked.
 2. Write the report in chat. Do not create a canvas or a report file.
 3. Build a traceability table when a plan exists.
 4. Cite a file and a section. Distinguish draft (`[SUGGESTION: …]`), decided (a **D** item), and blocked (a **Q** item, or `> **Open:** Q1 (short name)` pointing at one).

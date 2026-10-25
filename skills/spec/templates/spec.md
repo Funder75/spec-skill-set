@@ -12,6 +12,8 @@ document_url: n/a
 # {{Feature title}}
 
 **Progress:** design
+<!-- Depth: full | standard | lite. Chosen at create after Analysis. Missing on older folders → treat as full. lite folds tech and writes a thin plan in the same create session. -->
+**Depth:** {{full | standard | lite}}
 **Depends on:** {{`spec_docs/<slug>`, a named external deliverable, or "—"}}
 
 ## TL;DR
