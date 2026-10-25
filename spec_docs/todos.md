@@ -1,5 +1,9 @@
 # Loose ideas before creating actual specs
 
+Ideas for before moving into specs.
+
+Once promoted to a spec - we should remove it entirely from here.
+
 ## Skip processed
 
 It should be possible to skip tech specs or implemeation plan for smaller tasks.
@@ -12,21 +16,6 @@ Find a way to to create small specs by skipping steps / files in the spec creati
 
 Investigation:
 How can we do this in a good way. One way could be to make an analysis either before creating the first spec doc or after. So add a pre- or post- analysis to the create spec process that evaluates the need for spec depth. This could result in giving the programmer some options.
-
-## Integrate with Linear
-
-Goal:
-Have a deep integration with linear so that  it is possible to:
-- Create a spec from a Linear issue
-- Create subtask in linear from a spec
-- Update progress and status in linear according to the spec progress
-- Being able to start a cursor cloud agent to implement a spec
-
-Concerns:
-We have to make sure that the spec in the repo and the linear issues are not out of sync. This is especially a concern while reviewing / changing the spec. This is high priority that we solve this - if not it is may be a deal breaker
-
-Investigation:
-See [linear-integration-investigation.md](./linear-integration-investigation.md) (2026-10-25). Pre-spec; sync doctrine is the blocking decision.
 
 ## use spec slug for file name and cursor plan for implementation plan
 
