@@ -4,6 +4,8 @@ Status: promoted — see [spec.md](./spec.md) (`Progress: tech`).
 Source: was `todos.md` › Integrate with Linear (removed on promote).
 Date: 2026-10-25 (updated after [multi-subagent](../archive/multi-subagent/spec.md) landed).
 
+> **Terminology update:** The promoted design calls the Linear work item linked from `spec.md` the **Tracker Spec** and each Linear work item linked from an implementation-plan phase a **Tracker Phase**. The repo stores their ids in `Work item:` and `Tracker phase:` fields; the earlier description-marker proposal in this investigation is superseded.
+
 ## TL;DR
 
 Deep Linear integration is feasible via Linear MCP and Cursor’s native Linear ↔ Cloud Agent product. The hard problem remains **keeping the repo spec and Linear from diverging**.
@@ -14,11 +16,11 @@ Deep Linear integration is feasible via Linear MCP and Cursor’s native Linear 
 | -------- | ------ |
 | Source of truth | **S1 — repo only** after a spec folder exists. Linear is the tracker (links, status, phase mirrors, comments). |
 | Primary operators | Cursor-first; Linear-only users still need visibility. Spec *review* from Linear is a **one-way mirror / pointer** problem, not dual-edited prose. |
-| Structure | Prefer **M2+**: parent ↔ spec; children include **plan phases** (and optionally nest under an “Implementation” child). Non-phase children may exist; sync does not own them. |
-| Freeze for children | **Not before the plan exists.** Prefer create/refresh while the plan is reviewed or on first implement — **least user work** (auto where safe). |
-| Thin specs (no plan) | **No-op on children** so Linear reflects that there is no phase structure. |
+| Structure | Tracker Spec ↔ spec; Tracker Phases ↔ **plan phases**. Other Linear work may exist; sync does not own unreferenced work. |
+| Freeze for Tracker Phases | **Not before the plan exists.** Prefer create/refresh while the plan is reviewed or on first implement — **least user work** (auto where safe). |
+| Thin specs (no plan) | **No-op on Tracker Phases** so Linear reflects that there is no phase structure. |
 | Team conventions | None yet — capture Linear team/states/labels during **project init** into `spec_docs/README.md` Project conventions. |
-| Cloud kickoff | Multi-subagent already owns **phase brief + env checklist** and deferred Linear wiring here. Prefer **native assign Cursor / `@Cursor`** on children whose body points at the repo + pasteable brief contract — **not** a second skill-owned agent launcher. |
+| Cloud kickoff | Multi-subagent already owns **phase brief + env checklist** and deferred Linear wiring here. Prefer **native assign Cursor / `@Cursor`** on Tracker Phases whose body points at the repo + pasteable brief contract — **not** a second skill-owned agent launcher. |
 
 Deal-breaker risk is still dual canon. Reject bidirectional body sync (S3). Optional Linear Document / sticky comment as a **read-only snapshot** is the realistic path for “review the spec from Linear” without sync hell.
 
@@ -72,7 +74,7 @@ Cursor already supports:
 - Config via `[repo=…]`, `[model=…]`, `[branch=…]`, or `repo` label groups
 - Optional triage rules that assign to Cursor
 
-**Implication after multi-subagent:** Goal (4) is **“Linear child is ready to run the same phase brief contract”** — pointers to `spec_docs/<slug>/`, phase id, Done when, stop-after-this-unit, env checklist cues — then native delegate / `@Cursor`. Building a second launcher inside `/spec` still duplicates product surface. What multi-subagent unlocked is the **brief quality**, not a new start API.
+**Implication after multi-subagent:** Goal (4) is **“Tracker Phase is ready to run the same phase brief contract”** — pointers to `spec_docs/<slug>/`, phase id, Done when, stop-after-this-unit, env checklist cues — then native delegate / `@Cursor`. Building a second launcher inside `/spec` still duplicates product surface. What multi-subagent unlocked is the **brief quality**, not a new start API.
 
 ---
 
@@ -118,7 +120,7 @@ Settled there and already in the skill:
 
 So this Linear work should:
 
-- **Consume** the phase-brief / env-checklist contract when writing child issue text for `@Cursor`.
+- **Consume** the phase-brief / env-checklist contract when writing Tracker Phase text for `@Cursor`.
 - **Not** re-implement serial orchestration or a competing cloud starter.
 - Treat status sync as a **mirror of plan phase status** the SDD runner already writes — Linear lags the plan, never the reverse for binding content.
 
@@ -139,7 +141,7 @@ Open cloud question **reframed:** not “does the skill start agents?” → “
 | Trigger | `/spec create from TEAM-123` only · also from Linear URL · triage label “needs-spec” |
 | When to link back | On first write of `spec.md` · only after design approval · never auto |
 | What goes back to Linear on create | Comment + link to repo path · `links` attachment · optional Linear Document snapshot · **do not** replace description with full spec |
-| Issue already has children | Refuse · adopt unmanaged · ignore unmanaged |
+| Tracker Spec already has other Linear work | Leave unreferenced work human-owned |
 
 **Pros of thin create (read-only + Work item field):** Low sync risk; matches today’s skill.  
 **Cons:** Linear stays silent; PMs don’t see that design started.
@@ -147,37 +149,31 @@ Open cloud question **reframed:** not “does the skill start agents?” → “
 **Pros of create + “spec linked” write-back:** Visibility for Linear-only users.  
 **Cons:** Starts dual-write if description is rewritten — avoid rewriting AC body.
 
-### 2. Create Linear subtasks from a spec
+### 2. Create Tracker Phases from a spec
 
-**What could map to a Linear child?**
+**What could map to a Tracker Phase?**
 
-| Repo artifact | Linear child meaning | Notes |
+| Repo artifact | Tracker meaning | Notes |
 | ------------- | -------------------- | ----- |
 | Plan phase | Implementable unit | **Primary** — matches serial SDD dispatch unit |
-| Combinable group | One child for the group | Prefer one child when the plan marks one unit |
-| Nesting: “Implementation” parent child | Container for phase children | Optional; keeps non-implement noise off the epic |
-| Ad-hoc / human Linear children | Unmanaged | Sync leaves them alone (no marker) |
-| Work-split slice (`spec.md`) | Coarse epic children | Unstable until design settles — **not** default create |
+| Combinable group | One Tracker Phase for the group | Every combined phase stores the same id |
+| Optional “Implementation” work item | Container for Tracker Phases | Deferred; direct Tracker Spec linkage is the default |
+| Ad-hoc / human Linear work | Human-owned | Sync leaves unreferenced work alone |
+| Work-split slice (`spec.md`) | Coarse tracker work | Unstable until design settles — **not** default create |
 | Goal (G1…) | Outcome tracking | Poor fit for implementation agents |
-| Whole spec / thin (no plan) | **No children** | Settled: no-op so Linear matches “no phases” |
+| Whole spec / thin (no plan) | **No Tracker Phases** | Settled: no-op so Linear matches “no phases” |
 
-**When to create children (timing):**
+**When to create Tracker Phases (timing):**
 
 | Option | Pros | Cons | Status |
 | ------ | ---- | ---- | ------ |
 | At design approval | Early visibility | High churn | **Rejected** (too early) |
-| **While plan exists / on plan review** | Structure stable enough; sync on plan edits | Needs idempotent reconcile | **Preferred if low friction** |
+| **While plan exists / on plan review** | Structure stable enough; selective create/update on plan edits | Needs persisted ids | **Preferred if low friction** |
 | At first implement (or just before) | Minimal orphans | Board lags until implement | **Acceptable fallback** |
-| Explicit `/spec linear sync` only | Human-controlled | Easy to forget | Supplement, not sole path if “least user work” |
+| Explicit `/spec linear sync` only | Human-controlled | Easy to forget | Create/repair supplement, not the routine update path |
 | Never structure-sync | Almost no structure drift | Fails goal 2 | Rejected as sole approach |
 
-**Identity / idempotency:** Durable marker so re-sync does not duplicate children, e.g. in child description:
-
-```text
-<!-- spec-sync: slug=foo phase=2 -->
-```
-
-Prefer **update-by-marker** over delete/recreate. Unmarked children are human-owned.
+**Identity / idempotency (updated after promotion):** `Work item:` in `spec.md` identifies the Tracker Spec. `Tracker phase:` in every plan phase identifies its Tracker Phase. The skill creates when the field is `n/a`, writes the returned id back, and otherwise updates directly by id. Combined phases share one id. Linear work not referenced by these fields is human-owned.
 
 ### 3. Update progress and status from the spec
 
@@ -185,12 +181,12 @@ Prefer **update-by-marker** over delete/recreate. Unmarked children are human-ow
 
 | Repo signal | Suggested Linear effect |
 | ----------- | ----------------------- |
-| `Progress: design` | Parent: Backlog / Speccing + label `spec:design` |
+| `Progress: design` | Tracker Spec: Backlog / Speccing + label `spec:design` |
 | `Progress: tech` / `plan` | Labels or custom states if configured |
-| `Progress: implementing` | Parent In Progress |
-| Phase `Started` / `Reviewing` / `Done` | Matching child state (Reviewing ≈ In Review or label) |
-| `Progress: archived` | Parent Done (or Cancelled if deferred-heavy) |
-| Phase `Blocked` | Child Blocked + comment with reason |
+| `Progress: implementing` | Tracker Spec In Progress |
+| Phase `Started` / `Reviewing` / `Done` | Matching Tracker Phase state (Reviewing ≈ In Review or label) |
+| `Progress: archived` | Tracker Spec Done (or Cancelled if deferred-heavy) |
+| Phase `Blocked` | Tracker Phase Blocked + comment with reason |
 | Gate review ask in chat | Optional comment only — do not invent Linear “approval” |
 
 **Status-only + sticky progress comment (recommended baseline):**
@@ -200,7 +196,7 @@ Prefer **update-by-marker** over delete/recreate. Unmarked children are human-ow
 
 **Mirroring plan checkboxes into Linear:** Highest drift risk — out of v1.
 
-**Auto vs ask (inferred from “least user work” + SDD write-back):** Prefer **automatic status/structure writes** when the skill crosses gates or reconciles the plan (create/update marked children, map states, refresh sticky comment). Keep an explicit `/spec linear sync` / reconcile for recovery and renumber. Do **not** require a confirm prompt on every phase Done — that fights serial SDD’s auto-continue. First-time enable / missing conventions may still ask once.
+**Auto vs ask (updated after promotion):** Prefer **selective automatic writes**: a gate change updates the Tracker Spec; a phase change updates that Tracker Phase. Keep `/spec linear sync` for create-missing and repair, asking for required information when absent. Do **not** require a full sync or confirm prompt on every phase Done.
 
 ### 4. Start a Cursor cloud agent to implement a spec
 
@@ -208,10 +204,10 @@ Prefer **update-by-marker** over delete/recreate. Unmarked children are human-ow
 
 | Approach | Pros | Cons | Fit |
 | -------- | ---- | ---- | --- |
-| **Native Linear → Cursor** with brief-quality child text | Supported product path; progress/PR already flow | Agent may ignore repo unless prompted well | **v1 default** |
+| **Native Linear → Cursor** with brief-quality Tracker Phase text | Supported product path; progress/PR already flow | Agent may ignore repo unless prompted well | **v1 default** |
 | Skill-invoked Cloud Agent SDK/API | Tighter prompt control | Extra surface; duplicates product; auth | Later / only if native path fails |
 | Local `/spec implement` only | Matches Cursor-primary users | Does not satisfy Linear-started walk-away | Still primary for Cursor users |
-| Hybrid | Child Ready + optional `delegate`; human or triage assigns | Needs excellent issue text | **Recommended** |
+| Hybrid | Tracker Phase Ready + optional `delegate`; human or triage assigns | Needs excellent work-item text | **Recommended** |
 
 **Critical conflict with skill bounds:** Implement stage says no branches/commits unless asked. Cloud Agents typically branch + PR. Align with multi-subagent G6: when the run **already is** cloud (incl. Linear-started), cloud consent is implied; document that in Project conventions for Linear-delegated work.
 
@@ -229,7 +225,7 @@ Prefer **update-by-marker** over delete/recreate. Unmarked children are human-ow
 | ---- | ---- |
 | Matches how the skill already thinks | PMs who live in Linear see thin issues unless we add a mirror |
 | Review/change of spec does not require Linear prose edits | Need discipline / labels (“do not edit body — see repo”) |
-| Drift limited to status/structure | Structure sync still needed for children |
+| Drift limited to status/structure | Tracker Phase ids still need to stay in the plan |
 
 **Sync on spec edit:** Update Linear **only** if phase list/status markers change (and optional regenerate Document); never treat Linear AC as winning over `spec.md`.
 
@@ -251,35 +247,35 @@ Useful if we ever push mirrors: before overwrite, compare Linear `updatedAt` / h
 
 ### M1 — One Linear issue ↔ one spec folder
 
-No children. Status maps from `Progress` only.  
-Simplest; weak on phase/agent granularity. Still the effective shape for **thin specs** (no plan → no children).
+No Tracker Phases. Status maps from `Progress` only.
+Simplest; weak on phase/agent granularity. Still the effective shape for **thin specs** (no plan → no Tracker Phases).
 
-### M2 — Parent issue ↔ spec; children ↔ plan phases — **base default**
+### M2 — Tracker Spec ↔ spec; Tracker Phases ↔ plan phases — **base default**
 
-Create/refresh children once a plan exists (or on first implement). Marker `phase=N`.  
+Create/refresh Tracker Phases once a plan exists (or on first implement). Persist ids in phase fields.
 Best match for goals 2–4 and serial SDD units.
 
-### M2+ — Parent ↔ spec; optional Implementation container; phase children; unmanaged extras — **preferred direction**
+### M2+ — Tracker Spec, optional Implementation work item, Tracker Phases, and human extras
 
 ```text
-Parent (TEAM-123)          ↔ spec folder
+Tracker Spec (TEAM-123)    ↔ spec folder
 └── Implementation (opt.)  ↔ “implement this spec”
-    ├── Phase 1 (marked)   ↔ plan phase 1 / dispatch unit
-    ├── Phase 2 (marked)
-    └── … human child …    ↔ unmanaged (no marker)
+    ├── Tracker Phase 1    ↔ plan phase 1 / dispatch unit
+    ├── Tracker Phase 2
+    └── … human work …     ↔ unreferenced
 ```
 
-Phases may hang directly under the parent if the team prefers flatter boards. Sync:
+Tracker Phases hang directly under the Tracker Spec by default. Sync:
 
-- Creates/updates **marked** phase (or combinable-unit) children.
-- Does not delete unmarked children.
-- May cancel+comment marked children whose phase was removed (never silent delete).
+- Creates a Tracker Phase when its field is `n/a`; otherwise updates directly by id.
+- Does not touch unreferenced work.
+- May cancel+comment a referenced Tracker Phase when its phase is removed (never silent delete).
 
-### M3 — Children ↔ work-split slices
+### M3 — Tracker work ↔ work-split slices
 
 Earlier visibility; worse churn — not default.
 
-### M4 — Children ↔ plan sub-tasks
+### M4 — Tracker work ↔ plan sub-tasks
 
 Finest board; highest spam — not default (phases are the unit; plan sub-tasks stay repo-only unless a human creates Linear work).
 
@@ -289,7 +285,7 @@ Later / out of scope unless already used.
 
 **Phase ↔ Linear state sketch (for M2 / M2+):**
 
-| Plan status | Child Linear state (example) |
+| Plan status | Tracker Phase state (example) |
 | ----------- | ---------------------------- |
 | Not started | Backlog / Todo |
 | Started | In Progress |
@@ -298,18 +294,18 @@ Later / out of scope unless already used.
 | Deferred | Canceled or Done + label `deferred` |
 | Blocked | Blocked / as-team-defines |
 
-Parent state: roll up (any child In Progress → parent In Progress; all Done/Deferred → Done).
+Tracker Spec state: roll up (any Tracker Phase In Progress → Tracker Spec In Progress; all Done/Deferred → Done).
 
 ---
 
 ## Review / change protocol (must-have for the deal breaker)
 
-1. **No Linear phase children until a plan exists** (or first implement if plan sync was skipped).
-2. **Idempotent sync** via markers; never delete children automatically; cancel + comment instead.
+1. **No Tracker Phases until a plan exists** (or first implement if plan creation was skipped).
+2. **Idempotent direct updates** via repo-stored ids; never delete Tracker Phases automatically; cancel + comment instead.
 3. **Content edits** to goals/journeys/plan Approach happen in repo only; Linear gets a “spec revised” comment (and optional Document regenerate) when agent-relevant content changes.
-4. **Re-plan / phase renumber:** reconcile that diffs markers vs plan and proposes create/cancel/rename — never silent reshuffle.
+4. **Re-plan / phase renumber:** preserve each stored Tracker Phase id with its dispatch-unit content; never infer identity from the phase number or title.
 5. **Human edits in Linear description after link:** convention = do not edit binding AC; detection TBD (warn vs stop — still open).
-6. **Cloud agent prompt contract:** child says “repo is canonical; read these paths / brief fields; stop after this unit; do not invent scope from this description beyond Done when.”
+6. **Cloud agent prompt contract:** Tracker Phase says “repo is canonical; read these paths / brief fields; stop after this unit; do not invent scope from this description beyond Done when.”
 
 Without (1)–(4), design/plan iteration will orphan or mis-map sub-issues — the failure mode in todos.
 
@@ -321,12 +317,12 @@ Not a gated spec yet — concrete enough to disagree precisely:
 
 1. **Conventions / init:** Project init fills Linear team, default project, state/label map, and Work-items fetch via MCP into `spec_docs/README.md` (ties to **Init project for spec** todo).
 2. **Create:** `/spec create from TEAM-123` → existing create-spec dialogue → `Work item` set → Linear comment + link (`spec_docs/<slug>/`) + label `spec:design`. **Do not** rewrite issue description with the full spec. Optional: attach/update a Document titled as mirror.
-3. **Subtasks:** After plan exists, auto-create/refresh marked phase children (M2 or M2+). Re-sync when the plan’s phase list changes during review. Fallback: create just before / at first implement if not done yet. Thin specs: **no children**.
-4. **Status:** On implement/archive (and reconcile), map phase + Progress → Linear states; update one sticky progress comment on the parent. Prefer auto writes; expose `/spec linear sync` for recovery.
-5. **Cloud agent:** Phase children include brief-quality text (paths, Done when, stop-after-this-unit, env cues, `[repo=…]` if configured) so assign Cursor / `@Cursor` works. Skill may “mark ready to delegate”; auto-delegate is opt-in later. No skill-owned second launcher in v1.
+3. **Tracker Phases:** After plan exists, create when `Tracker phase:` is `n/a` and update directly by id. Fallback: create just before / at first implement. Thin specs: **no Tracker Phases**.
+4. **Status:** On gate/phase events, selectively map Progress → Tracker Spec and phase status → Tracker Phase; append a progress comment on the Tracker Spec. Expose `/spec linear sync` for create/repair.
+5. **Cloud agent:** Tracker Phases include brief-quality text (paths, Done when, stop-after-this-unit, env cues, `[repo=…]` if configured) so assign Cursor / `@Cursor` works. Skill may “mark ready to delegate”; auto-delegate is opt-in later. No skill-owned second launcher in v1.
 6. **Sync doctrine:** S1. Reject body bidirectional sync. Optional one-way Document for Linear-only readers.
 
-**Out of v1:** Bidirectional prose; initiative sync; auto-delegate all phases; webhooks outside the agent session; mirroring Done-when checkboxes; owning unmarked Linear children.
+**Out of v1:** Bidirectional prose; initiative sync; auto-delegate all phases; webhooks outside the agent session; mirroring Done-when checkboxes; owning unreferenced Linear work.
 
 ---
 
@@ -334,7 +330,7 @@ Not a gated spec yet — concrete enough to disagree precisely:
 
 | Todo | Interaction |
 | ----- | ----------- |
-| Skip processed (thin specs) | Create-from still works; **no-op children** without a plan |
+| Skip processed (thin specs) | Create-from still works; **no-op Tracker Phases** without a plan |
 | Multiple subagents / cloud agents | **Done** — provides brief + SDD; Linear kickoff consumes that contract |
 | Init project for spec | **Home for Linear conventions** (team, states, Work items MCP) — not ad-hoc per chat |
 | Skill “no surprise SCM” | Same G6 story: Linear-started cloud implies cloud consent; extra SCM still ask |
@@ -345,8 +341,8 @@ Not a gated spec yet — concrete enough to disagree precisely:
 
 - **Deal breaker — dual canon:** If PMs edit Linear AC after `spec.md` exists, implementers/agents disagree on truth.
 - **Linear-only readers:** Thin tracker issues feel empty; Document/mirror must stay clearly non-authoritative or people will edit it.
-- **Issue explosion:** Phase children + optional Implementation container + human extras; sync must not touch unmarked issues.
-- **Stale agent context:** Native Cursor agent reads Linear first; child text must point at repo + brief fields.
+- **Issue explosion:** Tracker Phases + optional Implementation container + human extras; sync must not touch unreferenced work.
+- **Stale agent context:** Native Cursor agent reads Linear first; Tracker Phase text must point at repo + brief fields.
 - **Auth & portability:** Skill assumes Linear MCP connected; conventions must say what to do when missing.
 - **State taxonomy mismatch:** Mapping must be configurable in Project conventions (init), not hard-coded English names.
 - **Permissions:** Creating many issues / assigning Cursor may need admin-connected integration.
@@ -362,14 +358,14 @@ Starred items that blocked the future spec:
 
 1. **\*Source of truth:** **Only in the repo** after a spec folder exists. Linear = tracker.
 2. **\*Primary user:** Mostly Cursor users; also Linear-only users. Ideal: review specs from Linear — pursue via **one-way mirror / pointer**, not dual-edited AC (sync difficulty acknowledged).
-3. **\*Subtask granularity:** **Phases as subtasks**; other subtasks may exist; optional nest phases under an Implementation child (M2+).
-4. **\*When to create children:** **Not before the plan.** Prefer during plan change/review sync; else at/just before first phase implement. Optimize for **least user work**.
-5. **\*Cloud agent:** After multi-subagent — **native assign / `@Cursor` + brief-quality child text** is enough for v1; skill does not need its own agent starter. Multi-subagent already owns brief/env; this feature wires Linear kickoff.
-6. **Auto vs ask:** Inferred: **auto** status/structure writes on gate/plan changes (least user work; matches SDD auto-continue); keep explicit reconcile for recovery. Confirm once at enable / missing conventions if needed.
+3. **\*Subtask granularity:** **Tracker Phases map to plan phases**; other Linear work may exist; direct linkage to the Tracker Spec is the default.
+4. **\*When to create Tracker Phases:** **Not before the plan.** Prefer during plan change/review; else at/just before first phase implement. Optimize for **least user work**.
+5. **\*Cloud agent:** After multi-subagent — **native assign / `@Cursor` + brief-quality Tracker Phase text** is enough for v1; skill does not need its own agent starter. Multi-subagent already owns brief/env; this feature wires Linear kickoff.
+6. **Auto vs ask:** **Selective automatic** writes on gate/phase changes; keep explicit `/spec linear sync` for create/repair. Ask when required conventions or ownership information is missing.
 7. **Team conventions:** **No** existing map. Candidate for **project init** → `spec_docs/README.md` Project conventions.
 8. **Multi-player conflict:** *Still open* — recommend warn-in-Cursor + S4-style stop before overwrite; do not silent-overwrite from repo.
-9. **Scope of v1 ranking:** *Still open* — strawman priority: create-from → phase children + status → cloud-ready text → optional Document mirror → auto-delegate later.
-10. **Thin specs:** **No-op on children** so Linear reflects the (planless) spec.
+9. **Scope of v1 ranking:** *Still open* — strawman priority: create-from → Tracker Phases + status → cloud-ready text → optional Document mirror → auto-delegate later.
+10. **Thin specs:** **No-op on Tracker Phases** so Linear reflects the (planless) spec.
 
 ---
 
@@ -379,18 +375,18 @@ Starred items that blocked the future spec:
 
 1. Confirm Q8: warn vs stop vs ignore when Linear body is edited after link?
 2. Rank the four todo bullets for must-have vs later (Q9).
-3. After archive: parent auto-Done? Deferred phase children?
-4. Optional Implementation container by default, or flat phase children under the parent?
+3. After archive: Tracker Spec auto-Done? Deferred Tracker Phases?
+4. Optional Implementation container, or flat Tracker Phases directly under the Tracker Spec?
 5. How rich is the Linear Document / mirror for Linear-only review (TL;DR only vs goals+AC vs full `spec.md`)?
 
 ### Sync doctrine
 
-6. Freeze default: sync children as soon as plan exists vs only at first implement?
-7. On `spec.md` revision after children exist: comment-only vs also regenerate Document?
+6. Freeze default: create Tracker Phases as soon as plan exists vs only at first implement?
+7. On `spec.md` revision after Tracker Phases exist: comment-only vs also regenerate Document?
 
 ### Mapping / conventions
 
-8. Parent rollup when some children Deferred?
+8. Tracker Spec rollup when some Tracker Phases are Deferred?
 9. Exact Project conventions schema for Linear states/labels/team (for init)?
 
 ### Cloud agent

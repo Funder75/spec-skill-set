@@ -6,28 +6,30 @@ Phases for [spec.md](./spec.md).
 
 ## Progress overview
 
-Work-split items 2 and 4’s cloud-ready body are one phase (child description). Document mirror, conflict stop, and operator README are one later phase.
+Work-split items 2 and 4’s cloud-ready body are one phase (Tracker Phase description). Document mirror, conflict stop, and operator README are one later phase.
 
 | Phase | Status | Name | Tier | Depends on | Combinable with |
 | ----- | ---- | ------ | ---- | ---------- | --------------- |
 | **1** | Not started | Conventions and create-from link-back | Medium | — | — |
-| **2** | Not started | Marked children and cloud-ready bodies | High | 1 | — |
-| **3** | Not started | Status mirror, reconcile, archive | High | 2 | 4 |
+| **2** | Not started | Tracker Phases and cloud-ready bodies | High | 1 | — |
+| **3** | Not started | Selective status updates, explicit sync, archive | High | 2 | 4 |
 | **4** | Not started | Document mirror, conflict stop, README | Medium | 1 | 3 |
 
 ```mermaid
 flowchart LR
-  P1[1 Conventions / link-back] --> P2[2 Children / cloud bodies]
+  P1[1 Conventions / link-back] --> P2[2 Tracker Phases / cloud bodies]
   P1 --> P4[4 Document / conflict / README]
-  P2 --> P3[3 Status / reconcile / archive]
+  P2 --> P3[3 Selective status / explicit sync / archive]
   P3 -.->|combinable| P4
 ```
 
 ## Phase 1 — Conventions and create-from link-back
 
+**Tracker phase:** n/a
+
 **Goal:** Create-from can link a Linear issue to a new folder without rewriting the issue body, using conventions and a shared sync helper.
 
-**Covers:** G1 (create from linear), G7 (repo canonical), R1 (conventions gate), R2 (no body rewrite), R3 (first link back), R20 (routing entry), R21 (mcp session)
+**Covers:** G1 (create from linear), G7 (repo canonical), R1 (conventions gate), R2 (no body rewrite), R3 (first link back), R20 (routing entry), R21 (mcp session), R22 (reference gate)
 
 **Read first:**
 
@@ -36,46 +38,49 @@ flowchart LR
 - [business-logic.md › R3 (first link back)](./business-logic.md#r3-first-link-back)
 - [business-logic.md › R20 (routing entry)](./business-logic.md#r20-routing-entry)
 - [business-logic.md › R21 (mcp session)](./business-logic.md#r21-mcp-session)
+- [business-logic.md › R22 (reference gate)](./business-logic.md#r22-reference-gate)
 - [business-logic.md › Create-from and link-back](./business-logic.md#create-from-and-link-back)
 - [contracts.md › Linear conventions](./contracts.md#linear-conventions-project-conventions--work-items)
-- [contracts.md › Sync ids in spec.md](./contracts.md#sync-ids-in-specmd)
+- [contracts.md › Tracker Spec identity](./contracts.md#tracker-spec-identity)
 - [contracts.md › Link-back](./contracts.md#link-back)
 - [contracts.md › Linear MCP get_issue](./contracts.md#linear-mcp-get_issue)
 - [contracts.md › Linear MCP save_issue](./contracts.md#linear-mcp-save_issue)
-- [contracts.md › Linear MCP save_comment](./contracts.md#linear-mcp-save_comment)
+- [contracts.md › Linear MCP save_comment](./contracts.md#linear-mcp-save-comment)
 
 **Tier:** Medium — first Linear write-back path; MCP ops and field tables are already specified
 
-**Not in this phase:** Marked children; status sync; Document create/regenerate; conflict fingerprint compare; plugin root README Linear section
+**Not in this phase:** Tracker Phases; status updates; Document create/regenerate; plugin root README Linear section
 
 **Deliverables:**
 
-- `skills/spec/templates/spec-docs-readme.md` — extend: Work items slots for team, fetch blurb, Progress/phase state maps, optional design label and default `[repo=…]`
-- `skills/spec/templates/spec.md` — extend: machine fields near `Work item` for Document id and conflict fingerprint (placeholders until first link fills them)
-- `skills/spec/stages/linear-sync.md` — new, because: shared sync doctrine reused by create-spec, plan, implement, and reconcile (lifecycle boundary)
+- `skills/spec/templates/spec-docs-readme.md` — extend: Work items slots for `Linear project: <id> | n/a`, team, fetch blurb, Tracker Spec/Tracker Phase state maps, optional design label and default `[repo=…]`
+- `skills/spec/templates/spec.md` — keep tracker-agnostic `Work item`; add machine fields near it for Tracker Spec URL, Document id, and Document URL (filled after Linear returns them)
+- `skills/spec/stages/linear-sync.md` — new, because: shared update doctrine reused by create-spec, plan, implement, and explicit sync (lifecycle boundary)
 - `skills/spec/stages/create-spec.md` — extend: after `Work item` is set, call link-back when write-back is allowed; keep existing AC→goal mapping
-- `skills/spec/SKILL.md` — extend: Infer table row for `/spec linear sync` (and equivalent reconcile wording) → `stages/linear-sync.md`
+- `skills/spec/SKILL.md` — extend: Infer table row for `/spec linear sync` (and equivalent create/repair wording) → `stages/linear-sync.md`
 
 **Approach** (advisory):
 
 1. Fill Work items schema in `templates/spec-docs-readme.md` from the contracts field table. Keep live project fill out of this phase (init-project todo).
-2. Add `linear-sync.md` with **Preconditions** (R1 (conventions gate), R21 (mcp session)), **Link-back**, and stubs or “later phase” pointers for Child sync, Status, Document, Conflict, Reconcile so later phases extend one file.
-3. Wire create-spec Write: after successful `Work item` set, invoke link-back. On missing MCP/conventions, ask once and still allow `spec.md` write without inventing a team.
-4. Link-back: `save_comment` and/or append `links` to `spec_docs/<slug>/`; optional `addLabels` for design-stage label. Never set parent `description` to the spec.
-5. Add Infer routing for reconcile. Reconcile body can stay “not implemented until phase 3” if the route exists.
+2. Add `linear-sync.md` with **Preconditions** (R1 (conventions gate), R21 (mcp session), R22 (reference gate)), **Link-back**, and stubs or “later phase” pointers for Tracker Phase, selective Status, Document, Conflict, and Explicit sync so later phases extend one file.
+3. Wire create-spec Write: after successful `Work item` set, invoke link-back. On missing MCP/conventions, warn once and still allow `spec.md` write without inventing a team.
+4. Link-back: `save_comment` with repo path text; optional `addLabels`; `links` only with a real URI. Write the returned Tracker Spec URL into `spec.md`. Never set Tracker Spec `description` to the spec.
+5. Add Infer routing for explicit sync. Its full create/repair behavior lands in phase 3.
 
 Do:
 
 ```text
 # link-back may touch
-save_comment(issueId, body with repo path)
-save_issue(id, links append, addLabels)
+save_comment(issueId, body with repo path text)
+save_issue(id, addLabels; links only if real URI)
+# then write Tracker Spec URL into spec.md
 ```
 
 Do not:
 
 ```text
 save_issue(id, description: <full spec.md>)
+save_issue(id, links: [{url: "spec_docs/foo/"}])
 ```
 
 ### Acceptance scenarios
@@ -84,18 +89,18 @@ save_issue(id, description: <full spec.md>)
   - Journey: Create a spec from a Linear issue, steps 1–3
   - Given Linear MCP works and Work items conventions are filled
   - When the user creates a spec from `TEAM-123`
-  - Then `spec.md` has `Work item` set, Linear gets a comment and/or link to `spec_docs/<slug>/`, and the issue description is unchanged
+  - Then `spec.md` has `Work item` set and the Tracker Spec URL stored, Linear gets a comment naming the repo path, no fake `links` URI is invented, and the issue description is unchanged
 
 - **A1.2 — Missing conventions stops write-back only**
   - Journey: Create a spec from a Linear issue, Goes wrong (MCP or conventions missing)
-  - Given Work items conventions are still the placeholder, or Linear MCP is missing
+  - Given the folder would be linked, and Work items conventions are still the placeholder, or Linear MCP is missing
   - When create-from would write back
-  - Then the skill asks once, skips write-back, and does not invent a team or half-link
+  - Then the skill warns once, skips write-back, and does not invent a team or half-link
 
-- **A1.3 — Reconcile route exists**
+- **A1.3 — Explicit sync route exists**
   - Journey: —
   - Given the skill Infer table
-  - When the user says `/spec linear sync` (or equivalent reconcile wording)
+  - When the user says `/spec linear sync` (or equivalent create/repair wording)
   - Then the skill opens `stages/linear-sync.md` rather than inventing a second doctrine
 
 ### Done when
@@ -103,6 +108,7 @@ save_issue(id, description: <full spec.md>)
 - [ ] Tier verify passes (Project conventions in `spec_docs/README.md`)
 - [ ] A1.1–A1.3 pass
 - [ ] Create-spec still maps Linear AC onto goals’ `Source:` lines and does not paste the raw payload into `spec.md`
+- [ ] Tracker Spec URL is written into `spec.md` only after Linear returns it; no bare-path `links`
 - [ ] No HTML author comments or `{{…}}` left in touched skill/template files
 
 ### Close-out
@@ -111,91 +117,111 @@ save_issue(id, description: <full spec.md>)
 - Deviations:
 - Follow-ups:
 
-## Phase 2 — Marked children and cloud-ready bodies
+## Phase 2 — Tracker Phases and cloud-ready bodies
 
-**Goal:** After a plan exists, sync creates or updates one marked Linear child per dispatch unit with brief-quality text; planless folders stay childless.
+**Tracker phase:** n/a
 
-**Covers:** G2 (phase children), G4 (cloud ready children), G6 (thin noop), R4 (freeze before plan), R5 (thin noop), R6 (marked only), R7 (unmanaged leave), R8 (idempotent update), R9 (cancel removed), R10 (flat children), R15 (cloud ready body), R16 (human gated launch)
+**Goal:** After a plan exists, the skill creates or updates one Tracker Phase per dispatch unit with brief-quality text and stores its id in the plan; planless folders have no Tracker Phases.
+
+**Covers:** G2 (tracker phases), G4 (cloud ready phases), G6 (thin noop), R4 (freeze before plan), R5 (thin noop), R6 (repo-stored phase identity), R7 (unreferenced leave), R8 (direct and selective update), R9 (cancel removed), R10 (flat phases), R15 (cloud ready body), R16 (human gated launch), R22 (reference gate)
 
 **Read first:**
 
 - [business-logic.md › R4 (freeze before plan)](./business-logic.md#r4-freeze-before-plan)
 - [business-logic.md › R5 (thin noop)](./business-logic.md#r5-thin-noop)
-- [business-logic.md › R6 (marked only)](./business-logic.md#r6-marked-only)
-- [business-logic.md › R7 (unmanaged leave)](./business-logic.md#r7-unmanaged-leave)
-- [business-logic.md › R8 (idempotent update)](./business-logic.md#r8-idempotent-update)
+- [business-logic.md › R6 (repo-stored phase identity)](./business-logic.md#r6-repo-stored-phase-identity)
+- [business-logic.md › R7 (unreferenced leave)](./business-logic.md#r7-unreferenced-leave)
+- [business-logic.md › R8 (direct and selective update)](./business-logic.md#r8-direct-and-selective-update)
 - [business-logic.md › R9 (cancel removed)](./business-logic.md#r9-cancel-removed)
-- [business-logic.md › R10 (flat children)](./business-logic.md#r10-flat-children)
+- [business-logic.md › R10 (flat phases)](./business-logic.md#r10-flat-phases)
 - [business-logic.md › R15 (cloud ready body)](./business-logic.md#r15-cloud-ready-body)
 - [business-logic.md › R16 (human gated launch)](./business-logic.md#r16-human-gated-launch)
-- [business-logic.md › Phase child sync](./business-logic.md#phase-child-sync)
-- [contracts.md › Spec sync marker](./contracts.md#spec-sync-marker-marked-child)
-- [contracts.md › Marked child body](./contracts.md#marked-child-body-cloud-ready)
-- [contracts.md › Sync children](./contracts.md#sync-children)
+- [business-logic.md › R22 (reference gate)](./business-logic.md#r22-reference-gate)
+- [business-logic.md › Tracker Phase create and update](./business-logic.md#tracker-phase-create-and-update)
+- [contracts.md › Tracker Spec identity](./contracts.md#tracker-spec-identity)
+- [contracts.md › Tracker Phase identity](./contracts.md#tracker-phase-identity)
+- [contracts.md › Tracker Phase body](./contracts.md#tracker-phase-body-cloud-ready)
+- [contracts.md › Create or update Tracker Phase](./contracts.md#create-or-update-tracker-phase)
 - [contracts.md › Native Cursor assign / @Cursor](./contracts.md#native-cursor-assign--cursor)
 
-**Tier:** High — many interacting ownership rules; child body is a contract other agents rely on
+**Tier:** High — persisted identity and ownership rules interact; Tracker Phase body is a contract other agents rely on
 
-**Not in this phase:** Parent/child status maps; progress comments; Document mirror; conflict stop; reconcile apply UI beyond what child sync needs for create/update/cancel
+**Not in this phase:** Tracker Spec/Tracker Phase status updates; progress comments; Document mirror; conflict stop; full explicit-sync repair behavior
 
 **Deliverables:**
 
-- `skills/spec/stages/linear-sync.md` — extend: Child sync (create/update/cancel-by-marker), child body builder aligned with implement Phase brief
-- `skills/spec/stages/plan.md` — extend: after plan write or phase-list change, trigger child sync when linked and conventions allow
-- `skills/spec/stages/implement.md` — extend: note that marked child bodies reuse Phase brief / Env checklist fields; fallback child sync at or just before first implement when plan exists and children are missing
+- `skills/spec/templates/implementation-plan.md` — add `Tracker phase: n/a` to every phase packet
+- `skills/spec/stages/linear-sync.md` — extend: create/update/cancel by repo-stored id; Tracker Phase body builder aligned with implement Phase brief
+- `skills/spec/stages/plan.md` — extend: after plan write or dispatch-unit change, create only missing Tracker Phases when linked and conventions allow; preserve ids through renames/renumbering
+- `skills/spec/stages/implement.md` — extend: note that Tracker Phase bodies reuse Phase brief / Env checklist fields; fallback create at or just before first implement when a phase still says `n/a`
 
 **Approach** (advisory):
 
-1. Build dispatch units from the plan overview: one unit per phase, or one unit for a combinable group (same meaning as multi-subagent).
-2. Match existing children by `<!-- spec-sync: slug=… unit=… -->`. Same key → update. Missing → create with `parentId` = linked parent. No plan → no-op children.
-3. Leave unmarked children untouched. Removed units → cancel marked child + comment; never silent delete.
-4. Body after the marker: canon banner, unit identity, Done when summary, paths / Read first cues, stop-after-this-unit, env cues, optional `[repo=…]` from conventions.
-5. Do not auto-assign Cursor. Skill may mention “mark ready to delegate” as status/label only.
-
-Marker shape (binding):
-
-```text
-<!-- spec-sync: slug=linear-integration unit=2 -->
-```
+1. Routine hooks skip Tracker Phase writes when `Work item` is `n/a` (R22 (reference gate)). Explicit sync may create the Tracker Spec first. If MCP is missing, warn once and skip.
+2. Build dispatch units from the plan overview: one unit per phase, or one unit for a combinable group.
+3. Ensure each phase has `Tracker phase: <id> | n/a`. For a combinable group, every phase stores the same value.
+4. If the value is `n/a`, create one Tracker Phase with Linear API `parentId` = Tracker Spec id, then persist the returned id on every phase in that unit. Otherwise update directly by id.
+5. Leave Linear work not referenced in the repo untouched. When removing a referenced unit, cancel + comment before deleting its field; never silent-delete.
+6. Body: canon banner, unit identity, Done when summary, paths / Read first cues, stop-after-this-unit, env cues, optional `[repo=…]` from conventions.
+7. Do not auto-assign Cursor. Skill may mention “mark Tracker Phase ready to delegate” as status/label only.
 
 ### Acceptance scenarios
 
-- **A2.1 — Plan creates marked children**
-  - Journey: Plan phases appear as Linear children, steps 1–2
+- **A2.1 — Plan creates Tracker Phases and stores ids**
+  - Journey: Plan phases appear as Tracker Phases, steps 1–2
   - Given a linked folder with a new `implementation-plan.md` and write-back allowed
-  - When plan sync runs
-  - Then one marked child exists per dispatch unit with the sync marker and brief-quality body
+  - When plan creation runs
+  - Then one Tracker Phase exists per dispatch unit with a brief-quality body, and each phase stores its returned id
 
-- **A2.2 — Thin / planless is a no-op for children**
-  - Journey: Plan phases appear as Linear children, step 4
+- **A2.2 — Thin / planless is a no-op for Tracker Phases**
+  - Journey: Plan phases appear as Tracker Phases, step 4
   - Given a linked folder with no `implementation-plan.md`
   - When structure sync runs
-  - Then no phase children are created
+  - Then no Tracker Phases are created
 
-- **A2.3 — Re-sync is idempotent; unmanaged left alone**
-  - Journey: Plan phases appear as Linear children, Goes wrong (duplicates / human children)
-  - Given marked children already exist and an unmarked human child is present
-  - When sync runs again
-  - Then marked children update in place with no duplicates, and the unmarked child is unchanged
+- **A2.3 — Stored ids update directly; unreferenced work is left alone**
+  - Journey: Plan phases appear as Tracker Phases, Goes wrong (duplicates / human work)
+  - Given Tracker Phase ids already exist and unrelated Linear work is present
+  - When a source field changes
+  - Then only the referenced Tracker Phase updates in place, with no duplicate, and unrelated work is unchanged
 
 - **A2.4 — Removed unit cancels with comment**
   - Journey: —
-  - Given a marked child for a unit that left the plan
-  - When sync runs
-  - Then that child is canceled with a reason comment, not silently deleted
+  - Given a Tracker Phase id for a unit being removed from the plan
+  - When the plan edit is applied
+  - Then that Tracker Phase is canceled with a reason comment before its repo reference is removed
 
-- **A2.5 — Child body forbids inventing scope**
+- **A2.5 — Tracker Phase body forbids inventing scope**
   - Journey: Start cloud work from Linear, Goes wrong (stale Linear AC)
-  - Given a refreshed marked child
-  - When an agent reads the child description
+  - Given a refreshed Tracker Phase
+  - When an agent reads its description
   - Then the body states the repo is canonical and Done when bounds scope; no skill Cloud Agent launcher is introduced
+
+- **A2.6 — Routine hook does not create implicitly**
+  - Journey: —
+  - Given a folder with `Work item: n/a`
+  - When an unrelated plan or phase hook runs
+  - Then no Linear writes run and no Tracker Phases are created; explicit `/spec linear sync` remains available to create them
+
+- **A2.7 — Linked but MCP missing warns**
+  - Journey: —
+  - Given a linked folder and Linear MCP unavailable
+  - When a Tracker Phase create/update would run
+  - Then the skill warns once and skips write-back
+
+- **A2.8 — Combined phases share one id**
+  - Journey: Plan phases appear as Tracker Phases
+  - Given phases 2 and 3 are one combinable dispatch unit
+  - When their Tracker Phase is created
+  - Then both phase sections store the same returned Tracker Phase id
 
 ### Done when
 
 - [ ] Tier verify passes (Project conventions in `spec_docs/README.md`)
-- [ ] A2.1–A2.5 pass
-- [ ] Child body field list stays aligned with `stages/implement.md` › Phase brief / Env checklist
-- [ ] Children are never created while `implementation-plan.md` is missing
+- [ ] A2.1–A2.8 pass
+- [ ] Tracker Phase body field list stays aligned with `stages/implement.md` › Phase brief / Env checklist
+- [ ] Tracker Phases are never created while `implementation-plan.md` is missing
+- [ ] Unlinked folders never call Linear discovery
 
 ### Close-out
 
@@ -203,73 +229,75 @@ Marker shape (binding):
 - Deviations:
 - Follow-ups:
 
-## Phase 3 — Status mirror, reconcile, and archive gate
+## Phase 3 — Selective status updates, explicit sync, and archive gate
 
-**Goal:** Linear parent and marked-child states follow repo Progress and plan status automatically; reconcile recovers drift; archive respects marked-child completion.
+**Tracker phase:** n/a
 
-**Covers:** G3 (status mirror), R8 (idempotent update), R11 (status mirror), R12 (auto tracker writes), R13 (progress log), R18 (archive gate)
+**Goal:** Tracker Spec and Tracker Phase states follow repo Progress and plan status through selective updates; explicit sync creates or repairs missing references; archive respects referenced Tracker Phase completion.
+
+**Covers:** G3 (status mirror), R8 (direct and selective update), R11 (status mirror), R12 (selective tracker writes), R13 (progress log), R18 (archive gate)
 
 **Read first:**
 
 - [business-logic.md › R11 (status mirror)](./business-logic.md#r11-status-mirror)
-- [business-logic.md › R12 (auto tracker writes)](./business-logic.md#r12-auto-tracker-writes)
+- [business-logic.md › R12 (selective tracker writes)](./business-logic.md#r12-selective-tracker-writes)
 - [business-logic.md › R13 (progress log)](./business-logic.md#r13-progress-log)
 - [business-logic.md › R18 (archive gate)](./business-logic.md#r18-archive-gate)
-- [business-logic.md › Status sync and progress log](./business-logic.md#status-sync-and-progress-log)
+- [business-logic.md › Selective status update and progress log](./business-logic.md#selective-status-update-and-progress-log)
 - [business-logic.md › Archive gate](./business-logic.md#archive-gate)
 - [business-logic.md › States and transitions](./business-logic.md#states-and-transitions)
 - [contracts.md › Progress-log marker](./contracts.md#progress-log-marker)
-- [contracts.md › Sync status](./contracts.md#sync-status)
-- [contracts.md › Reconcile](./contracts.md#reconcile)
+- [contracts.md › Selective status update](./contracts.md#selective-status-update)
+- [contracts.md › Explicit sync](./contracts.md#explicit-sync)
 
 **Tier:** High — lifecycle across gates; append-only timeline; archive incomplete-board ask
 
-**Not in this phase:** Document regenerate; conflict fingerprint; child create rules already shipped in phase 2; plugin README
+**Not in this phase:** Document regenerate; Tracker Phase create rules already shipped in phase 2; plugin README
 
 **Deliverables:**
 
-- `skills/spec/stages/linear-sync.md` — extend: Status sync, progress-log comments, Reconcile (diff markers vs plan; propose create/cancel/rename; apply on confirm)
-- `skills/spec/stages/implement.md` — extend: on phase status changes and archive, call status sync; no confirm prompt on every Done; archive gate before parent Done
-- `skills/spec/stages/plan.md` — extend: Progress/gate write-back hooks if not already covered when plan lands (parent map entry)
+- `skills/spec/stages/linear-sync.md` — extend: selective status update, progress-log comments, and explicit sync (create `n/a`, update referenced ids, repair invalid references, ask for missing information)
+- `skills/spec/stages/implement.md` — extend: on a phase status change, update only that Tracker Phase; on archive, apply the gate before Tracker Spec Done
+- `skills/spec/stages/plan.md` — extend: on a Progress/gate change, update only the Tracker Spec
 
 **Approach** (advisory):
 
-1. Map `Progress` → parent state/labels and plan phase status → marked child state via conventions maps. Linear never writes the plan.
-2. On a real Progress or marked-child status delta, `save_comment` a **new** parent comment with `<!-- spec-sync-progress: slug=… -->`. Never edit prior progress comments. Skip comments on no-op reconcile.
-3. Day-to-day sync stays automatic (R12 (auto tracker writes)). `/spec linear sync` shows a create/cancel/rename plan and applies only after the user confirms that reconcile plan.
-4. Archive: parent Done only when every marked child is Done or Deferred; otherwise ask.
+1. Map `Progress` → Tracker Spec state/labels and phase status → Tracker Phase state via conventions maps. Linear never writes the plan.
+2. On a gate change, update only the Tracker Spec. On a phase-status change, update only the referenced Tracker Phase. On a real delta, `save_comment` a **new** Tracker Spec comment with `<!-- spec-sync-progress: slug=… -->`.
+3. `/spec linear sync` is the explicit create/repair path. It processes repo fields, asks for missing information, and never becomes a prerequisite for routine selective writes.
+4. Archive: Tracker Spec Done only when every referenced Tracker Phase is Done or Deferred; otherwise ask.
 
 ### Acceptance scenarios
 
-- **A3.1 — Phase status mirrors to marked children**
+- **A3.1 — Phase status selectively mirrors to Tracker Phase**
   - Journey: Status stays aligned during implement, steps 1–2
-  - Given a linked plan with marked children and conventions maps filled
+  - Given a linked plan with Tracker Phase ids and conventions maps filled
   - When a phase moves `Started` / `Reviewing` / `Done` / `Blocked`
-  - Then the matching marked child state updates without a confirm prompt each time
+  - Then only that Tracker Phase state updates, without a confirm prompt or full sync
 
 - **A3.2 — Progress comment on real change only**
   - Journey: Status stays aligned during implement, step 2
-  - Given a real Progress or marked-child status change
-  - When status sync runs
-  - Then a new parent progress comment is posted; a second sync with no delta posts none
+  - Given a real Progress or Tracker Phase status change
+  - When its selective update runs
+  - Then a new Tracker Spec progress comment is posted; a repeated no-op update posts none
 
 - **A3.3 — Linear does not drive the plan**
   - Journey: Status stays aligned during implement, Goes wrong (Linear as driver)
-  - Given someone changes a Linear child state in the board
+  - Given someone changes a Tracker Phase state in Linear
   - When the skill runs
   - Then plan phase status and `Progress` are not overwritten from Linear
 
-- **A3.4 — Reconcile proposes structure fixes**
+- **A3.4 — Explicit sync creates and repairs**
   - Journey: —
-  - Given marker/plan drift (renumber or missing child)
+  - Given a `Tracker phase: n/a`, an invalid stored id, or missing required conventions
   - When the user runs `/spec linear sync`
-  - Then the skill proposes create/cancel/rename and does not silent-reshuffle before confirm
+  - Then the skill creates missing tracker work, updates referenced ids, or asks for the missing information; it does not infer ownership from titles
 
 - **A3.5 — Archive gate**
   - Journey: Status stays aligned during implement, End state / archive
-  - Given archive is confirmed but a marked child is still open
-  - When the skill would mark the parent Done
-  - Then it asks instead of silently completing the parent
+  - Given archive is confirmed but a referenced Tracker Phase is still open
+  - When the skill would mark the Tracker Spec Done
+  - Then it asks instead of silently completing the Tracker Spec
 
 ### Done when
 
@@ -284,11 +312,13 @@ Marker shape (binding):
 - Deviations:
 - Follow-ups:
 
-## Phase 4 — Document mirror, conflict stop, and operator README
+## Phase 4 — Document mirror, conflict policy, and operator README
 
-**Goal:** Linear-only readers get a regenerable Document mirror; human body edits stop overwrite; operators know local MCP sync vs `@Cursor` kickoff.
+**Tracker phase:** n/a
 
-**Covers:** G5 (document mirror), R14 (conflict stop), R17 (document mirror), R19 (no secrets), R21 (mcp session)
+**Goal:** Linear-only readers get a regenerable Document mirror; banners forbid Linear edits; operators know local MCP sync vs `@Cursor` kickoff.
+
+**Covers:** G5 (document mirror), R14 (conflict stop), R17 (document mirror), R19 (no secrets), R21 (mcp session), R22 (reference gate)
 
 **Read first:**
 
@@ -297,29 +327,31 @@ Marker shape (binding):
 - [business-logic.md › R19 (no secrets)](./business-logic.md#r19-no-secrets)
 - [business-logic.md › Conflict stop before mirror overwrite](./business-logic.md#conflict-stop-before-mirror-overwrite)
 - [contracts.md › Document mirror content](./contracts.md#document-mirror-content)
-- [contracts.md › Sync ids in spec.md](./contracts.md#sync-ids-in-specmd)
+- [contracts.md › Tracker Spec identity](./contracts.md#tracker-spec-identity)
 - [contracts.md › Linear MCP save_document / get_document](./contracts.md#linear-mcp-save_document--get_document)
 - [spec.md › Notes › Plugin README](./spec.md#notes)
 - [spec.md › D15 (document trigger)](./spec.md#d15-document-trigger--create-document-on-first-link-regenerate-when-tldr-or-goals-change)
-- [spec.md › D16 (conflict fingerprint)](./spec.md#d16-conflict-fingerprint--hash-the-parent-description-at-link-time-compare-before-overwrite)
+- [spec.md › D16 (no linear edits)](./spec.md#d16-no-linear-edits--do-not-change-binding-content-in-linear-skip-non-trivial-compare)
+- [spec.md › D20 (conflict choices)](./spec.md#d20-conflict-choices--regular-options-when-a-linear-prose-conflict-is-known)
+- [spec.md › Q1 (auto detect)](./spec.md#q1-auto-detect--should-v1-add-any-automatic-linear-body-edit-detection)
 - [spec.md › D19 (mcp session)](./spec.md#d19-mcp-session--tracker-write-back-only-in-sessions-with-working-linear-mcp)
 
-**Tier:** Medium — conflict stop before Document overwrite; README is mechanical once the operator model is fixed
+**Tier:** Medium — Document create/regenerate and banners; README is mechanical once the operator model is fixed
 
-**Not in this phase:** Child structure rules; status maps; inventing a skill Cloud Agent launcher; filling adopter Project conventions (init-project)
+**Not in this phase:** Tracker Phase structure rules; status maps; inventing a skill Cloud Agent launcher; filling adopter Project conventions (init-project); non-trivial conflict fingerprinting (D16 (no linear edits))
 
 **Deliverables:**
 
-- `skills/spec/stages/linear-sync.md` — extend: Conflict check (description hash), Document create on first link, regenerate when TL;DR or goals change; persist Document id + fingerprint in `spec.md`
+- `skills/spec/stages/linear-sync.md` — extend: Document create on first link, regenerate when TL;DR or goals change; persist Document id + URL in `spec.md`; conflict check offers D20 (conflict choices) when a conflict is known (no required hash tripwire)
 - `skills/spec/stages/create-spec.md` — extend: first-link path also creates Document when write-back allowed (D15 (document trigger))
-- `README.md` — extend: Linear (or Work items) operator section — connect Linear MCP in IDE; fill conventions; create-from/sync locally; native `@Cursor` for cloud; do not expect cloud alone to sync Linear; optional note on cloud Linear MCP OAuth
+- `README.md` — extend: Linear (or Work items) operator section — connect Linear MCP in IDE; fill conventions; create-from/sync locally; native `@Cursor` for cloud; do not expect cloud alone to sync Linear; do not edit Linear as binding AC; optional note on cloud Linear MCP OAuth
 
 **Approach** (advisory):
 
-1. On first successful link: hash parent `description`, store fingerprint in `spec.md`; create Document (TL;DR + goals/AC summary + mirror banner); store Document id.
-2. Before Document regenerate (or any body overwrite): re-fetch, re-hash, compare. Match → proceed. Mismatch → warn and stop until the person chooses; on resolve, refresh the stored hash. Status-only updates and new progress comments that leave the body alone may continue.
-3. Regenerate Document when TL;DR or goals change; not on status-only ticks. Never pull Linear prose into `spec.md`.
-4. Plugin README documents local MCP write-back vs Linear product kickoff (D19 (mcp session)).
+1. On first successful link: create Document (TL;DR + goals/AC summary + “do not edit in Linear” banner); store Document id and URL in `spec.md`.
+2. Regenerate Document from the repo when TL;DR or goals change; not on status-only ticks. Never pull Linear prose into `spec.md`.
+3. If a conflict is known, warn and offer D20 (conflict choices). Do not add a hash tripwire unless Q1 (auto detect) lands something trivial.
+4. Plugin README documents local MCP write-back vs Linear product kickoff (D19 (mcp session)) and the no-edit-in-Linear rule (D16 (no linear edits)).
 
 ### Acceptance scenarios
 
@@ -327,7 +359,7 @@ Marker shape (binding):
   - Journey: Create a spec from a Linear issue, step 4; Linear-only review of design, steps 1–2
   - Given write-back allowed on first link
   - When link-back completes
-  - Then a Linear Document exists on the parent with mirror banner, TL;DR, and goals/AC summary, and its id is stored in `spec.md`
+  - Then a Linear Document exists on the Tracker Spec with mirror banner, TL;DR, and goals/AC summary, and its id and URL are stored in `spec.md`
 
 - **A4.2 — Regenerate on summary change, not status-only**
   - Journey: Linear-only review of design, step 3
@@ -335,11 +367,11 @@ Marker shape (binding):
   - When sync runs after that change versus after a status-only change
   - Then Document content refreshes for the summary change and does not regenerate for status-only
 
-- **A4.3 — Conflict stop before overwrite**
+- **A4.3 — Banner forbids Linear edits; known conflict uses choices**
   - Journey: Linear-only review of design, Goes wrong (edit as AC truth)
-  - Given a human edited the parent Linear description after link
-  - When Document regenerate would run
-  - Then the skill warns, stops overwrite, and still allows status-only updates that leave the body alone
+  - Given a Document mirror on a linked Tracker Spec
+  - When an operator reads the Document or a known conflict is raised
+  - Then the banner states do not edit binding content in Linear, and a known conflict offers D20 (conflict choices) without a required hash tripwire
 
 - **A4.4 — Operator README states kickoff ≠ sync**
   - Journey: Start cloud work from Linear, Goes wrong (expect cloud alone to sync)
@@ -351,8 +383,9 @@ Marker shape (binding):
 
 - [ ] Tier verify passes (Project conventions in `spec_docs/README.md`)
 - [ ] A4.1–A4.4 pass
-- [ ] Document and child/comment payloads stay summaries — no secrets or full private dumps
-- [ ] Missing Linear MCP still asks/skips write-back without failing an implement unit solely for sync
+- [ ] Document, Tracker Phase, and comment payloads stay summaries — no secrets or full private dumps
+- [ ] Missing Linear MCP still warns/skips write-back without failing an implement unit solely for sync
+- [ ] No body-hash fingerprint field is required in `spec.md`
 
 ### Close-out
 
@@ -363,4 +396,4 @@ Marker shape (binding):
 ## Risks
 
 - **Cloud checkout status lag.** Plan status on a cloud agent checkout may not match Linear until merge and a later MCP-capable sync. Mitigation: implement/status copy notes catch-up; do not treat Linear as ahead of the repo.
-- **Adopter conventions empty.** Until init-project or a human fills Work items, write-back stays ask-and-skip. Mitigation: schema lands in the template in phase 1; do not invent team maps in skill code.
+- **Adopter conventions empty.** Until init-project or a human fills Work items, write-back stays warn-and-skip on linked folders. Mitigation: schema lands in the template in phase 1; do not invent team maps in skill code.
