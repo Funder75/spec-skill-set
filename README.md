@@ -137,7 +137,6 @@ Destination: ~/.cursor/skills/spec
 
 Before changing anything:
 - Confirm Source contains SKILL.md, stages/, and templates/. If SKILL.md is missing, stop. Do not delete or copy anything.
-- Copy the destination to ~/.cursor/skills/spec.bak-<date>. Replace an older backup only after telling me.
 - List every destination file that is not in the source. Wait for me to confirm those deletions. Do not delete until I confirm.
 
 Then replace the destination with the source:

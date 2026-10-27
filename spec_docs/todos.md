@@ -143,3 +143,9 @@ When create-spec detects a UI-primary feature, offer once, in its own message, a
 **Borrowed from:** BMAD retrospective and Superpowers finishing-a-branch.
 
 After converge (A1), ask one question: "Anything to add to **Project conventions**?" Examples are a missing verify command, a new hotspot, or a principle. If the answer is yes, route to `fill-conventions.md`. This makes each finished spec improve the next one.
+
+## The conventions should cover things that should included in specs or offered as an option at spec creation interview
+
+For example: 
+- Always include documentation in code for public interfaces
+- Update readme.md and other documentation files
