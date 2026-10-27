@@ -40,6 +40,8 @@ Full path:
 
 Invoke the **spec** skill with `/spec`. Examples: `/spec explore`, create a spec from a note or a work item (optionally `as lite`, `as bugfix`, or both), `/spec next`, promote to tech specs, promote to an implementation plan, implement the next phase, audit or review a spec, archive, sync with Linear.
 
+To check a folder for mechanical doc defects without an audit, run `/bin/sh skills/spec/scripts/validate spec_docs/<slug>/` from the repo (or the same script under the installed skill root). Create-spec, plan, and audit call it first when they can; see the [project README](../README.md) › Validate a folder.
+
 Do not edit the skill to record progress.
 
 ## Reading these docs

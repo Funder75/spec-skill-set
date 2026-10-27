@@ -239,13 +239,24 @@ For lite, run Link-back after the spec exists; Progress → Tracker Spec for `pl
 
 ## Self-review
 
-After writing `<slug>.spec.md` (and the lite plan, when applicable) and before asking for file review, check:
+After writing `<slug>.spec.md` (and the lite plan, when applicable) and before asking for file review:
+
+1. Resolve the validate script at `<skill-root>/scripts/validate` (skill-root is the directory that contains `SKILL.md` and `stages/`). Run it on `spec_docs/<slug>/`. A person may run the same path by hand.
+2. **Script ran** (exit 0 or a findings exit). Fix every finding. Do not skip the script because it reported findings. Then only check judgment items below.
+3. **Script failed to run** (missing, not executable, or the shell could not launch it — not a findings exit). Fall back to the manual mechanical list below. Do not treat a findings exit as fallback.
+
+**Judgment (always, after a successful script run or during manual fallback):**
+
+1. Contradictions between goals, non-goals, journeys (feature) or behaviour lists (bugfix), and decisions. `Kind` is set.
+2. Scope leaks into **Non-goals** (or the reverse).
+3. `Depth` is set. For lite: doc index has no `pending` tech rows, no tech sibling files, and `<slug>.plan.md` exists with `Progress: plan`. Each plan phase has **Close** (`automated` or `human`) in the overview and on the phase, and a **Gates** table.
+
+**Manual mechanical review (fallback only — when the script failed to run):**
 
 1. Placeholders (`{{…}}`) or leftover HTML author comments.
-2. Contradictions between goals, non-goals, journeys (feature) or behaviour lists (bugfix), and decisions. `Kind` is set.
-3. Scope leaks into **Non-goals** (or the reverse).
-4. Bare ID citations (for example `G1` without `(short name)`).
-5. `Depth` is set. For lite: doc index has no `pending` tech rows, no tech sibling files, and `<slug>.plan.md` exists with `Progress: plan`. Each plan phase has **Close** (`automated` or `human`) in the overview and on the phase, and a **Gates** table.
+2. Bare ID citations (for example `G1` without `(short name)`).
+3. Unaccepted `[SUGGESTION:` markers.
+4. Bare basenames (`implementation-plan.md`, `spec.md`, `business-logic.md`, `contracts.md`, `ui.md`, `data.md`).
 
 Fix cheap failures in the same turn. Call out failures that need a person in the review ask.
 

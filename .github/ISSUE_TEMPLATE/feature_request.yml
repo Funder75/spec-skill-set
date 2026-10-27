@@ -1,0 +1,40 @@
+name: Feature request
+description: Suggest an improvement to the Spec skill or plugin
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What friction or gap are you hitting?
+      placeholder: e.g. lite plans cannot express …
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: What should change? Prefer concrete stage/template behaviour over vague “make it smarter”.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Gates / Depth / Kind
+        - Stages or templates
+        - Install / plugin packaging
+        - Linear integration
+        - Docs
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Workarounds or other approaches you tried.
+    validations:
+      required: false

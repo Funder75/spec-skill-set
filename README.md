@@ -80,12 +80,23 @@ Authors walk the same loop the skill enforces (lite collapses design + thin plan
 
 More detail is in [`spec_docs/README.md`](spec_docs/README.md).
 
+### Validate a folder
+
+Create-spec, plan, and audit run a mechanical check first when the skill can launch it. You can run the same check by hand on any `spec_docs/<slug>/` folder:
+
+```bash
+/bin/sh skills/spec/scripts/validate spec_docs/<slug>/
+```
+
+Exit `0` means no mechanical findings. Non-zero prints one finding per line (placeholders, bare ID citations, Close/Gates mismatches, legacy bare basenames, and related checks). The script does not judge design quality. If it is missing or fails to launch, those stages fall back to their manual checklists; a findings exit is not a fallback.
+
 ### Tips
 
 - **Explore first when unsure.** `/spec explore` restates the ask and exits with no folder, a named Depth+slug, or a spike — without writing `spec_docs/`.
 - **Pick Kind on purpose.** Use `as bugfix` for defect fixes so create skips journeys and Work split. Leave feature (or omit Kind) for new behaviour.
 - **Pick Depth on purpose.** Use `lite` for small, low-risk work (including many bugfixes). Use `standard` for a normal fold-then-plan path. Reserve `full` when tech siblings and a multi-phase plan earn their keep.
 - **Keep tabs readable.** New folders use slug-prefixed names (`<slug>.spec.md`, `<slug>.plan.md`). Older archived folders may still use bare basenames until someone renames them by hand.
+- **Validate before you ask.** Run `skills/spec/scripts/validate` on a slug folder when you want a fast mechanical pass without starting an audit.
 - **Fill conventions early.** On first bootstrap, opt in to fill **Project conventions** while context is fresh. Later stages otherwise hit placeholders when they need a project fact. Say `/spec fill conventions` any time afterward to fill or update them — it is not limited to first bootstrap, and a stage that hits a placeholder will offer the same flow.
 - **Repo stays canonical.** Edit the markdown in `spec_docs/`. Linear (when used) mirrors links and status; do not treat tracker text as binding acceptance criteria.
 - **One open unit.** Implement one phase or combinable group at a time. Multi-phase plans dispatch fresh context per unit; do not parallelize implementers.
@@ -105,61 +116,7 @@ Optional tracker integration for linked `spec_docs/` folders. The repo stays can
 
 ## Contribute
 
-### Local development against a project
-
-When you already have the Spec plugin (or user-level `spec` skill) installed, Cursor will not reliably prefer a project copy that reuses the same skill name. A bare symlink of `skills/spec` into a project also fails discovery when the folder name and frontmatter `name` disagree.
-
-To try skill changes from this repository inside another project without reinstalling the plugin:
-
-1. In the target project, create `.cursor/skills/spec-local/` as a **real directory** (not a symlink of the whole skill folder).
-2. Copy `skills/spec/SKILL.md` into that directory and change frontmatter so `name` matches the folder:
-
-   ```yaml
-   ---
-   name: spec-local
-   description: >-
-     LOCAL DEV copy of the spec skill. Invoke with /spec-local.
-   disable-model-invocation: true
-   ---
-   ```
-
-   Cursor requires `name` to match the parent folder name. If they differ, the skill will not appear in `/` autocomplete.
-
-3. Symlink the shared assets from this repo so edits here apply immediately:
-
-   ```bash
-   SRC=/absolute/path/to/spec-skill-set/skills/spec
-   DEST=/absolute/path/to/<project>/.cursor/skills/spec-local
-   mkdir -p "$DEST"
-   # After placing SKILL.md with name: spec-local, link the rest:
-   ln -s "$SRC/analysis-checklist.md" "$DEST/analysis-checklist.md"
-   ln -s "$SRC/design-quality.md" "$DEST/design-quality.md"
-   ln -s "$SRC/writing-style.md" "$DEST/writing-style.md"
-   ln -s "$SRC/stages" "$DEST/stages"
-   ln -s "$SRC/templates" "$DEST/templates"
-   ```
-
-4. Reload the window or open a new Agent chat, then invoke `/spec-local`.
-
-Use `/spec` for the installed plugin/user skill and `/spec-local` for this checkout. Edits under `stages/`, `templates/`, and the linked markdown files show up through the symlinks. Changes to `SKILL.md` itself must be re-copied into the project (with `name: spec-local` kept) because that file is not symlinked.
-
-Do not commit `.cursor/skills/spec-local/` to the project unless the team wants that layout shared.
-
-### Update the user-level spec skill
-
-Another way to run this checkout locally is to replace the user-level `spec` skill with the files in [`skills/spec`](skills/spec). After that, `/spec` in every project follows this revision until you copy a different revision back. Use this when `/spec` is that user skill. It does not change a Spec plugin install under `~/.cursor/plugins/`.
-
-The skill lives at `~/.cursor/skills/spec/` (a real directory). Frontmatter stays `name: spec` so it matches the folder.
-
-From this repo:
-
-```bash
-./scripts/update-user-spec-skill.sh
-```
-
-The script checks that the source has `SKILL.md`, `stages/`, and `templates/`; copies into `~/.cursor/skills/spec`; lists destination-only files and asks before deleting them (`--yes` skips the prompt; `--dry-run` prints the plan only); then prints the copied git revision.
-
-Reload the window or open a new Agent chat, then invoke `/spec`. To restore a previous revision, check out that commit and run the script again (or pass an explicit source path).
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for local-dev layout, the user-skill update script, and PR expectations. Please follow the [Code of Conduct](CODE_OF_CONDUCT.md). Security reports go through [`SECURITY.md`](SECURITY.md), not public issues.
 
 ## License
 

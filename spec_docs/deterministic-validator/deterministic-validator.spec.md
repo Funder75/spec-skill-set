@@ -7,7 +7,7 @@ document_url: n/a
 
 # Deterministic validator
 
-**Progress:** plan
+**Progress:** implementing
 **Depth:** lite
 **Depends on:** —
 
@@ -139,7 +139,7 @@ Judgment stays in the stage prose. The script never claims a folder is "good des
 | ------- | -------------- |
 | CLI | `validate <folder>` (name may be `skills/spec/scripts/validate`) |
 | stdout/stderr | One finding per line; path and short reason |
-| Scope of files | Markdown under the given folder (emitted D1 names) |
+| Scope of files | Markdown under the given folder (slug-prefixed role filenames) |
 | Persistence | none |
 
 ## Decisions
@@ -165,7 +165,7 @@ Judgment stays in the stage prose. The script never claims a folder is "good des
 ### D4 (basename list) — Fail every legacy bare role basename
 
 - **Date:** 2026-10-27 · **Area:** rules
-- **Why:** Matches the skill stop-and-rename rule for bare names outside the D1 role map, not only the plan example.
+- **Why:** Matches the skill stop-and-rename rule for bare names outside the role-map filenames, not only the plan example.
 - **Rejected:** A — only `implementation-plan.md` in v1
 - **Choice:** Fail when any of these bare basenames appear in the slug folder: `implementation-plan.md`, `spec.md`, `business-logic.md`, `contracts.md`, `ui.md`, `data.md`.
 

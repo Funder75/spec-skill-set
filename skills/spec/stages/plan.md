@@ -80,6 +80,13 @@ Do not create branches, worktrees, or commits unless the user explicitly asks in
 
 Walk the checklist in [design-quality.md](../design-quality.md). Fix gaps, or add a **Q** item in `<slug>.spec.md` and point at it with `> **Open:** Q1 (short name)`. A question may remain only if its **Blocks** line does not include phase 1.
 
+## Mechanical validate
+
+After the plan is written (and before Stop), resolve `<skill-root>/scripts/validate` (skill-root is the directory that contains `SKILL.md` and `stages/`) and run it on `spec_docs/<slug>/`. A person may run the same path by hand.
+
+- **Script ran** (exit 0 or findings). Fix every finding. Do not skip because of findings. Then continue with judgment readiness only (design-quality gaps above).
+- **Script failed to run** (missing, not executable, or shell launch error — not a findings exit). Fall back to manual mechanical checks: placeholders, HTML comments, `[SUGGESTION:`, bare ID citations, overview **Close** vs phase **Close**, scenario **Check** vs **Gates**, bare basenames. Do not treat a findings exit as fallback.
+
 ## Update `<slug>.spec.md`
 
 Do not rewrite the spec. Add `<slug>.plan.md` to the doc index. Set `Progress: plan` only when the current value is `design` or `tech` (monotonic — [SKILL.md](../SKILL.md) › Progress); a folder already at `implementing` or `archived` keeps its Progress value even when this stage edits the plan.

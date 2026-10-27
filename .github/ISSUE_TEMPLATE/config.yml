@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Usage questions
+    url: https://github.com/Funder75/spec-skill-set/blob/main/README.md
+    about: How to install and use /spec — start with the README and your project’s spec_docs/README.md.
