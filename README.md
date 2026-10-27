@@ -39,30 +39,52 @@ Main actions:
 
 `/spec help` points at the project’s `spec_docs/README.md` when that file exists.
 
-Create-spec runs dialogue and chat approval before writing the design file. Plans use guided Approach (not pasteable full code). The skill does not create branches, worktrees, or commits unless you ask.
+Create-spec runs dialogue and chat approval before writing the design file. You can set Depth and Kind up front (`as lite`, `as bugfix`, or both). Plans use guided Approach (not pasteable full code). The skill does not create branches, worktrees, or commits unless you ask.
 
 ### What `spec_docs/` is for
 
-`spec_docs/` holds one folder per feature. Active work lives under `spec_docs/<slug>/`. Finished work moves to `spec_docs/archive/<slug>/`.
+`spec_docs/` holds one folder per unit of work (feature or bugfix). Active work lives under `spec_docs/<slug>/`. Finished work moves to `spec_docs/archive/<slug>/`.
 
-Each folder starts at `<slug>.spec.md` (scope and gates). Sibling files cover tech notes and the plan when needed. Gates, Depth paths, markers, and **Project conventions** live in [`spec_docs/README.md`](spec_docs/README.md).
+Each folder starts at `<slug>.spec.md` (scope and gates). Sibling files cover tech notes and the plan when needed. Gates, Depth paths, Kind, markers, and **Project conventions** live in [`spec_docs/README.md`](spec_docs/README.md).
+
+### Kind: feature vs bugfix
+
+Every `<slug>.spec.md` carries `Kind: feature | bugfix` next to Progress and Depth. Missing Kind on an older folder means `feature`.
+
+| Kind | Design shape | When to use |
+| ---- | ------------ | ----------- |
+| **feature** (default) | **User journeys** and **Work split** | New behaviour, product change, or anything that is not a defect fix |
+| **bugfix** | **Current / Expected / Unchanged behaviour** lists plus **Root cause** (no journeys or Work split) | A defect, regression, or “broken when …” fix |
+
+Say `create … as bugfix` (alone or with a Depth) to set Kind without a recommend ask. When Kind is unset and the input looks like a bug, create recommends bugfix once. Lite is recommended for many bugs, not required. Bugfix plans map acceptance scenarios 1:1 onto the behaviour lists; at least one regression scenario records red-before-green evidence in Close-out.
+
+### Depth
+
+`Depth` (`lite` / `standard` / `full`) chooses how many documents and review gates you walk — not a second skill. Missing Depth on an older folder means `full`. Say `create … as lite` (or `as standard` / `as full`) to skip the Depth ask. Unsure whether you need a folder at all? Start with `/spec explore`.
+
+| Depth | Path |
+| ----- | ---- |
+| **lite** | One chat approval covers design + thin `<slug>.plan.md` in the same create session (`Progress: plan`). Empty optional sections stay omitted; tech folds into **Technical notes** or `not needed` (no tech siblings). Simple Low + Close `automated` → next offer is implement (no second plan-review gate). |
+| **standard** | Design → fold tech / `not needed` (`Progress: tech`) → thin plan → implement. Separate promote to plan; few phases. Tech siblings are unusual. |
+| **full** | Design → tech siblings when the emit bar is met → full plan → implement. Default for older folders with no Depth line. |
 
 ### Write and iterate
 
-Authors walk the same loop the skill enforces:
+Authors walk the same loop the skill enforces (lite collapses design + thin plan into one create session):
 
-1. **Design** — Create and iterate `<slug>.spec.md` until the shape is accepted.
-2. **Tech** — Add or fold technical notes when the feature needs them (`Progress: tech`).
+1. **Design** — Create and iterate `<slug>.spec.md` until the shape is accepted (journeys / Work split for feature; behaviour lists + Root cause for bugfix).
+2. **Tech** — Add or fold technical notes when the work needs them (`Progress: tech`). Skipped as a separate step on lite.
 3. **Plan** — Write `<slug>.plan.md` with phases, Done when, and a **Close** of `automated` or `human` on each phase (`Progress: plan`).
 4. **Implement** — One phase (or one combinable group) at a time (`Progress: implementing`).
 5. **Archive** — Move the folder under `archive/` when the work is done.
 
-**Depth** (`lite` / `standard` / `full`) shortens how many documents and review gates you walk. Say `create … as lite` for small work that can ship a thin plan in the same create session. **Lite skim:** one chat approval covers design + thin plan; empty optional sections stay omitted; a simple Low automated plan goes straight to implement (no second plan-review gate). Unsure whether you need a folder at all? Start with `/spec explore`. Details and the Depth table are in [`spec_docs/README.md`](spec_docs/README.md).
+More detail is in [`spec_docs/README.md`](spec_docs/README.md).
 
 ### Tips
 
 - **Explore first when unsure.** `/spec explore` restates the ask and exits with no folder, a named Depth+slug, or a spike — without writing `spec_docs/`.
-- **Pick Depth on purpose.** Use `lite` for small, low-risk work. Reserve `full` when tech siblings and a multi-phase plan earn their keep.
+- **Pick Kind on purpose.** Use `as bugfix` for defect fixes so create skips journeys and Work split. Leave feature (or omit Kind) for new behaviour.
+- **Pick Depth on purpose.** Use `lite` for small, low-risk work (including many bugfixes). Use `standard` for a normal fold-then-plan path. Reserve `full` when tech siblings and a multi-phase plan earn their keep.
 - **Keep tabs readable.** New folders use slug-prefixed names (`<slug>.spec.md`, `<slug>.plan.md`). Older archived folders may still use bare basenames until someone renames them by hand.
 - **Fill conventions early.** On first bootstrap, opt in to fill **Project conventions** while context is fresh. Later stages otherwise hit placeholders when they need a project fact. Say `/spec fill conventions` any time afterward to fill or update them — it is not limited to first bootstrap, and a stage that hits a placeholder will offer the same flow.
 - **Repo stays canonical.** Edit the markdown in `spec_docs/`. Linear (when used) mirrors links and status; do not treat tracker text as binding acceptance criteria.

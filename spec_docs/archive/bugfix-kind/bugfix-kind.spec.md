@@ -7,7 +7,7 @@ document_url: n/a
 
 # Bugfix kind
 
-**Progress:** implementing
+**Progress:** archived
 **Depth:** standard
 **Depends on:** —
 

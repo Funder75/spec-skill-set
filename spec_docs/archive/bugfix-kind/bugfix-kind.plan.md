@@ -9,7 +9,7 @@ Phases for [bugfix-kind.spec.md](./bugfix-kind.spec.md).
 | Phase | Status | Name | Tier | Close | Depends on | Combinable with |
 | ----- | ---- | ------ | ---- | ----- | ---------- | --------------- |
 | **1** | Done | Kind and create shape | Medium | human | — | — |
-| **2** | Reviewing | Plan and audit evidence | Medium | human | 1 | — |
+| **2** | Done | Plan and audit evidence | Medium | human | 1 | — |
 
 ## Phase 1 — Kind and create shape
 
@@ -121,7 +121,7 @@ Do not:
 
 ## Phase 2 — Plan and audit evidence
 
-**Status:** Reviewing
+**Status:** Done
 
 **Tracker phase:** n/a
 
@@ -219,6 +219,7 @@ Do not:
 - Deviations: none
 - Follow-ups: —
 - Blocked: —
+- Human gates accepted: A2.1–A2.3; Feature / missing-Kind regression (archive 2026-10-27)
 
 ## Risks
 
