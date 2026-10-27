@@ -16,11 +16,12 @@ Before handing the folder to an implement session:
 | **Decisions closed or Open** | Every architecture, persistence, or UX fork is a **D** or a **Q** item with **Blocks** set |
 | **Traceability** | Each goal is in a **Covers** line; phases list their rules, scenarios, and Done when |
 | **Named IDs** | Every `G`, `R`, `D`, `Q` citation uses the full form, such as `G1 (short name)` |
-| **Journey trace** | Each acceptance scenario names its journey step, or `Journey: —` |
+| **Journey trace** | Each acceptance scenario names its journey step, or `Journey: —`, and a **Check** of `automated` or `human` |
 | **Read first** | Each phase links the tech-doc sections it needs, not whole docs |
 | **Failure modes** | Empty, error, and permission (or an explicit "n/a") where the work touches users or stored data |
 | **Phase sizing** | As few phases as safely possible; verify for the phase tier passes at the end; split only for a real reason — see [Phase sizing](#phase-sizing) |
 | **Tier** | Each phase has a tier and a reason naming its deciding factor. The tier is rated for that phase alone, and the overview label matches the phase block — see [Phase tier](#phase-tier) |
+| **Close** | Overview **Close** is `automated` or `human` and matches the phase line. Every scenario **Check** appears in **Gates**. `automated` only when every owner is `automated` — see [Phase close](#phase-close) |
 | **Non-goals are real** | Out-of-scope names concrete deferrals |
 | **Concrete paths** | Deliverables name real modules discovered while exploring |
 | **New files justified** | Every proposed new doc or module has a one-line reason. Default is extend |
@@ -29,7 +30,7 @@ Before handing the folder to an implement session:
 
 A **Q** item may remain only if its **Blocks** line does not include phase 1.
 
-Multi-phase serial implement expects a brief-sized phase packet (linked **Read first** plus **Done when**) so the orchestrator can build the chat-only phase brief without the full plan.
+Multi-phase serial implement expects a brief-sized phase packet (linked **Read first**, **Done when**, **Close**, and **Gates**) so the orchestrator can build the chat-only phase brief without the full plan.
 
 ---
 
@@ -62,7 +63,7 @@ Deferrals belong in **Non-goals**. There is no stretch list.
 
 It rates complexity, not size. File count and line count do not set the tier. It rates this phase, not the feature. A late phase of a hard feature can be Low.
 
-The tier selects the default row in **Verify tiers**. A phase that needs a stronger check names that command in **Done when** and keeps its tier. Config, dependency, or generated-type changes that only a full `build` catches are the usual case.
+The tier selects the default row in **Verify tiers**. A phase that needs a stronger check names that command in **Done when** and keeps its tier. Config, dependency, or generated-type changes that only a full `build` catches are the usual case. Who may mark the phase `Done` is [Phase close](#phase-close), not the tier.
 
 ### Levels
 
@@ -79,7 +80,7 @@ The tier selects the default row in **Verify tiers**. A phase that needs a stron
 - Many interacting rules or edge cases, such as several **R** rows with exceptions or a state machine.
 - A wide blast radius: changed behaviour in code many callers use, or removing legacy code whose callers are hard to find.
 - No pattern to follow: the first instance of something in this repo, or an unfamiliar or poorly documented third-party API.
-- Weak feedback: the result can only be verified manually, inside an embedding host, or at build time.
+- Weak feedback: the result can only be verified by a person, inside an embedding host, or at build time. A person-only result sets **Close** to `human`. A build command in **Done when** can stay **Close** `automated`.
 - The phase deliberately leaves real choices to the implementer.
 
 ### Factors that lower complexity
@@ -95,8 +96,31 @@ The tier selects the default row in **Verify tiers**. A phase that needs a stron
 - Start from the strongest factor that raises complexity. Drop one level only when a lowering factor clearly covers that same factor.
 - Write a one-line reason naming the deciding factor, for example `High — overlay cleanup order across router navigation`.
 - A combinable group takes the highest tier among its members. A sub-task takes its phase's tier.
-- Tier is not a reason to split. Use [Phase sizing](#phase-sizing). A phase that is High because it bundles an unrelated hard part already meets the unrelated-surfaces split rule.
+- Tier is not a reason to split. Use [Phase sizing](#phase-sizing). A phase that is High because it bundles an unrelated hard part already meets the unrelated-surfaces split rule. Tier is not **Close**. A High phase can be `automated` when commands cover it. A Low phase can be `human` when a person must look.
 - Read **Complexity hotspots** in `spec_docs/README.md` when that subsection has filled bullets. It names project areas the generic factors cannot see. An empty list means none yet — use the generic rubric.
+
+---
+
+## Phase close
+
+**Close** says whether this phase can finish with no person. Tier is how hard the work is. Close is who must sign off.
+
+The progress overview **Close** column and the phase **Close** line use the same word.
+
+- **automated.** The implementer runs the **Verify tiers** command and the scenario checks owned `automated`. The parent runs one review subagent. On pass, the parent marks `Done` and may start the next ready unit.
+- **human.** The same agent verify and review run first. On pass, status stays `Reviewing` until a person continues. The runner does not start the next unit.
+
+### How to apply
+
+- Set each acceptance scenario **Check** to `automated` or `human`.
+- **automated** when a command, a test, or the review can show the result from the repo.
+- **human** when a person must judge the result: visual or copy, a host or device the agent cannot run, auth or secrets sign-off, persisted data that must keep working, or a migration.
+- **Gates** lists those checks. Owner matches **Check**. One row may cover a range that shares an owner.
+- **Close** is `human` if any owner is `human`. Otherwise `automated`.
+- A combinable group is `human` if any member is `human`. A sub-task takes its phase's **Close**.
+- **Ask-before** is a person stop during the phase. Write `—` when there is none. It does not replace **Close**. A security choice is **Ask-before** and **Close** `human` when a person must accept the result.
+- Do not add a **Gates** row for the implement review subagent. That review always runs, for both values.
+- Do not leave **Close** unset. A missing value is not `automated`.
 
 ---
 
@@ -147,10 +171,19 @@ The tier selects the default row in **Verify tiers**. A phase that needs a stron
 | --- | ---- |
 | A prop rename across 30 components marked High because many files change | Low — the edit is mechanical, and typecheck catches misses |
 | A settings view built from existing form and list composables marked Low | Medium — a new route and its states, with a pattern to follow |
-| A small host-message payload change marked Medium because the diff is small | High — a contract with another runtime, and only manual testing can verify it |
+| A small host-message payload change marked Medium because the diff is small | High — a contract with another runtime. Close `human` — only a person can verify it in the host |
 | A new persisted filter preference marked Low | Medium — or High when existing stored values must keep working |
 | A one-file edit to token refresh marked Low | High — auth and async ordering |
 | A copy-only change marked Medium because users see it | Low |
+
+### Phase close
+
+| Bad | Good |
+| --- | ---- |
+| A UI sheet marked `automated` because typecheck passes | `human` — the 390px look is a person check in **Gates** |
+| **Close** `human` on a rename because the tier is High | `automated` — typecheck catches misses; no person check |
+| "Manual test" in **Done when**, and **Close** `automated` | **Gates** owner `human`, and **Close** `human` |
+| Every phase `human` with no person check named | `automated` where commands cover the scenarios; `human` only for a named person check |
 
 ### Risks
 

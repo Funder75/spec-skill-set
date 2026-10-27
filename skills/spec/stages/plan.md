@@ -1,13 +1,13 @@
 # Create implementation plan
 
-Write `spec_docs/<slug>/<slug>.plan.md` from the reviewed spec and tech docs (G3 (plan extension), R1 (filename pattern), R3 (new names only)). This is the execution contract: phases, the **Depends on** and **Combinable with** columns, Done when, acceptance scenarios, and the only phase status. Phase status, Done when, Close-out, tier, Ask-before, and acceptance scenarios live in the markdown body only — do not add Cursor YAML `todos` or other Plan Mode frontmatter (R5 (plan body authority)). Do not rename existing bare siblings (R4 (no auto migrate)).
+Write `spec_docs/<slug>/<slug>.plan.md` from the reviewed spec and tech docs (G3 (plan extension), R1 (filename pattern), R3 (new names only)). This is the execution contract: phases, the **Depends on**, **Combinable with**, and **Close** columns, Done when, acceptance scenarios, and the only phase status. Phase status, Done when, Close-out, tier, Close, Gates, Ask-before, and acceptance scenarios live in the markdown body only — do not add Cursor YAML `todos` or other Plan Mode frontmatter (R5 (plan body authority)). Do not rename existing bare siblings (R4 (no auto migrate)).
 
 ## Preconditions
 
 - The user asked to promote to an implementation plan, or confirmed that step after `/spec next`.
 - Read `Depth` from `<slug>.spec.md` (missing → treat as `full`).
 - **Depth: lite** — Create already wrote the thin plan. If `<slug>.plan.md` exists, resume or edit it only; do not regenerate from scratch without asking. If it is missing (interrupted create), write the thin 1-phase plan now, ensure tech rows are folded / `not needed`, and set `Progress: plan`.
-- **Depth: standard** — `Progress` should be `tech` with doc index rows folded or `not needed` (no pressure for siblings). If still `design`, run a fold-tech step first in this session (set index + **Technical notes** as needed, `Progress: tech`), then write the plan — do not leave tech as `pending`. Prefer few phases.
+- **Depth: standard** — `Progress` should be `tech` with doc index rows folded or `not needed` (no pressure for siblings). If still `design`, run [tech-specs.md](tech-specs.md) › **Standard fold** first in this session, then write the plan — do not leave tech as `pending` and do not inline a second, weaker fold procedure here. Prefer few phases.
 - **Depth: full** (or missing) — `Progress` is `tech`. If it is still `design`, ask whether to write tech specs first. Do not skip that gate.
 - `<slug>.spec.md` has no `{{…}}` left and no `[SUGGESTION:`. If a suggestion is still there, the user has not accepted it — stop and ask.
 - Read [design-quality.md](../design-quality.md) before drafting. Do not read it on other actions.
@@ -27,9 +27,12 @@ Each phase uses the same block:
 | **Not in this phase** | Adjacent work the implementer must leave alone |
 | **Deliverables** | Concrete files: `extend`, `new`, or `remove`. `new` needs a one-line reason. Prefer `extend` |
 | **Approach** (advisory) | Ordered steps with real source paths, plus guiding code, do/do-not examples, and code-design notes when shape would otherwise be ambiguous. Omit when deliverables alone are enough |
-| **Acceptance scenarios** | `A<phase>.<n>` list items, Given / When / Then, each traced to a journey step. Behaviour only |
+| **Acceptance scenarios** | `A<phase>.<n>` list items, Given / When / Then, each traced to a journey step, each with **Check** `automated` or `human`. Behaviour only |
 | **Tier** | Label plus a one-line reason naming the deciding factor. See [Phase tier](../design-quality.md#phase-tier) |
-| **Done when** | The tier's default verify first, plus any stronger command this phase needs, then the scenario IDs, then phase-specific regressions |
+| **Close** | `automated` or `human`, in the progress overview and on the phase. See [Phase close](../design-quality.md#phase-close) |
+| **Done when** | The tier's default verify first, plus any stronger command this phase needs, then the scenario IDs, then phase-specific regressions. Who runs each line is **Gates** |
+| **Gates** | One row per check: Check, Owner (`automated` or `human`), Evidence. Every scenario **Check** appears here |
+| **Ask-before** | `—`, or the phase-specific person stop. Do not repeat the global stops in [implement.md](implement.md) |
 | **Close-out** | Leave blank. The implementer fills it |
 | **Sub-tasks** | Optional. Each sized for one implement session, with a Status cell |
 
@@ -38,18 +41,20 @@ Rules:
 - As few phases as safely possible. Split only when a phase would span unrelated surfaces, cannot pass verify midway, or is honestly easier to review in two passes. More than about five phases needs a one-line reason under the progress overview. Detail: [design-quality.md](../design-quality.md).
 - Phase size stays outcome-based. Do not default to 2–5 minute micro-steps.
 - Set each phase's **Tier** with [Phase tier](../design-quality.md#phase-tier). Rate this phase, not the feature, and not by file count. The label in the progress overview matches the phase block. Read **Complexity hotspots** in `spec_docs/README.md` when that subsection has filled bullets. If it is missing, empty, or still a placeholder, use the generic rubric and do not ask.
-- The tier selects the default commands in **Verify tiers**. If that subsection is still the placeholder, ask. Do not invent a build pipeline. A phase that needs a stronger check names that command in **Done when** and keeps its tier.
+- The tier selects the default commands in **Verify tiers**. If that subsection is still the placeholder, ask — offer to save the answer via [fill-conventions.md](fill-conventions.md) so later phases do not ask again. Do not invent a build pipeline. A phase that needs a stronger check names that command in **Done when** and keeps its tier. A **Done when** command must come from **Verify tiers** or **Other commands** in `spec_docs/README.md`; a command that is not already listed there is flagged in the phase (one line, "new command — confirm before running") so the implementer asks before the first run.
+- Set each phase's **Close** with [Phase close](../design-quality.md#phase-close). The overview cell and the phase line use the same word: `automated` or `human`. `automated` only when every **Gates** owner and every scenario **Check** is `automated`. Any `human` owner forces **Close** `human`. A combinable group is `human` if any member is `human`. Do not leave **Close** for the implementer to infer.
+- **Gates** names who runs each check. Owner `automated` is a command, a test, or a result the review can show from the repo. Owner `human` is a person. Do not add a row for the implement review subagent. **Ask-before** is `—` when this phase has no extra person stop. When scenarios do not share an owner, put the human IDs on their own **Done when** line so the agent does not check them off. When the matching **Verify tiers** row is the explicit value `none` (no command for that tier), the phase's **Gates** owner for that check is `automated` only if the row names concrete review-observable evidence from the repo; otherwise set **Close** `human`. Do not treat `none` or an unresolved `{{command}}` placeholder as satisfied.
 - Phases start at **Not started**.
-- **Depends on** and **Combinable with** in the progress overview are the order gate. `—` means none. A Mermaid graph is optional, and only when there are more than four phases; the table stays the source of truth.
+- **Depends on** and **Combinable with** in the progress overview are the order gate. `—` means none. **Close** in that same table is who can finish the phase. A Mermaid graph is optional, and only when there are more than four phases; the table stays the source of truth.
 - **Read first** links each tech-doc section or **Technical notes** anchor the phase needs, not whole docs. Do not restate them.
-- Each acceptance scenario names the `<slug>.spec.md` journey step it checks, or `Journey: —` for a rule with no journey step. A journey step no scenario checks is a gap.
+- Each acceptance scenario names the `<slug>.spec.md` journey step it checks, or `Journey: —` for a rule with no journey step, and a **Check** of `automated` or `human`. A journey step no scenario checks is a gap. **Check** and the **Gates** owner for that scenario use the same word.
 - Replace every `{{…}}` placeholder. Strip every HTML comment.
 - Omit empty **Prerequisites**, **Follow-ups**, **Risks**, and **Decisions**. A plan decision continues the `<slug>.spec.md` ID sequence and does not repeat a decision already recorded there. Open questions stay in `<slug>.spec.md`.
 - Risks only when they change approach, sequencing, or testing.
 
 ### Approach contract
 
-**Approach** stays advisory. **Done when** and acceptance scenarios stay the binding check.
+**Approach** stays advisory. **Done when**, acceptance scenarios, **Close**, and **Gates** stay the binding check.
 
 **MUST:**
 
@@ -74,15 +79,15 @@ Walk the checklist in [design-quality.md](../design-quality.md). Fix gaps, or ad
 
 ## Update `<slug>.spec.md`
 
-Do not rewrite the spec. Set `Progress: plan` and add `<slug>.plan.md` to the doc index.
+Do not rewrite the spec. Add `<slug>.plan.md` to the doc index. Set `Progress: plan` only when the current value is `design` or `tech` (monotonic — [SKILL.md](../SKILL.md) › Progress); a folder already at `implementing` or `archived` keeps its Progress value even when this stage edits the plan.
 
-When `Progress` changes to `plan` (this promote) or any later gate change lands from this stage’s path, run [linear-sync.md](linear-sync.md) › Status (selective) › Progress → Tracker Spec when write-back is allowed (G3 (status mirror), R11 (status mirror), R12 (selective tracker writes)). Update **only** the Tracker Spec by its stored frontmatter `work_item` id. On a real Progress delta, append a progress-log comment; no-op → none (R13 (progress log)). MUST NOT run full explicit sync for a routine gate change. `work_item: n/a` (or missing) → skip (R22 (reference gate)). MCP / map missing → warn once; skip write-back (R1 (conventions gate), R21 (mcp session)). Linear MUST NOT drive Progress (G7 (repo canonical)).
+When `Progress` changes to `plan` (this promote) or any later gate change lands from this stage’s path, run [linear-sync/status.md](linear-sync/status.md) › Progress → Tracker Spec when write-back is allowed (G3 (status mirror), R11 (status mirror), R12 (selective tracker writes)). Update **only** the Tracker Spec by its stored frontmatter `work_item` id. On a real Progress delta, append a progress-log comment; no-op → none (R13 (progress log)). MUST NOT run full explicit sync for a routine gate change. `work_item: n/a` (or missing) → skip (R22 (reference gate)). MCP / map missing → warn once; skip write-back (R1 (conventions gate), R21 (mcp session)). Linear MUST NOT drive Progress (G7 (repo canonical)).
 
 ## Tracker Phases after plan write or edit
 
-After the plan file is written or a dispatch-unit change lands (phase added, removed, renumbered, renamed, or combinable grouping changed), run [linear-sync.md](linear-sync.md) › Tracker Phase create / update / cancel when write-back is allowed (G2 (tracker phases), R4 (freeze before plan)).
+After the plan file is written or a dispatch-unit change lands (phase added, removed, renumbered, renamed, or combinable grouping changed), run [linear-sync/tracker-phases.md](linear-sync/tracker-phases.md) when write-back is allowed (G2 (tracker phases), R4 (freeze before plan)).
 
-**Plan file.** This stage emits `<slug>.plan.md`. Treat “plan exists” as that file **or** bare `implementation-plan.md` already in the folder (R4 (no auto migrate)). Do not auto-rename. Without either file, Tracker Phase work is a no-op (R5 (thin noop)) — this hook only runs after a plan write, so that case does not apply here.
+**Plan file.** This stage emits `<slug>.plan.md`. “Plan exists” means that file only (R4 (no auto migrate)). Do not auto-rename a bare `implementation-plan.md` and do not dual-read it as the plan; stop and tell the user to rename it first. Without `<slug>.plan.md`, Tracker Phase work is a no-op (R5 (thin noop)) — this hook only runs after a plan write, so that case does not apply here.
 
 **Every phase packet** MUST include `Tracker phase: <id> | n/a` (template default `n/a`). Combinable phases in one dispatch unit share one value (R6 (repo-stored phase identity)).
 
@@ -104,4 +109,4 @@ Do not create Tracker Phases before the plan exists. Do not invent a skill Cloud
 
 ## Stop
 
-Tell the user the folder path, the first phase, its tier and the reason, its Done when, remaining open questions, and that implementation is `/spec` implement on this folder — one phase per session unless the plan marks phases combinable.
+Tell the user the folder path, the first phase, its tier and the reason, its **Close**, its Done when, remaining open questions, and that implementation is `/spec` implement on this folder — one phase per session unless the plan marks phases combinable.

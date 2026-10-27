@@ -12,11 +12,13 @@ Phases for [{{feature-slug}}.spec.md](./{{feature-slug}}.spec.md).
 
 <!-- Tier: Low / Medium / High from Phase tier in the spec skill's design-quality.md. Rate the hardest factor in this phase, not the feature and not the file count. The label here matches the phase block. -->
 
-| Phase | Status | Name | Tier | Depends on | Combinable with |
-| ----- | ---- | ------ | ---- | ---------- | --------------- |
-| **1** | Not started | {{name}} | {{Low / Medium / High}} | — | — |
-| **2** | Not started | {{name}} | {{…}} | 1 | 3 |
-| **3** | Not started | {{name}} | {{…}} | 1 | 2 |
+<!-- Close: automated or human, from Phase close in design-quality.md. automated = verify and the one agent review can mark Done with no person. human = after that review, stay Reviewing until a person continues. The cell matches the phase Close line. A combinable group is human if any member is human. -->
+
+| Phase | Status | Name | Tier | Close | Depends on | Combinable with |
+| ----- | ---- | ------ | ---- | ----- | ---------- | --------------- |
+| **1** | Not started | {{name}} | {{Low / Medium / High}} | {{automated / human}} | — | — |
+| **2** | Not started | {{name}} | {{…}} | {{automated / human}} | 1 | 3 |
+| **3** | Not started | {{name}} | {{…}} | {{automated / human}} | 1 | 2 |
 
 <!-- include when: more than about five phases. One line, for example "6 phases — migration needs a backfill-verify step before enforcing NOT NULL." -->
 
@@ -39,11 +41,11 @@ flowchart LR
 
 ## Phase {{n}} — {{name}}
 
-<!-- required. Repeat this block for every phase. Same sections each time. Goal, Read first, Deliverables, Done when, Tier, and Ask-before feed the serial-SDD phase brief (no new columns). -->
+<!-- required. Repeat this block for every phase. Same sections each time. Goal, Read first, Deliverables, Done when, Tier, Close, Gates, and Ask-before feed the serial-SDD phase brief. -->
 
 **Tracker phase:** n/a
 
-<!-- Filled after Linear returns an id (or stays n/a). Combinable phases in one dispatch unit share the same value. -->
+<!-- Filled after Linear returns an id (or stays n/a). pending appears briefly while a create call is in flight — see linear-sync/tracker-phases.md. Combinable phases in one dispatch unit share the same value. -->
 
 **Goal:** {{one outcome — what exists when this phase is complete}}
 
@@ -56,6 +58,10 @@ flowchart LR
 - {{[{{feature-slug}}.contracts.md › TypeName](./{{feature-slug}}.contracts.md#typename)}}
 
 **Tier:** {{Low / Medium / High}} — {{deciding factor, one line}}
+
+**Close:** {{automated / human}}
+
+<!-- Matches the progress overview. human when any Gates owner is human. automated only when every owner is automated. -->
 
 **Not in this phase:** {{adjacent work the implementer must leave alone}}
 
@@ -83,29 +89,44 @@ flowchart LR
 
 ### Acceptance scenarios
 
-<!-- required. Binding. Behaviour only. Trace each scenario to the {{feature-slug}}.spec.md journey step it checks, or write "Journey: —" when it checks a rule with no journey step. -->
+<!-- required. Binding. Behaviour only. Trace each scenario to the {{feature-slug}}.spec.md journey step it checks, or write "Journey: —" when it checks a rule with no journey step. Check is automated or human, and the same word appears in Gates. -->
 
 - **A{{n}}.1 — {{short title}}**
   - Journey: {{journey title}}, step {{n}}
+  - Check: {{automated / human}}
   - Given {{precondition}}
   - When {{action}}
   - Then {{observable result}}
 
 ### Done when
 
-<!-- required. Binding. The tier selects the default Verify tiers row. Add a stronger command on its own line when this phase needs one (config, dependency, or generated types that only a full build catches). That does not change the tier. -->
+<!-- required. Binding. The tier selects the default Verify tiers row. Add a stronger command on its own line when this phase needs one (config, dependency, or generated types that only a full build catches). That does not change the tier. Who runs each line is Gates, not this list. When some scenarios are human, put those IDs on their own line. -->
 
 - [ ] Tier verify passes (Project conventions in `spec_docs/README.md`)
 - [ ] A{{n}}.1–A{{n}}.x pass
 - [ ] {{regression: existing behaviour X unchanged}}
 
+### Gates
+
+<!-- required. Binding. One row per check. Owner is automated or human. Every scenario Check appears here (a shared owner may be a range). Close is human when any owner is human. Do not add a row for the implement review subagent — that review always runs. A cell is about 10 words. Omit a human row only when Close is automated and no person check exists. -->
+
+| Check | Owner | Evidence |
+| ----- | ----- | -------- |
+| {{Low verify command}} | automated | Close-out command result |
+| A{{n}}.1–A{{n}}.x | {{automated / human}} | {{Close-out, or unchecked until continue}} |
+
+**Ask-before:** {{— or the person stop for this phase}}
+
+<!-- — means no phase-specific stop. Branch, commit, a new dependency, and the other global stops in implement.md still apply. Do not copy those onto every phase. -->
+
 ### Close-out
 
-<!-- The implementer fills this at Reviewing or Done. Leave the three lines blank. -->
+<!-- The implementer fills this at Reviewing, Done, or Blocked. Leave the lines blank until then. Fill Blocked only when status is Blocked: reason, date, and the last failing command. -->
 
 - Verified:
 - Deviations:
 - Follow-ups:
+- Blocked:
 
 ## Follow-ups
 

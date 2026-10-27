@@ -23,16 +23,16 @@ Planning documents for this repo. One folder per feature spec. The spec workflow
 | **standard** | Design → fold tech / `not needed` (`Progress: tech`) → thin plan → implement. |
 | **full** | Design → tech siblings when needed → plan → implement (default for older folders with no Depth line). |
 
-Full path (R7 (skill surface complete)):
+Full path:
 
 1. **Spec design** — `<slug>.spec.md` only (`Progress: design`). Iterate here.
 2. **Technical specs** — `<slug>.logic.md`, `<slug>.contracts.md`, and `<slug>.ui.md` when that concern needs its own file. Older folders may still have bare `data.md` until a person renames; after rename it is `<slug>.data.md` (same doc as contracts). Otherwise the notes stay in `<slug>.spec.md` under **Technical notes** (`Progress: tech`).
-3. **Implementation plan** — `<slug>.plan.md`: phases, Done when, and phase status (`Progress: plan`).
+3. **Implementation plan** — `<slug>.plan.md`: phases, Done when, phase status, and **Close** (`automated` or `human`) (`Progress: plan`).
 4. **Implement** one phase at a time (`Progress: implementing`). When the work is done, move the folder to `archive/` (`Progress: archived`).
 
 `Progress` in `<slug>.spec.md` is the gate: `design`, `tech`, `plan`, `implementing`, or `archived`. Phase status (`Not started` through `Done`, plus `Deferred` and `Blocked`) lives only in `<slug>.plan.md`.
 
-Invoke the user-level **spec** skill (`/spec`) and say what to do. Examples: create a spec from a note or a work item (optionally `as lite`), promote to tech specs, promote to an implementation plan, implement the next phase, archive, sync with Linear.
+Invoke the **spec** skill with `/spec`. Examples: create a spec from a note or a work item (optionally `as lite`), `/spec next`, promote to tech specs, promote to an implementation plan, implement the next phase, audit or review a spec, archive, sync with Linear.
 
 Do not edit the skill to record progress.
 
@@ -44,7 +44,7 @@ Do not edit the skill to record progress.
 | `> **Open:** Q1 (name)` | Points at an open question in that spec's `<slug>.spec.md` |
 | `(advisory)` | A hint. The implementer may deviate, and records the deviation in the phase **Close-out** |
 
-Binding, and what a review checks against: goals, rules, deliverables, acceptance scenarios, Done when, and field tables. Approach, sketches, and diagrams are advisory.
+Binding, and what a review checks against: goals, rules, deliverables, acceptance scenarios, Done when, Close, Gates, and field tables. Approach, sketches, and diagrams are advisory.
 
 IDs carry a short name, for example `G1 (writing style)`:
 
@@ -61,6 +61,8 @@ Phase status: `Not started`, `Started`, `Reviewing`, `Done`, `Deferred`, `Blocke
 
 **Tier** rates how hard a phase is to implement (Low / Medium / High) so the implementer can choose effort. It also selects the default verify row under **Project conventions**.
 
+**Close** on each plan phase is `automated` or `human`. The same word is in the progress overview. `automated` means verify and the agent review can mark the phase Done. `human` means a person continues after that review. **Gates** names who runs each check.
+
 ## Project conventions
 
 <!--
@@ -70,7 +72,7 @@ The skill reads this section when it needs a project fact. If a subsection is st
 ### Work items
 
 <!--
-Bootstrap asks None vs Linear (see stages/fill-conventions.md).
+Bootstrap asks None vs Linear. To fill or update this section later, run `/spec fill conventions`.
 None → replace this subsection with short prose: no work-item system; specs from chat / free text.
 Linear → keep the fields below (names are stable for linear-sync). On fetch, keep title,
 description, and acceptance criteria; map each criterion to a goal Source line (e.g. WI AC2).
@@ -83,17 +85,26 @@ Hand-fill either shape the same way.
 - **Team:** {{name or id}}
 - **Fetch:** {{use Linear MCP `get_issue` by id or URL}}
 - **Tracker Spec Progress → state/label map:** {{design → …; tech → …; plan → …; implementing → …; archived → …}}
-- **Tracker Phase status → state map:** {{Not started → …; Started → …; Reviewing → …; Done → …; Deferred → …; Blocked → …}}
+- **Tracker Phase status → state map:** {{Not started → …; Started → …; Reviewing → …; Done → …; Deferred → …; Blocked → …; Removed → …}}
 - **Optional design-stage label:** {{label name/id, or omit}}
 - **Optional default `[repo=…]`:** {{owner/name the cloud agent should use, or omit}}
 
 ### Verify tiers
 
+<!--
+A row is a real command, the placeholder {{command}}, or the explicit value `none`.
+`none` is not the same as a placeholder: it means this repo has no command for that tier
+(for example a docs-only or config-only tier). A phase whose tier row is `none` must either
+set Close to human, or its Gates row must name review-observable evidence instead of a
+command (see plan.md's Gates owner rule). Leaving the placeholder unresolved still means
+"ask" — only `none` means "no command by design."
+-->
+
 | Tier | Verify |
 | ---- | ------ |
-| Low | {{command}} |
-| Medium | {{command}} |
-| High | {{command}} |
+| Low | {{command \| none}} |
+| Medium | {{command \| none}} |
+| High | {{command \| none}} |
 
 {{Where to run the commands, and any setup they assume.}}
 
