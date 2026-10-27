@@ -127,30 +127,17 @@ Do not commit `.cursor/skills/spec-local/` to the project unless the team wants 
 
 Another way to run this checkout locally is to replace the user-level `spec` skill with the files in [`skills/spec`](skills/spec). After that, `/spec` in every project follows this revision until you copy a different revision back. Use this when `/spec` is that user skill. It does not change a Spec plugin install under `~/.cursor/plugins/`.
 
-The skill lives at `~/.cursor/skills/spec/` (a real directory). Leave frontmatter `name: spec` so it matches the folder.
+The skill lives at `~/.cursor/skills/spec/` (a real directory). Frontmatter stays `name: spec` so it matches the folder.
 
-Paste this prompt in an Agent chat opened on this repository (or fill in the source path):
+From this repo:
 
-```text
-Update my user-level spec skill so it matches this checkout.
-
-Source: /absolute/path/to/spec-skill-set/skills/spec
-Destination: ~/.cursor/skills/spec
-
-Before changing anything:
-- Confirm Source contains SKILL.md, stages/, and templates/. If SKILL.md is missing, stop. Do not delete or copy anything.
-- List every destination file that is not in the source. Wait for me to confirm those deletions. Do not delete until I confirm.
-
-Then replace the destination with the source:
-- Copy every file and subdirectory from the source into the destination.
-- Delete only the destination files I confirmed.
-- Leave SKILL.md frontmatter as name: spec. Do not rename the skill or the folder.
-- Do not edit skill content, and do not commit.
-
-When the copy is done, print the source revision you copied (`git rev-parse --short HEAD` in the source repo, or say the revision was unknown). Tell me to reload the window or open a new Agent chat, then invoke /spec.
+```bash
+./scripts/update-user-spec-skill.sh
 ```
 
-Reload the window or open a new Agent chat, then invoke `/spec`. To restore a previous revision, run the same prompt with that revision as the source.
+The script checks that the source has `SKILL.md`, `stages/`, and `templates/`; copies into `~/.cursor/skills/spec`; lists destination-only files and asks before deleting them (`--yes` skips the prompt; `--dry-run` prints the plan only); then prints the copied git revision.
+
+Reload the window or open a new Agent chat, then invoke `/spec`. To restore a previous revision, check out that commit and run the script again (or pass an explicit source path).
 
 ## License
 

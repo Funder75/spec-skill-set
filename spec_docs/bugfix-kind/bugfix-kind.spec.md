@@ -7,7 +7,7 @@ document_url: n/a
 
 # Bugfix kind
 
-**Progress:** tech
+**Progress:** plan
 **Depth:** standard
 **Depends on:** —
 
@@ -26,7 +26,7 @@ document_url: n/a
 | bugfix-kind.logic.md | Rules, workflows, state transitions | folded → [Technical notes › Rules](#rules) |
 | bugfix-kind.contracts.md | Types, API contracts, state ownership, storage | folded → [Technical notes › Contracts](#contracts) |
 | bugfix-kind.ui.md | Layout, interaction, states, copy | not needed |
-| bugfix-kind.plan.md | Phases and phase status | pending |
+| [bugfix-kind.plan.md](./bugfix-kind.plan.md) | Phases and phase status | yes |
 
 ## Source
 
@@ -60,7 +60,7 @@ Source: todos › Kind line and `create … as bugfix`
 - Every new `<slug>.spec.md` has a body line `Kind: feature | bugfix` next to Progress / Depth.
 - Missing Kind on an older folder means `feature`. Create MUST NOT rewrite older folders only to add Kind.
 - User may set Kind with `create … as bugfix` (alone or with a Depth). Any Depth is allowed; lite is recommended in help text, not required.
-- When Kind is unset and the input looks like a bug, create recommends bugfix once and waits for yes or no. Explicit `as bugfix` or `as feature` skips that ask.
+- When Kind is unset and the input looks like a bug under D5 (bug heuristic), create recommends bugfix once and waits for yes or no. Explicit `as bugfix` or `as feature` skips that ask.
 - When Kind is unset and the input does not look like a bug, Kind defaults to `feature` with no Kind round.
 
 ### G2 (bugfix shape) — Bugfix specs use behaviour lists and Root cause
@@ -181,7 +181,7 @@ Covers: G3 (plan evidence)
 
 ## Concerns
 
-- **Infer false positives.** If "looks like a bug" is too broad, every create gets an extra ask. If left: authors ignore the recommend or get annoyed. Mitigate with a narrow heuristic and always allow decline (G1 (kind line)).
+- **Infer false positives.** If the heuristic is too broad, every create gets an extra ask. Mitigated by D5 (bug heuristic) and always allowing decline (G1 (kind line)).
 
 ## Proposed solution
 
@@ -251,11 +251,9 @@ Depth is standard, so rules and document contracts stay here. No UI surface.
 
 **Lands in:** `skills/spec/stages/create-spec.md` › after Analysis / with Depth round
 
-- When Kind is unset and the input looks like a bug, create MUST recommend `Kind: bugfix` once and wait for yes or no.
+- When Kind is unset and the input looks like a bug under D5 (bug heuristic), create MUST recommend `Kind: bugfix` once and wait for yes or no.
 - Decline MUST leave Kind as `feature`.
 - Create MUST NOT silently default unset Kind to bugfix.
-
-> **Open:** Q1 (bug heuristic)
 
 #### R4 (feature default)
 
@@ -298,7 +296,7 @@ Depth is standard, so rules and document contracts stay here. No UI surface.
 ### Kind resolution (create)
 
 1. Parse explicit `as bugfix` / `as feature` from the invoke — `skills/spec/SKILL.md` › create row; `skills/spec/stages/create-spec.md`.
-2. If unset and bug-like → one recommend ask (R3 (infer confirm)); else default feature (R4 (feature default)).
+2. If unset and bug-like under D5 (bug heuristic) → one recommend ask (R3 (infer confirm)); else default feature (R4 (feature default)).
 3. After Depth and Clarify, Write uses the settled Kind (R5 (bugfix design shape) or feature path).
 
 ### Contracts
@@ -392,12 +390,9 @@ Close-out evidence line (advisory shape): red: named command or repro failed; gr
 - **Why:** Some bugs still need standard or full gates. Forcing lite would fight Depth heuristics.
 - **Rejected:** bugfix implies lite
 
-## Open questions
+### D5 (bug heuristic) — Infer uses keyword / intent cues only
 
-### Q1 (bug heuristic) — What counts as "looks like a bug" for the recommend ask?
-
-- **Priority:** high · **Blocks:** create Write for infer path · **Owner:** author at promote / plan
-- **Options:**
-  - **A.** Keyword / intent cues only (bug, fix, regression, broken, fails when, stack trace) — recommended default
-  - **B.** Also treat a linked failing test or error log as sufficient without those words
-  - **C.** Broader: any "when … does X instead of Y" behaviour delta
+- **Date:** 2026-10-27 · **Area:** create
+- **Why:** Narrow cues keep the recommend ask rare. Authors can still say `as bugfix` when words are missing.
+- **Chosen:** Keyword / intent cues only — for example bug, fix, regression, broken, fails when, stack trace
+- **Rejected:** Failing test or error log alone without those cues; broader "when … does X instead of Y" behaviour-delta matching
