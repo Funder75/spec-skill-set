@@ -18,10 +18,10 @@ Do not copy this file into `spec_docs/<slug>/`.
 | **Business rules home** | Multi-step rules are scattered, and `<slug>.logic.md` is missing with no `folded →` line pointing at **Technical notes › Rules** |
 | **Optional doc gap** | `<slug>.contracts.md` (or legacy `<slug>.data.md`, per [SKILL.md](SKILL.md) › Spec docs) or `<slug>.ui.md` is omitted, the doc index does not say `folded` or `not needed`, and the only detail is a plan snippet. Do **not** flag when Depth is `lite` or `standard` and the index already says `folded` or `not needed` |
 | **Failure modes** | User-facing flows lack empty, error, or permission handling, and there is no explicit n/a |
-| **Journeys** | `<slug>.spec.md` has no **User journeys** section and no n/a line, or a user-facing goal appears in no journey |
-| **Thin spec** | `<slug>.spec.md` leaves behaviour to be discovered at promote: missing edge cases, journeys, or decisions a reviewer must accept |
+| **Journeys** | **Feature / missing Kind:** `<slug>.spec.md` has no **User journeys** section and no n/a line, or a user-facing goal appears in no journey. **Kind: bugfix (explicit):** do not flag missing journeys or Work split; instead flag when any of Current / Expected / Unchanged behaviour is missing or empty |
+| **Thin spec** | `<slug>.spec.md` leaves behaviour to be discovered at promote: missing edge cases, journeys (feature / missing Kind) or behaviour lists (bugfix), or decisions a reviewer must accept |
 | **Landing sites** | A tech-doc rule, type, or screen state names no file it is expected to change |
-| **Journey trace** | An acceptance scenario names no journey step and no `Journey: —`, or `<slug>.ui.md` skips a screen-touching journey step |
+| **Journey trace** | **Feature / missing Kind:** an acceptance scenario names no journey step and no `Journey: —`, or `<slug>.ui.md` skips a screen-touching journey step. **Kind: bugfix:** an acceptance scenario has no 1:1 Trace to a behaviour-list item, or the plan has no scenario marked Regression |
 | **Acceptance scenarios** | A phase has no `A<phase>.<n>` Given / When / Then |
 | **Done when gaps** | A phase has deliverables and no testable Done when |
 | **Phase close** | No **Close**, the overview cell differs from the phase line, a scenario has no **Check**, **Check** and the **Gates** owner disagree, or **Close** is `automated` while any owner is `human`. A person-only result ("manual", "eyes", a host the agent cannot run) with **Close** `automated` |
@@ -39,7 +39,7 @@ Do not copy this file into `spec_docs/<slug>/`.
 | **Undocumented surface** | A shipped route, command, table, or screen has no mention in the spec |
 | **Phase partial** | A `Done` phase has unchecked Done-when items, or the behaviour is not observable |
 | **Dependency** | The spec depends on another slug's outcome that is not in the code |
-| **Close-out** | A `Done` or `Reviewing` phase has no **Close-out** record of what was verified. A `Done` phase with a human **Gates** row has no note that a person accepted it |
+| **Close-out** | A `Done` or `Reviewing` phase has no **Close-out** record of what was verified. A `Done` phase with a human **Gates** row has no note that a person accepted it. **Kind: bugfix:** a `Done` or `Reviewing` phase with a Regression scenario has no red-before-green evidence (failed without the fix; passed with it) for that scenario |
 
 ---
 
@@ -54,7 +54,7 @@ Do not copy this file into `spec_docs/<slug>/`.
 | **UI vs rules** | `<slug>.ui.md` shows a flow the rules forbid |
 | **Plan vs siblings** | Deliverables contradict `<slug>.spec.md` or a resolved decision |
 | **Spec drift** | `<slug>.spec.md` scope, non-goals, or glossary no longer match a sibling |
-| **Work split vs phases** | The plan restates the work-split rationale instead of pointing at it by goal ID, or a phase **Covers** a goal the spec does not list and does not say why |
+| **Work split vs phases** | **Feature / missing Kind:** the plan restates the work-split rationale instead of pointing at it by goal ID, or a phase **Covers** a goal the spec does not list and does not say why. **Kind: bugfix:** do not flag missing Work split; still flag a phase that **Covers** a goal the spec does not list without saying why |
 | **Glossary** | The same term means different things across files |
 | **Resolved vs Open** | A **D** item and a **Q** item contradict, or two **D** items contradict |
 | **Phase order** | A later phase assumes something an earlier phase deferred, and **Depends on** does not say so |
@@ -145,7 +145,7 @@ Optimizations are not blockers unless they hide a Critical or Warning issue.
 
 ## Reviewer habits
 
-1. Read `Progress` and `Depth` first (missing Depth → `full`). That decides how deep to go and which skipped-gate rules apply. Do not open `spec_docs/archive/` unless asked.
+1. Read `Progress`, `Depth`, and `Kind` first (missing Depth → `full`; missing Kind → `feature`). That decides how deep to go, which skipped-gate rules apply, and whether Journeys / Journey trace / Work split use the feature or bugfix branch. Do not open `spec_docs/archive/` unless asked.
 2. Write the report in chat. Do not create a canvas or a report file.
 3. Build a traceability table when a plan exists.
 4. Cite a file and a section. Distinguish draft (`[SUGGESTION: …]`), decided (a **D** item), and blocked (a **Q** item, or `> **Open:** Q1 (short name)` pointing at one).

@@ -116,6 +116,7 @@ Do not auto-assign Cursor.
 - **No secret values.** Close-out records pass or fail and a redacted excerpt. Never paste tokens, passwords, keys, or secret-file contents.
 - An out-of-scope finding goes under **Follow-ups** (added, phase, task, destination). Do not fix it in this phase.
 - After verify, the worker MUST update the plan on its checkout: Done-when checkboxes, **Close-out**, and status to `Reviewing`. The worker MUST NOT mark `Done`. Report-only to the parent (no plan edit) does not count as finished (R6 (worker writeback), D9 (done timing)).
+- **Regression Close-out (bugfix).** When the phase has a scenario marked **Regression: yes** (typical for `Kind: bugfix`), Reviewing / Done **Close-out** MUST record red-before-green for that scenario: the check failed without the fix and passed with it (command, manual repro, or equivalent). Green-only evidence for that scenario is a defect — do not mark `Reviewing` until it is recorded. This applies to the regression scenario only; it does not force TDD for every phase.
 - Tell the user how to verify, and name any **Gates** row still owned `human`.
 
 If implementation shows `<slug>.spec.md` scope, non-goals, or glossary are wrong, stop and update the spec, then the siblings that reference the change. Do not build around the mismatch.

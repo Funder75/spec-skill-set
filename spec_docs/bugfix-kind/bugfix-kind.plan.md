@@ -8,12 +8,12 @@ Phases for [bugfix-kind.spec.md](./bugfix-kind.spec.md).
 
 | Phase | Status | Name | Tier | Close | Depends on | Combinable with |
 | ----- | ---- | ------ | ---- | ----- | ---------- | --------------- |
-| **1** | Reviewing | Kind and create shape | Medium | human | — | — |
-| **2** | Not started | Plan and audit evidence | Medium | human | 1 | — |
+| **1** | Done | Kind and create shape | Medium | human | — | — |
+| **2** | Reviewing | Plan and audit evidence | Medium | human | 1 | — |
 
 ## Phase 1 — Kind and create shape
 
-**Status:** Reviewing
+**Status:** Done
 
 **Tracker phase:** n/a
 
@@ -117,8 +117,11 @@ Do not:
 - Deviations: none
 - Follow-ups: Phase 2 — plan Trace / regression Close-out; implement Close-out evidence; audit and design-quality Kind branch
 - Blocked: —
+- Human gates accepted: A1.1–A1.3; Older folders / feature regression (person continue 2026-10-27)
 
 ## Phase 2 — Plan and audit evidence
+
+**Status:** Reviewing
 
 **Tracker phase:** n/a
 
@@ -189,10 +192,10 @@ Do not:
 
 ### Done when
 
-- [ ] Verify tiers Medium is n/a (no command in Project conventions)
-- [ ] A2.1–A2.3 pass
-- [ ] Feature / missing-Kind plan and audit paths still require journey Trace and Work split checks as today
-- [ ] Global TDD policy unchanged except the single regression Close-out rule
+- [x] Verify tiers Medium is n/a (no command in Project conventions)
+- [x] A2.1–A2.3 pass
+- [x] Feature / missing-Kind plan and audit paths still require journey Trace and Work split checks as today
+- [x] Global TDD policy unchanged except the single regression Close-out rule
 
 ### Gates
 
@@ -207,9 +210,15 @@ Do not:
 ### Close-out
 
 - Verified:
-- Deviations:
-- Follow-ups:
-- Blocked:
+  - **Verify Medium:** Project conventions › Verify tiers lists Medium as `n/a` — no command to run.
+  - **A2.1:** `plan.md` › What to write requires bugfix scenarios to Trace 1:1 to a behaviour-list item and mark at least one **Regression: yes**. Lite thin-plan path in `create-spec.md` follows the same Trace rules. Template author comments document Trace + Regression for bugfix.
+  - **A2.2:** `implement.md` › Session checklist refuses green-only Close-out for a Regression scenario; template Close-out comment requires red then green evidence. `plan.md` notes the same Close-out shape without forcing global TDD.
+  - **A2.3:** `analysis-checklist.md` branches Journeys, Journey trace, Work split vs phases, and Close-out on explicit `Kind: bugfix` so missing journeys / Work split are not defects; missing list Trace, missing Regression mark, or missing red-before-green are. `design-quality.md` › Journey trace accepts behaviour-list Trace for bugfix.
+  - **Feature / missing Kind:** Feature path still requires `Journey: …` / `Journey: —` and Work split checks; missing Kind treated as feature in checklist habits and plan rules.
+  - **TDD policy:** "Require TDD unless Project conventions say so" retained; red-before-green scoped to the regression scenario only.
+- Deviations: none
+- Follow-ups: —
+- Blocked: —
 
 ## Risks
 

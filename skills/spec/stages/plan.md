@@ -27,7 +27,7 @@ Each phase uses the same block:
 | **Not in this phase** | Adjacent work the implementer must leave alone |
 | **Deliverables** | Concrete files: `extend`, `new`, or `remove`. `new` needs a one-line reason. Prefer `extend` |
 | **Approach** (advisory) | Ordered steps with real source paths, plus guiding code, do/do-not examples, and code-design notes when shape would otherwise be ambiguous. Omit when deliverables alone are enough |
-| **Acceptance scenarios** | `A<phase>.<n>` list items, Given / When / Then, each traced to a journey step, each with **Check** `automated` or `human`. Behaviour only |
+| **Acceptance scenarios** | `A<phase>.<n>` list items, Given / When / Then, each with a Kind-aware Trace (below) and **Check** `automated` or `human`. Behaviour only |
 | **Tier** | Label plus a one-line reason naming the deciding factor. See [Phase tier](../design-quality.md#phase-tier) |
 | **Close** | `automated` or `human`, in the progress overview and on the phase. See [Phase close](../design-quality.md#phase-close) |
 | **Done when** | The tier's default verify first, plus any stronger command this phase needs, then the scenario IDs, then phase-specific regressions. Who runs each line is **Gates** |
@@ -47,7 +47,10 @@ Rules:
 - Phases start at **Not started**.
 - **Depends on** and **Combinable with** in the progress overview are the order gate. `—` means none. **Close** in that same table is who can finish the phase. A Mermaid graph is optional, and only when there are more than four phases; the table stays the source of truth.
 - **Read first** links each tech-doc section or **Technical notes** anchor the phase needs, not whole docs. Do not restate them.
-- Each acceptance scenario names the `<slug>.spec.md` journey step it checks, or `Journey: —` for a rule with no journey step, and a **Check** of `automated` or `human`. A journey step no scenario checks is a gap. **Check** and the **Gates** owner for that scenario use the same word.
+- Each acceptance scenario has a Kind-aware journey or list Trace and a **Check** of `automated` or `human`. **Check** and the **Gates** owner for that scenario use the same word.
+  - **Kind: feature** (or missing Kind): each scenario names the `<slug>.spec.md` journey step it checks (`Journey: …`), or `Journey: —` for a rule with no journey step. A journey step no scenario checks is a gap.
+  - **Kind: bugfix**: each scenario's **Trace** maps one-to-one onto one item from Current / Expected / Unchanged behaviour (name the list and item, or an equivalent clear form). Journey-step traces MUST NOT be required. At least one scenario in the plan MUST be marked **Regression: yes** (the scenario that proves the fix).
+- For bugfix, the regression scenario's Reviewing / Done Close-out MUST record red-before-green evidence (failed without the fix; passed with it — command, manual repro, or equivalent). That rule applies to the regression scenario only; it does not force TDD for every phase. "Require TDD unless **Project conventions** say so" still holds.
 - Replace every `{{…}}` placeholder. Strip every HTML comment.
 - Omit empty **Prerequisites**, **Follow-ups**, **Risks**, and **Decisions**. A plan decision continues the `<slug>.spec.md` ID sequence and does not repeat a decision already recorded there. Open questions stay in `<slug>.spec.md`.
 - Risks only when they change approach, sequencing, or testing.
@@ -65,7 +68,7 @@ Rules:
 **MUST NOT:**
 
 - Ship pasteable full implementation blocks meant to be copied into the repo without further design.
-- Require TDD unless **Project conventions** say so.
+- Require TDD unless **Project conventions** say so (bugfix red-before-green on the regression scenario is not a global TDD policy).
 - Default phases to 2–5 minute micro-steps.
 - Add Cursor YAML `todos` (or other Plan Mode frontmatter) as a second status store (R5 (plan body authority)).
 

@@ -89,10 +89,11 @@ flowchart LR
 
 ### Acceptance scenarios
 
-<!-- required. Binding. Behaviour only. Trace each scenario to the {{feature-slug}}.spec.md journey step it checks, or write "Journey: —" when it checks a rule with no journey step. Check is automated or human, and the same word appears in Gates. -->
+<!-- required. Binding. Behaviour only. Read Kind from {{feature-slug}}.spec.md (missing → feature). Feature / missing Kind: Journey title + step, or "Journey: —" when it checks a rule with no journey step. Bugfix: Trace 1:1 to one Current / Expected / Unchanged behaviour item (name the list and item); at least one scenario in the plan has Regression: yes. Check is automated or human, and the same word appears in Gates. -->
 
 - **A{{n}}.1 — {{short title}}**
   - Journey: {{journey title}}, step {{n}}
+  <!-- bugfix instead of Journey: use Trace + Regression, e.g. Trace: Expected behaviour › "When … the system shall …" and Regression: yes -->
   - Check: {{automated / human}}
   - Given {{precondition}}
   - When {{action}}
@@ -121,7 +122,7 @@ flowchart LR
 
 ### Close-out
 
-<!-- The implementer fills this at Reviewing, Done, or Blocked. Leave the lines blank until then. Fill Blocked only when status is Blocked: reason, date, and the last failing command. -->
+<!-- The implementer fills this at Reviewing, Done, or Blocked. Leave the lines blank until then. Fill Blocked only when status is Blocked: reason, date, and the last failing command. Bugfix + Regression: yes on a scenario → Verified MUST include red-before-green for that scenario: red (named command or repro failed without the fix); green (same check passed with the fix). Green-only for that scenario is a defect. Does not force TDD for every phase. -->
 
 - Verified:
 - Deviations:
