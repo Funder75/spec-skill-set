@@ -8,10 +8,12 @@ Phases for [bugfix-kind.spec.md](./bugfix-kind.spec.md).
 
 | Phase | Status | Name | Tier | Close | Depends on | Combinable with |
 | ----- | ---- | ------ | ---- | ----- | ---------- | --------------- |
-| **1** | Not started | Kind and create shape | Medium | human | — | — |
+| **1** | Reviewing | Kind and create shape | Medium | human | — | — |
 | **2** | Not started | Plan and audit evidence | Medium | human | 1 | — |
 
 ## Phase 1 — Kind and create shape
+
+**Status:** Reviewing
 
 **Tracker phase:** n/a
 
@@ -88,10 +90,10 @@ Do not:
 
 ### Done when
 
-- [ ] Verify tiers Medium is n/a (no command in Project conventions)
-- [ ] A1.1–A1.3 pass
-- [ ] Older folders without Kind still treated as feature; create does not mass-rewrite them
-- [ ] Depth round and Progress gates behave as before for feature work
+- [x] Verify tiers Medium is n/a (no command in Project conventions)
+- [x] A1.1–A1.3 pass
+- [x] Older folders without Kind still treated as feature; create does not mass-rewrite them
+- [x] Depth round and Progress gates behave as before for feature work
 
 ### Gates
 
@@ -106,9 +108,15 @@ Do not:
 ### Close-out
 
 - Verified:
-- Deviations:
-- Follow-ups:
-- Blocked:
+  - **Verify Medium:** Project conventions › Verify tiers lists Medium as `n/a` — no command to run.
+  - **A1.1:** `create-spec.md` › Kind resolution step 1 skips the recommend ask on explicit `as bugfix`; Write branch Kind: bugfix emits Current / Expected / Unchanged behaviour and Root cause, and omits User journeys and Work split. `templates/spec.md` mirrors those sections. Infer create row in `SKILL.md` accepts `as bugfix` alone or with Depth.
+  - **A1.2:** Kind resolution step 2 recommends `Kind: bugfix` once on D5 cues (bug, fix, regression, broken, fails when, stack trace); decline leaves `feature`; no silent bugfix default.
+  - **A1.3:** Kind resolution step 3 defaults unset, non-cue input to `feature` with no Kind round; Write branch Kind: feature keeps User journeys and Work split and forbids mandatory behaviour lists.
+  - **Older folders:** `SKILL.md` › Kind and template comments — missing Kind → feature; create MUST NOT rewrite older folders only to add Kind.
+  - **Feature Depth / Progress:** Depth round, Progress gates, and feature Write prose unchanged aside from Kind settle-before-write; no edits to plan.md, implement.md, analysis-checklist, or design-quality.
+- Deviations: none
+- Follow-ups: Phase 2 — plan Trace / regression Close-out; implement Close-out evidence; audit and design-quality Kind branch
+- Blocked: —
 
 ## Phase 2 — Plan and audit evidence
 

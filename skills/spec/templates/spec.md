@@ -14,6 +14,8 @@ document_url: n/a
 **Progress:** design
 <!-- Depth: full | standard | lite. Chosen at create after Analysis. Missing on older folders → treat as full. lite folds tech and writes a thin plan in the same create session. -->
 **Depth:** {{full | standard | lite}}
+<!-- Kind: feature | bugfix. Chosen at create (explicit as bugfix|feature, one recommend ask on D5 cues, else feature). Missing on older folders → treat as feature. Do not rewrite older folders only to add Kind. -->
+**Kind:** {{feature | bugfix}}
 **Depends on:** {{`spec_docs/<slug>`, a named external deliverable, or "—"}}
 
 ## TL;DR
@@ -31,7 +33,7 @@ document_url: n/a
 
 | Doc | Read for | Present? |
 | --- | -------- | -------- |
-| This file (`{{feature-slug}}.spec.md`) | Scope, goals, journeys, constraints, work split | yes |
+| This file (`{{feature-slug}}.spec.md`) | Scope, goals, journeys or behaviour lists, constraints, work split (feature) | yes |
 | {{feature-slug}}.logic.md | Rules, workflows, state transitions | pending |
 | {{feature-slug}}.contracts.md | Types, API contracts, state ownership, storage | pending |
 | {{feature-slug}}.ui.md | Layout, interaction, states, copy | pending |
@@ -56,6 +58,32 @@ document_url: n/a
 | Path | What it does today |
 | ---- | ------------------ |
 | `{{path}}` | {{about 10 words}} |
+
+<!-- Kind: bugfix only — emit the three binding lists and Root cause below (or as peer subsections under this heading). Omit User journeys and Work split entirely (not n/a stubs). Kind: feature — omit these lists; keep User journeys and Work split. -->
+
+### Current behaviour
+
+<!-- Kind: bugfix. Binding. Each item: "When … the system …" -->
+
+- When {{…}} the system {{…}}
+
+### Expected behaviour
+
+<!-- Kind: bugfix. Binding. Each item: "When … the system shall …" -->
+
+- When {{…}} the system shall {{…}}
+
+### Unchanged behaviour
+
+<!-- Kind: bugfix. Binding. Each item: "When … the system shall continue to …" -->
+
+- When {{…}} the system shall continue to {{…}}
+
+### Root cause
+
+<!-- Kind: bugfix. Cite only modules opened in Investigate. -->
+
+{{…}}
 
 ## Goals and acceptance criteria
 
@@ -83,9 +111,10 @@ Source: {{…}}
 
 ## User journeys
 
-<!-- required. One subsection per journey. Steps are from the user's side, with no code names. A feature with no user-facing flow replaces this section with one line: "n/a — {{why}}". -->
+<!-- Kind: feature — required. One subsection per journey. Steps are from the user's side, with no code names. A feature with no user-facing flow replaces this section with one line: "n/a — {{why}}".
+     Kind: bugfix — omit this whole section (not an n/a stub). Behaviour lists + Root cause replace it. -->
 
-<!-- UI-primary (any goal needs a user-visible change, including copy-only): also cover screen depth in journeys or an adjacent short subsection — layout regions, main interactions, empty and error states, and glance versus control when both exist. Do not put component props or wireframes here; those belong in {{feature-slug}}.ui.md at promote. Scale layout detail to the change; still name empty or error states when they apply. -->
+<!-- UI-primary feature (any goal needs a user-visible change, including copy-only): also cover screen depth in journeys or an adjacent short subsection — layout regions, main interactions, empty and error states, and glance versus control when both exist. Do not put component props or wireframes here; those belong in {{feature-slug}}.ui.md at promote. Scale layout detail to the change; still name empty or error states when they apply. Skip for bugfix. -->
 
 ### {{Journey title}}
 
@@ -157,7 +186,8 @@ Covers: {{G1 (short name), …}}
 
 ## Work split
 
-<!-- required. Ordered slices for review. The implementation plan turns these into phases. Do not list files, Done when, or acceptance scenarios. -->
+<!-- Kind: feature — required. Ordered slices for review. The implementation plan turns these into phases. Do not list files, Done when, or acceptance scenarios.
+     Kind: bugfix — omit this whole section (not an n/a stub). -->
 
 1. **{{Slice name}}.** Covers {{G1 (short name)}}. Outcome: {{what exists when this slice is done}}. Main surface: {{area — not a file list}}.
 

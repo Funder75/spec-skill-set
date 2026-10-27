@@ -49,6 +49,19 @@ Missing Depth on an older folder → treat as `full`. Set Depth once at create (
 
 Always emit `<slug>.plan.md` (implement and Linear require it). Lite does not embed the plan in `<slug>.spec.md`.
 
+## Kind
+
+Each `<slug>.spec.md` also carries what kind of work the folder is (body line next to Progress and Depth, not frontmatter):
+
+`Kind: feature | bugfix`
+
+Missing Kind on an older folder → treat as `feature`. Set Kind once at create; change it only when the user asks. Create MUST NOT rewrite older folders only to add Kind.
+
+- **feature** (default) — today's shape: **User journeys** and **Work split** stay required.
+- **bugfix** — omit **User journeys** and **Work split**; emit **Current behaviour**, **Expected behaviour**, **Unchanged behaviour**, and **Root cause** (cite Investigate-opened modules only). Any Depth is allowed; help SHOULD recommend **lite** for many bugs, not require it.
+
+Kind resolution at create: see [stages/create-spec.md](stages/create-spec.md) › Kind resolution.
+
 ## Spec docs
 
 `{{…}}` is fill-in. HTML comments in the templates are author guidance — strip them when writing the doc.
@@ -85,7 +98,7 @@ IDs: `G` goals, `R` rules, `A<phase>.<n>` acceptance scenarios, `D` decisions, `
 If the message is only `spec`, `/spec`, or `/spec help` — no slug and no action — stop. Do not bootstrap, do not open a stage file, and do not start a spec.
 
 - `spec_docs/README.md` exists → point the user at that file. Do not restate it.
-- It does not exist → explain what this skill does: the lifecycle (`<slug>.spec.md` → tech specs → `<slug>.plan.md` → one phase → archive), that **Depth** (`full` / `standard` / `lite`) shortens gates for smaller work, that read-only **explore** decides whether a folder is needed, and the actions in the table below.
+- It does not exist → explain what this skill does: the lifecycle (`<slug>.spec.md` → tech specs → `<slug>.plan.md` → one phase → archive), that **Depth** (`full` / `standard` / `lite`) shortens gates for smaller work, that **Kind** (`feature` / `bugfix`) chooses design shape (say `create … as bugfix`; lite is recommended for many bugs, not required), that read-only **explore** decides whether a folder is needed, and the actions in the table below.
 
 ## Infer, otherwise ask
 
@@ -94,7 +107,7 @@ Explicit verbs skip the "what next?" question. Read the matching stage file and 
 | User said | Action | Stage file |
 | --------- | ------ | ---------- |
 | explore / `/spec explore` / should this be a spec / do I need a folder | Read-only: restate ask, optional approaches, exactly one outcome (no spec / spec at Depth+slug / spike). Writes nothing under `spec_docs/` | [stages/explore.md](stages/explore.md) |
-| create spec from … / name it … / create … as lite\|standard\|full | Write or resume `<slug>.spec.md` (lite also writes thin plan). Explicit `as lite\|standard\|full` sets Depth without the Depth round ask | [stages/create-spec.md](stages/create-spec.md) |
+| create spec from … / name it … / create … as lite\|standard\|full / create … as bugfix\|feature | Write or resume `<slug>.spec.md` (lite also writes thin plan). Explicit `as lite\|standard\|full` sets Depth without the Depth round ask. Explicit `as bugfix` or `as feature` (alone or with a Depth) sets Kind without the recommend ask | [stages/create-spec.md](stages/create-spec.md) |
 | fill conventions / set up conventions / update project conventions | Interview and write **Project conventions** in `spec_docs/README.md`, independent of bootstrap. Creates the README first if missing | [stages/fill-conventions.md](stages/fill-conventions.md) |
 | promote to tech specs | Technical docs only. Set `Progress: tech`. No-op when `Depth: lite` | [stages/tech-specs.md](stages/tech-specs.md) |
 | promote to implementation plan | Plan only. Gate skip depends on Depth (see [stages/plan.md](stages/plan.md)) | [stages/plan.md](stages/plan.md) |
@@ -148,7 +161,7 @@ If `spec_docs/README.md` does not exist (whether or not `spec_docs/` or sibling 
 
 ## Work items
 
-When the input is a work-item id, follow **Project conventions** for how to fetch it. Keep the title and description in the source note, and map acceptance criteria onto the goals. Do not paste the raw work-item payload into `<slug>.spec.md` or the reply. After create-spec sets frontmatter `work_item`, link-back and other Linear writes follow [stages/linear-sync.md](stages/linear-sync.md) — do not invent a second sync doctrine (R20 (routing entry)). Durable Linear foreign keys (`work_item`, `tracker_spec_url`, `document_id`, `document_url`) live in `<slug>.spec.md` YAML frontmatter only; `Progress`, `Depth`, and `Depends on` stay in the body.
+When the input is a work-item id, follow **Project conventions** for how to fetch it. Keep the title and description in the source note, and map acceptance criteria onto the goals. Do not paste the raw work-item payload into `<slug>.spec.md` or the reply. After create-spec sets frontmatter `work_item`, link-back and other Linear writes follow [stages/linear-sync.md](stages/linear-sync.md) — do not invent a second sync doctrine (R20 (routing entry)). Durable Linear foreign keys (`work_item`, `tracker_spec_url`, `document_id`, `document_url`) live in `<slug>.spec.md` YAML frontmatter only; `Progress`, `Depth`, `Kind`, and `Depends on` stay in the body.
 
 ## Bounds
 
