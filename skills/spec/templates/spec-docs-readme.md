@@ -5,7 +5,7 @@ Planning documents for this repo. One folder per feature spec. The spec workflow
 | Path | Role |
 | ---- | ---- |
 | `<slug>/` | Active spec. Start at `<slug>.spec.md` |
-| `<slug>/<slug>.spec.md` | Scope, gates, and the coarse work split. Body lines: `Progress` (gate) and `Depth` (full / standard / lite). Linear FKs (`work_item`, URLs, Document ids) live in YAML frontmatter |
+| `<slug>/<slug>.spec.md` | Scope, gates, and the coarse work split (or bugfix behaviour lists). Body lines: `Progress` (gate), `Depth` (full / standard / lite), and `Kind` (feature / bugfix; missing → feature). Linear FKs (`work_item`, URLs, Document ids) live in YAML frontmatter |
 | `<slug>/<slug>.logic.md` | Rules, workflows, state transitions (when needed) |
 | `<slug>/<slug>.contracts.md` | Types, API contracts, state ownership, storage (when needed) |
 | `<slug>/<slug>.ui.md` | Layout, interaction, states, copy (when needed) |
@@ -23,6 +23,8 @@ Planning documents for this repo. One folder per feature spec. The spec workflow
 | **standard** | Design → fold tech / `not needed` (`Progress: tech`) → thin plan → implement. |
 | **full** | Design → tech siblings when needed → plan → implement (default for older folders with no Depth line). |
 
+`Kind` in `<slug>.spec.md` is `feature` (default) or `bugfix`. Say `create … as bugfix` (alone or with a Depth) to set Kind without a recommend ask. Lite is recommended for many bugs, not required. Bugfix design uses behaviour lists and Root cause instead of User journeys and Work split. Older folders without Kind are treated as feature.
+
 Full path:
 
 1. **Spec design** — `<slug>.spec.md` only (`Progress: design`). Iterate here.
@@ -32,7 +34,7 @@ Full path:
 
 `Progress` in `<slug>.spec.md` is the gate: `design`, `tech`, `plan`, `implementing`, or `archived`. Phase status (`Not started` through `Done`, plus `Deferred` and `Blocked`) lives only in `<slug>.plan.md`.
 
-Invoke the **spec** skill with `/spec`. Examples: create a spec from a note or a work item (optionally `as lite`), `/spec next`, promote to tech specs, promote to an implementation plan, implement the next phase, audit or review a spec, archive, sync with Linear.
+Invoke the **spec** skill with `/spec`. Examples: create a spec from a note or a work item (optionally `as lite`, `as bugfix`, or both), `/spec next`, promote to tech specs, promote to an implementation plan, implement the next phase, audit or review a spec, archive, sync with Linear.
 
 Do not edit the skill to record progress.
 

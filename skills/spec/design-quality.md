@@ -16,7 +16,7 @@ Before handing the folder to an implement session:
 | **Decisions closed or Open** | Every architecture, persistence, or UX fork is a **D** or a **Q** item with **Blocks** set |
 | **Traceability** | Each goal is in a **Covers** line; phases list their rules, scenarios, and Done when |
 | **Named IDs** | Every `G`, `R`, `D`, `Q` citation uses the full form, such as `G1 (short name)` |
-| **Journey trace** | Each acceptance scenario names its journey step, or `Journey: —`, and a **Check** of `automated` or `human` |
+| **Journey trace** | **Feature / missing Kind:** each acceptance scenario names its journey step, or `Journey: —`, and a **Check** of `automated` or `human`. **Kind: bugfix:** each scenario Traces 1:1 to a behaviour-list item; at least one scenario is marked Regression; the regression Close-out shape (red-before-green) is noted for implement |
 | **Read first** | Each phase links the tech-doc sections it needs, not whole docs |
 | **Failure modes** | Empty, error, and permission (or an explicit "n/a") where the work touches users or stored data |
 | **Phase sizing** | As few phases as safely possible; verify for the phase tier passes at the end; split only for a real reason — see [Phase sizing](#phase-sizing) |

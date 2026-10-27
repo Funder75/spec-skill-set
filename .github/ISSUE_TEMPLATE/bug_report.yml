@@ -1,0 +1,54 @@
+name: Bug report
+description: Something in the Spec plugin or /spec skill is wrong
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. For security issues, use [private vulnerability reporting](https://github.com/Funder75/spec-skill-set/security/advisories/new) instead.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you expect, and what actually happened?
+      placeholder: e.g. /spec create as lite wrote Progress: tech instead of plan
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Minimal steps, including the /spec command and any Depth/Kind flags.
+      placeholder: |
+        1. /add-plugin …
+        2. /spec create …
+        3. …
+    validations:
+      required: true
+  - type: input
+    id: cursor-version
+    attributes:
+      label: Cursor version
+      placeholder: e.g. 2.5.x
+    validations:
+      required: false
+  - type: dropdown
+    id: install-method
+    attributes:
+      label: How is Spec installed?
+      options:
+        - GitHub /add-plugin
+        - Local ~/.cursor/plugins/local/spec-skill-set
+        - User-level ~/.cursor/skills/spec
+        - Project .cursor/skills/spec-local (dev)
+        - Other / unsure
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Extra context
+      description: Logs, screenshots, or the slug/Depth/Kind of the folder involved.
+    validations:
+      required: false

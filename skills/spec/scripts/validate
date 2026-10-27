@@ -1,0 +1,303 @@
+#!/bin/sh
+# Validate mechanical defects in one spec_docs/<slug>/ folder.
+# Usage: validate <folder>
+# Exit 0 = clean. Non-zero = findings printed one per line.
+# Missing folder / bad argv → exit 2 (launch-style failure for stages).
+
+set -eu
+
+usage() {
+  echo "Usage: validate <folder>" >&2
+  exit 2
+}
+
+[ "${1:-}" = "-h" ] || [ "${1:-}" = "--help" ] && usage
+[ "$#" -eq 1 ] || usage
+
+FOLDER=$1
+case "$FOLDER" in
+  */) ;;
+  *) FOLDER="${FOLDER}/" ;;
+esac
+
+if [ ! -d "$FOLDER" ]; then
+  echo "validate: not a directory: $1" >&2
+  exit 2
+fi
+
+FOLDER=$(CDPATH= cd -- "$FOLDER" && pwd)
+FOLDER="${FOLDER}/"
+SLUG=$(basename "${FOLDER%/}")
+SPEC="${FOLDER}${SLUG}.spec.md"
+PLAN="${FOLDER}${SLUG}.plan.md"
+
+OUT=$(mktemp)
+NAMES=$(mktemp)
+OVERVIEW=$(mktemp)
+PHASE_CLOSE=$(mktemp)
+CHECKS=$(mktemp)
+GATES=$(mktemp)
+cleanup() {
+  rm -f "$OUT" "$NAMES" "$OVERVIEW" "$PHASE_CLOSE" "$CHECKS" "$GATES"
+}
+trap cleanup EXIT
+
+emit() {
+  printf '%s\n' "$1" >> "$OUT"
+}
+
+# --- Bare legacy basenames (D4) ---
+for base in implementation-plan.md spec.md business-logic.md contracts.md ui.md data.md; do
+  if [ -e "${FOLDER}${base}" ]; then
+    emit "${FOLDER}${base}: bare basename (use slug-prefixed D1 name)"
+  fi
+done
+
+# List markdown files into a stable list (avoid find|while FINDINGS issues).
+MD_LIST=$(mktemp)
+trap 'rm -f "$OUT" "$NAMES" "$OVERVIEW" "$PHASE_CLOSE" "$CHECKS" "$GATES" "$MD_LIST"' EXIT
+find "$FOLDER" -type f \( -name '*.md' -o -name '*.MD' \) > "$MD_LIST" 2>/dev/null || true
+
+# Strip inline `code` spans so docs can mention {{…}} / [SUGGESTION: as examples.
+strip_inline_code() {
+  # Remove paired backtick spans; leave the rest of the line.
+  printf '%s' "$1" | sed -E 's/`[^`]*`//g'
+}
+
+# --- Placeholders, HTML comments, [SUGGESTION: ---
+while IFS= read -r f || [ -n "$f" ]; do
+  [ -n "$f" ] || continue
+  in_fence=0
+  lineno=0
+  while IFS= read -r line || [ -n "$line" ]; do
+    lineno=$((lineno + 1))
+    case "$line" in
+      \`\`\`*)
+        if [ "$in_fence" -eq 0 ]; then
+          in_fence=1
+        else
+          in_fence=0
+        fi
+        continue
+        ;;
+    esac
+    [ "$in_fence" -eq 1 ] && continue
+
+    plain=$(strip_inline_code "$line")
+
+    case "$plain" in
+      *'{{'*'}}'*)
+        emit "${f}:${lineno}: leftover {{…}} placeholder"
+        ;;
+      *'{{'*)
+        emit "${f}:${lineno}: leftover {{…}} placeholder"
+        ;;
+    esac
+
+    case "$plain" in
+      *'<!--'*)
+        emit "${f}:${lineno}: leftover HTML comment"
+        ;;
+    esac
+
+    case "$plain" in
+      *'[SUGGESTION:'*)
+        emit "${f}:${lineno}: unaccepted [SUGGESTION: marker"
+        ;;
+    esac
+  done < "$f"
+done < "$MD_LIST"
+
+# --- Bare G/R/D/Q citations ---
+# Acceptable: "G1 (short name)". Also accept en/em-dash ranges only when each
+# bound is written in full form elsewhere on the same line — otherwise flag.
+# Skip fenced code and inline `code` (letter-only examples like `G`/`R`).
+while IFS= read -r f || [ -n "$f" ]; do
+  [ -n "$f" ] || continue
+  in_fence=0
+  lineno=0
+  while IFS= read -r line || [ -n "$line" ]; do
+    lineno=$((lineno + 1))
+    case "$line" in
+      \`\`\`*)
+        if [ "$in_fence" -eq 0 ]; then
+          in_fence=1
+        else
+          in_fence=0
+        fi
+        continue
+        ;;
+    esac
+    [ "$in_fence" -eq 1 ] && continue
+
+    plain=$(strip_inline_code "$line")
+    ids=$(printf '%s' "$plain" | grep -oE '[GRDQ][0-9]+' 2>/dev/null || true)
+    [ -n "$ids" ] || continue
+    while IFS= read -r id || [ -n "$id" ]; do
+      [ -n "$id" ] || continue
+      # Full form: id then optional space then (
+      if printf '%s' "$plain" | grep -qE "${id}[[:space:]]*\\("; then
+        continue
+      fi
+      # Range shorthand R1–R3 / R1-R3 counts as bare (writing-style wants full form)
+      emit "${f}:${lineno}: bare citation ${id} (need '${id} (short name)')"
+    done <<EOF
+$ids
+EOF
+  done < "$f"
+done < "$MD_LIST"
+
+# --- Reused id with different short names ---
+: > "$NAMES"
+while IFS= read -r f || [ -n "$f" ]; do
+  [ -n "$f" ] || continue
+  pairs=$(grep -oE '[GRDQ][0-9]+[[:space:]]*\([^)]+\)' "$f" 2>/dev/null || true)
+  [ -n "$pairs" ] || continue
+  while IFS= read -r pair || [ -n "$pair" ]; do
+    [ -n "$pair" ] || continue
+    id=$(printf '%s' "$pair" | sed -E 's/[[:space:]]*\(.*//')
+    name=$(printf '%s' "$pair" | sed -E 's/^[GRDQ][0-9]+[[:space:]]*\(([^)]+)\)$/\1/')
+    printf '%s\t%s\n' "$id" "$name" >> "$NAMES"
+  done <<EOF
+$pairs
+EOF
+done < "$MD_LIST"
+
+BAD_IDS=$(sort -u "$NAMES" | awk -F'\t' '
+  { key[$1] = key[$1] SUBSEP $2 }
+  END {
+    for (id in key) {
+      n = split(key[id], a, SUBSEP)
+      seen = 0
+      delete uniq
+      for (i = 1; i <= n; i++) {
+        if (a[i] == "") continue
+        if (!(a[i] in uniq)) { uniq[a[i]] = 1; seen++ }
+      }
+      if (seen > 1) print id
+    }
+  }
+')
+if [ -n "$BAD_IDS" ]; then
+  while IFS= read -r bad || [ -n "$bad" ]; do
+    [ -n "$bad" ] || continue
+    emit "folder: reused id ${bad} with different short names"
+  done <<EOF
+$BAD_IDS
+EOF
+fi
+
+# --- Progress line ---
+if [ ! -f "$SPEC" ]; then
+  emit "${SPEC}: missing design overview (expected ${SLUG}.spec.md)"
+else
+  progress_count=$(grep -cE '^\*\*Progress:\*\*' "$SPEC" 2>/dev/null || true)
+  progress_count=$(echo "$progress_count" | tr -d '[:space:]')
+  progress_count=${progress_count:-0}
+  if [ "$progress_count" -eq 0 ]; then
+    emit "${SPEC}: missing Progress line"
+  elif [ "$progress_count" -gt 1 ]; then
+    emit "${SPEC}: duplicated Progress line (${progress_count} times)"
+  fi
+fi
+
+# --- Plan Close mismatch + Gates↔Check ---
+if [ -f "$PLAN" ]; then
+  awk '
+    BEGIN { in_overview = 0 }
+    /^## Progress overview/ { in_overview = 1; next }
+    /^## / { if (in_overview) in_overview = 0 }
+    in_overview && /^\|/ {
+      line = $0
+      sub(/^\|[[:space:]]*/, "", line)
+      n = split(line, cells, /[[:space:]]*\|[[:space:]]*/)
+      if (n < 5) next
+      phase = cells[1]
+      gsub(/\*/, "", phase)
+      gsub(/[[:space:]]/, "", phase)
+      if (phase ~ /^-+$/) next
+      if (phase == "Phase") next
+      if (phase !~ /^[0-9]+$/) next
+      close_val = cells[5]
+      gsub(/[[:space:]]/, "", close_val)
+      print phase "\t" close_val
+    }
+  ' "$PLAN" > "$OVERVIEW" || true
+
+  awk '
+    /^## Phase[[:space:]]+[0-9]+/ {
+      phase = $0
+      sub(/^## Phase[[:space:]]+/, "", phase)
+      sub(/[[:space:]].*/, "", phase)
+      current = phase
+      next
+    }
+    /^\*\*Close:\*\*/ {
+      if (current == "") next
+      val = $0
+      sub(/^\*\*Close:\*\*[[:space:]]*/, "", val)
+      gsub(/[[:space:]]/, "", val)
+      print current "\t" val
+    }
+  ' "$PLAN" > "$PHASE_CLOSE" || true
+
+  while IFS= read -r row || [ -n "$row" ]; do
+    [ -n "$row" ] || continue
+    phase=$(printf '%s' "$row" | cut -f1)
+    oclose=$(printf '%s' "$row" | cut -f2)
+    pclose=$(awk -F'\t' -v p="$phase" '$1==p { print $2; exit }' "$PHASE_CLOSE")
+    if [ -z "$pclose" ]; then
+      emit "${PLAN}: phase ${phase} has overview Close but no phase Close line"
+      continue
+    fi
+    if [ "$oclose" != "$pclose" ]; then
+      emit "${PLAN}: phase ${phase} Close mismatch (overview=${oclose} phase=${pclose})"
+    fi
+  done < "$OVERVIEW"
+
+  awk '
+    /^\*\*A[0-9]+\.[0-9]+/ || /^- \*\*A[0-9]+\.[0-9]+/ {
+      id = $0
+      if (match(id, /A[0-9]+\.[0-9]+/)) {
+        current = substr(id, RSTART, RLENGTH)
+      }
+      next
+    }
+    current != "" && /Check:[[:space:]]*(automated|human)/ {
+      val = $0
+      sub(/.*Check:[[:space:]]*/, "", val)
+      gsub(/[[:space:]]/, "", val)
+      print current "\t" val
+      current = ""
+    }
+  ' "$PLAN" > "$CHECKS" || true
+
+  awk '
+    BEGIN { in_gates = 0 }
+    /^### Gates/ { in_gates = 1; next }
+    /^### / { if (in_gates) in_gates = 0 }
+    /^## / { if (in_gates) in_gates = 0 }
+    in_gates && /^\|/ {
+      line = $0
+      while (match(line, /A[0-9]+\.[0-9]+/)) {
+        print substr(line, RSTART, RLENGTH)
+        line = substr(line, RSTART + RLENGTH)
+      }
+    }
+  ' "$PLAN" | sort -u > "$GATES" || true
+
+  while IFS= read -r crow || [ -n "$crow" ]; do
+    [ -n "$crow" ] || continue
+    sid=$(printf '%s' "$crow" | cut -f1)
+    if ! grep -qxF "$sid" "$GATES" 2>/dev/null; then
+      emit "${PLAN}: scenario ${sid} Check has no matching Gates row"
+    fi
+  done < "$CHECKS"
+fi
+
+if [ -s "$OUT" ]; then
+  # Deduplicate while preserving order
+  awk 'NF && !seen[$0]++' "$OUT"
+  exit 1
+fi
+exit 0
