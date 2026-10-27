@@ -118,7 +118,7 @@ Run after Clarify is complete. Finish this round before Chat design approval. Sk
 
 ## Chat design approval
 
-**When Depth is lite:** present the whole packet once (scope, goals, folded-tech intent, and that a one-phase plan will be written). One approval covers the design and readiness to write both files. Do not ask section-by-section.
+**When Depth is lite (R8 (one lite approval)):** present the whole packet once (scope, goals, folded-tech intent, and that a thin `<slug>.plan.md` will be written). One approval covers the design and readiness to write both `<slug>.spec.md` and the thin plan. Do not ask section-by-section. Do not treat the later Stop as a second design gate when the simple-lite case holds (see Stop).
 
 **When Depth is standard or full:** present the design in short chat sections scaled to complexity. Ask for approval after sections, not only after a file exists.
 
@@ -131,6 +131,7 @@ Run after Clarify is complete. Finish this round before Chat design approval. Sk
 
 - Write `<slug>.spec.md` before chat approval or the assumptions path.
 - Open Write in the same turn as an unanswered design-section question (standard / full).
+- For lite, require a separate human "review the plan" approval after Write when Stop's simple-lite case holds (R8 (one lite approval)).
 
 If a section is rejected, revise that section in chat and ask again. Do not create the file until the design shape is approved (or the assumptions path applies).
 
@@ -149,7 +150,7 @@ The spec is semi-technical: what changes, why, v1 scope, non-goals, user journey
 
 **Depth: standard** — Same binding coverage (goals, journeys, edges, decisions). Prefer shorter prose; omit empty optional sections.
 
-**Depth: lite** — Binding goals, journeys (or n/a), edges, constraints, and touched paths stay. Prefer short sections. Do not pad. Still decide every behaviour a reviewer must accept, or record a **Q** item. Do not leave behaviour to discover at a later promote (there is no separate tech promote).
+**Depth: lite** — Binding goals, journeys (or n/a), edges, real constraints, and touched paths stay (human skim path: TL;DR, goals and non-goals, touched paths, real constraints, journeys or a single `n/a — …` line — R7 (lite skim path)). Prefer short sections. Do not pad. Still decide every behaviour a reviewer must accept, or record a **Q** item. Do not leave behaviour to discover at a later promote (there is no separate tech promote).
 
 **User journeys** is required. Cover every user-facing goal in at least one journey. When the feature has no user-facing flow, write one line: n/a, and why.
 
@@ -174,7 +175,14 @@ Replace every `{{…}}` placeholder. Strip every HTML comment. Number goals `G1 
 
 **Notes** hold context that needs no action. **Concerns** hold items that need a decision or a change, each with what goes wrong if left.
 
-Omit **Glossary**, **Capabilities**, **Decisions**, **Open questions**, **Notes**, **Concerns**, and **Technical notes** when they would be empty. **Constraints** stays: write `n/a` on a line that does not apply. Nothing in **Non-goals** may be built in this spec.
+Omit **Glossary**, **Capabilities**, **Decisions**, **Open questions**, **Notes**, **Concerns**, and **Technical notes** when they would be empty. Doc index and other agent scaffolding MAY remain when this skill requires them. Create MUST NOT invent filler prose for omitted sections.
+
+**Constraints by Depth:**
+
+- **standard / full:** **Constraints** stays. Write `n/a` on a line that does not apply.
+- **lite (R5 (lite omit empty), R6 (lite constraints)):** Also omit empty optionals listed above. Constraints MUST list only lines that apply — do not pad with `n/a` rows. Drop the whole Constraints section only when no line applies.
+
+Nothing in **Non-goals** may be built in this spec.
 
 If the assumptions path was used, ensure every recorded assumption appears as an **Open questions** or **Decisions** item before you finish the file.
 
@@ -220,6 +228,11 @@ Do not create branches, worktrees, or commits unless the user explicitly asks in
 
 ## Stop
 
-**Depth: lite** — Present the spec and the thin plan. Ask for review. Next offer is implement (not promote-to-tech). Iterate on those two files until they implement or ask to change Depth.
+**Depth: lite (R8 (one lite approval), D1 (plan stays)):**
 
-**Depth: standard / full** — Present the spec and ask the user to review it. Iterate on `<slug>.spec.md` alone until they promote. Do not add sibling docs during this loop.
+- Thin `<slug>.plan.md` was already written in this session. Do not embed it in `<slug>.spec.md`.
+- **Simple lite** — single Low (or clearly Low) phase with **Close** `automated`: next offer is implement. Do not ask humans to re-read the plan as a second design gate. Mention that both files exist; do not require a separate plan-review approval.
+- **Harder lite** — multi-phase, Tier above Low, or **Close** `human`: present the plan once for review, then next offer is implement.
+- Never offer promote-to-tech for lite. Iterate on the existing files until they implement or ask to change Depth.
+
+**Depth: standard / full** — Present the spec and ask the user to review it. Iterate on `<slug>.spec.md` alone until they promote. Do not add sibling docs during this loop. Design review before promote remains required.

@@ -21,9 +21,11 @@ For a short first-read overview (folder role, write loop, tips), see the [projec
 
 | Depth | Path |
 | ----- | ---- |
-| **lite** | One approval → `<slug>.spec.md` with tech folded or `not needed` + thin `<slug>.plan.md` (`Progress: plan`). Then implement. Say `create … as lite` to skip the Depth ask. |
+| **lite** | One approval → short human skim (`<slug>.spec.md` omits empty optionals; Constraints only real lines) + thin `<slug>.plan.md` (`Progress: plan`). Simple Low + Close automated → next offer is implement (no second plan-review gate). Say `create … as lite` to skip the Depth ask. |
 | **standard** | Design → fold tech / `not needed` (`Progress: tech`) → thin plan → implement. |
-| **full** | Design → tech siblings when needed → plan → implement (default for older folders with no Depth line). |
+| **full** | Design → tech siblings when the emit bar is met → plan → implement (default for older folders with no Depth line). |
+
+Not sure a folder is needed? `/spec explore` is read-only: no-spec / Depth+slug / spike; nothing under `spec_docs/`. When create's Depth heuristics prefer lite, the Depth round also offers **no folder**.
 
 Full path:
 
@@ -34,7 +36,7 @@ Full path:
 
 `Progress` in `<slug>.spec.md` is the gate: `design`, `tech`, `plan`, `implementing`, or `archived`. Phase status (`Not started` through `Done`, plus `Deferred` and `Blocked`) lives only in `<slug>.plan.md`.
 
-Invoke the **spec** skill with `/spec`. Examples: create a spec from a note or a work item (optionally `as lite`), `/spec next`, promote to tech specs, promote to an implementation plan, implement the next phase, audit or review a spec, archive, sync with Linear.
+Invoke the **spec** skill with `/spec`. Examples: `/spec explore`, create a spec from a note or a work item (optionally `as lite`), `/spec next`, promote to tech specs, promote to an implementation plan, implement the next phase, audit or review a spec, archive, sync with Linear.
 
 Do not edit the skill to record progress.
 

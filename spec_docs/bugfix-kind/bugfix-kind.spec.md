@@ -7,7 +7,7 @@ document_url: n/a
 
 # Bugfix kind
 
-**Progress:** design
+**Progress:** tech
 **Depth:** standard
 **Depends on:** —
 
@@ -23,9 +23,9 @@ document_url: n/a
 | Doc | Read for | Present? |
 | --- | -------- | -------- |
 | This file (`bugfix-kind.spec.md`) | Scope, goals, journeys, constraints, work split | yes |
-| bugfix-kind.logic.md | Rules, workflows, state transitions | pending |
-| bugfix-kind.contracts.md | Types, API contracts, state ownership, storage | pending |
-| bugfix-kind.ui.md | Layout, interaction, states, copy | pending |
+| bugfix-kind.logic.md | Rules, workflows, state transitions | folded → [Technical notes › Rules](#rules) |
+| bugfix-kind.contracts.md | Types, API contracts, state ownership, storage | folded → [Technical notes › Contracts](#contracts) |
+| bugfix-kind.ui.md | Layout, interaction, states, copy | not needed |
 | bugfix-kind.plan.md | Phases and phase status | pending |
 
 ## Source
@@ -220,6 +220,151 @@ Add a **Kind** body line beside Depth. Teach create routing and Write to branch 
 - **Kind:** Body line on `<slug>.spec.md`: `feature` or `bugfix`. Missing means `feature`.
 - **Behaviour list:** One of Current, Expected, or Unchanged behaviour on a bugfix spec.
 - **Red-before-green evidence:** Record that the regression check failed without the fix and passed with it, written in phase Close-out.
+
+## Technical notes (folded)
+
+Depth is standard, so rules and document contracts stay here. No UI surface.
+
+### Rules
+
+**In short:** Create sets Kind, Write branches the design shape, and plan / audit require list traces plus red-before-green on the regression scenario.
+
+#### R1 (kind body line)
+
+**Lands in:** `skills/spec/templates/spec.md` › Progress / Depth header; `skills/spec/stages/create-spec.md` › Write; `skills/spec/SKILL.md` › Progress / Depth docs
+
+- Every new `<slug>.spec.md` MUST include `Kind: feature | bugfix` next to Progress and Depth.
+- Missing Kind on an older folder MUST be treated as `feature`.
+- Create MUST NOT rewrite older folders only to add Kind.
+
+> **Preserve:** Existing folders without Kind keep working as feature.
+
+#### R2 (explicit kind flag)
+
+**Lands in:** `skills/spec/SKILL.md` › Infer table / create row; `skills/spec/stages/create-spec.md` › before or with Depth round
+
+- Create MUST accept `as bugfix` and `as feature` (alone or with a Depth).
+- Explicit Kind MUST skip the recommend ask.
+- Any Depth remains allowed with bugfix; help text SHOULD recommend lite, not require it (see D4 (any depth)).
+
+#### R3 (infer confirm)
+
+**Lands in:** `skills/spec/stages/create-spec.md` › after Analysis / with Depth round
+
+- When Kind is unset and the input looks like a bug, create MUST recommend `Kind: bugfix` once and wait for yes or no.
+- Decline MUST leave Kind as `feature`.
+- Create MUST NOT silently default unset Kind to bugfix.
+
+> **Open:** Q1 (bug heuristic)
+
+#### R4 (feature default)
+
+**Lands in:** `skills/spec/stages/create-spec.md` › Kind resolution
+
+- When Kind is unset and the input does not look like a bug, Kind MUST default to `feature` with no Kind round.
+
+#### R5 (bugfix design shape)
+
+**Lands in:** `skills/spec/templates/spec.md` › conditional sections; `skills/spec/stages/create-spec.md` › Write
+
+- For `Kind: bugfix`, Write MUST omit **User journeys** and **Work split**.
+- Write MUST emit three binding lists: **Current behaviour**, **Expected behaviour**, **Unchanged behaviour**, each as "When … the system …" items (Expected / Unchanged use "shall" / "shall continue to").
+- Under **Problem and current behaviour**, Write MUST add **Root cause** that cites only modules opened in Investigate.
+- Feature create MUST NOT gain mandatory behaviour lists.
+
+#### R6 (plan list trace)
+
+**Lands in:** `skills/spec/stages/plan.md` › acceptance scenarios; `skills/spec/templates/implementation-plan.md` › scenario Trace; lite thin-plan path in create-spec
+
+- For bugfix folders, each acceptance scenario MUST map one-to-one onto one item from the three behaviour lists.
+- The Trace field MUST name the list and item (or an equivalent clear form). Journey-step traces MUST NOT be required for bugfix.
+- At least one scenario MUST be marked as the regression that proves the fix.
+
+#### R7 (red before green)
+
+**Lands in:** `skills/spec/stages/implement.md` › Close-out / Reviewing; `skills/spec/templates/implementation-plan.md` › Close-out guidance; `skills/spec/stages/plan.md` › note
+
+- The regression scenario's **Close-out** MUST record red-before-green evidence: the check failed without the fix and passed with it.
+- Evidence MAY be an automated command, a manual repro, or equivalent. Inventing green-only MUST be treated as a defect.
+- This rule applies to that regression scenario only. It MUST NOT force TDD for every phase. `plan.md` › "Require TDD unless Project conventions say so" still holds.
+
+#### R8 (audit kind branch)
+
+**Lands in:** `skills/spec/analysis-checklist.md`; `skills/spec/design-quality.md`
+
+- For `Kind: bugfix` (explicit), audit and design-quality MUST check the three behaviour lists and the red-before-green Close-out rule instead of flagging missing journeys or Work split.
+- Missing Kind MUST keep today's journey / Work split checks (treat as feature).
+
+### Kind resolution (create)
+
+1. Parse explicit `as bugfix` / `as feature` from the invoke — `skills/spec/SKILL.md` › create row; `skills/spec/stages/create-spec.md`.
+2. If unset and bug-like → one recommend ask (R3 (infer confirm)); else default feature (R4 (feature default)).
+3. After Depth and Clarify, Write uses the settled Kind (R5 (bugfix design shape) or feature path).
+
+### Contracts
+
+**In short:** Kind is a body line. Bugfix replaces journey sections with named lists. Plans use a Trace field and Close-out evidence shape.
+
+#### Kind body line
+
+**Lands in:** `skills/spec/templates/spec.md` header block
+
+| Field | Values | Required on new writes | Missing means |
+| ----- | ------ | ---------------------- | ------------- |
+| Kind | `feature` \| `bugfix` | yes | `feature` |
+
+Sketch (advisory):
+
+```md
+**Progress:** design
+**Depth:** standard
+**Kind:** bugfix
+**Depends on:** —
+```
+
+#### Bugfix design sections
+
+**Lands in:** `skills/spec/templates/spec.md` (conditional); create Write
+
+| Section | Binding contents |
+| ------- | ---------------- |
+| Current behaviour | List of "When … the system …" |
+| Expected behaviour | List of "When … the system shall …" |
+| Unchanged behaviour | List of "When … the system shall continue to …" |
+| Root cause | Cite opened Investigate modules only |
+
+For bugfix, **User journeys** and **Work split** are absent (not n/a stubs).
+
+#### Scenario Trace and Close-out
+
+**Lands in:** `skills/spec/templates/implementation-plan.md`
+
+| Piece | Feature (or missing Kind) | Bugfix |
+| ----- | ------------------------- | ------- |
+| Scenario trace | Journey title + step, or `Journey: —` | Behaviour list + item (1:1) |
+| Regression mark | optional | at least one scenario marked regression |
+| Close-out (regression) | verify as today | MUST include red-before-green evidence |
+
+Sketch (advisory) for a bugfix scenario:
+
+```md
+- **A1.1 — Save keeps draft title**
+  - Trace: Expected behaviour › "When the user saves, the system shall keep the draft title"
+  - Regression: yes
+  - Check: automated
+  - Given …
+  - When …
+  - Then …
+```
+
+Close-out evidence line (advisory shape): red: named command or repro failed; green: same check passed after the fix.
+
+#### Help / invoke docs
+
+**Lands in:** `skills/spec/templates/spec-docs-readme.md`; `spec_docs/README.md` when that doc is next updated for conventions
+
+- Mention `Kind` and `create … as bugfix`.
+- SHOULD note lite is recommended for many bugs, not required.
 
 ## Decisions
 

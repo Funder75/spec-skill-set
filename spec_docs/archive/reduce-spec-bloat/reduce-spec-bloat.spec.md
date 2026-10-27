@@ -7,7 +7,7 @@ document_url: n/a
 
 # Reduce spec bloat
 
-**Progress:** implementing
+**Progress:** archived
 **Depth:** standard
 **Depends on:** —
 

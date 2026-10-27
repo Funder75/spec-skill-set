@@ -28,6 +28,7 @@ In a project that has (or will have) `spec_docs/`, invoke the skill with `/spec`
 
 Main actions:
 
+- `/spec explore` — read-only: decide whether you need a folder (no spec / Depth+slug / spike); writes nothing under `spec_docs/`
 - Create a spec
 - Promote to tech specs
 - Promote to an implementation plan
@@ -56,10 +57,11 @@ Authors walk the same loop the skill enforces:
 4. **Implement** — One phase (or one combinable group) at a time (`Progress: implementing`).
 5. **Archive** — Move the folder under `archive/` when the work is done.
 
-**Depth** (`lite` / `standard` / `full`) shortens how many documents and review gates you walk. Say `create … as lite` for small work that can ship a thin plan in the same create session. Details and the Depth table are in [`spec_docs/README.md`](spec_docs/README.md).
+**Depth** (`lite` / `standard` / `full`) shortens how many documents and review gates you walk. Say `create … as lite` for small work that can ship a thin plan in the same create session. **Lite skim:** one chat approval covers design + thin plan; empty optional sections stay omitted; a simple Low automated plan goes straight to implement (no second plan-review gate). Unsure whether you need a folder at all? Start with `/spec explore`. Details and the Depth table are in [`spec_docs/README.md`](spec_docs/README.md).
 
 ### Tips
 
+- **Explore first when unsure.** `/spec explore` restates the ask and exits with no folder, a named Depth+slug, or a spike — without writing `spec_docs/`.
 - **Pick Depth on purpose.** Use `lite` for small, low-risk work. Reserve `full` when tech siblings and a multi-phase plan earn their keep.
 - **Keep tabs readable.** New folders use slug-prefixed names (`<slug>.spec.md`, `<slug>.plan.md`). Older archived folders may still use bare basenames until someone renames them by hand.
 - **Fill conventions early.** On first bootstrap, opt in to fill **Project conventions** while context is fresh. Later stages otherwise hit placeholders when they need a project fact. Say `/spec fill conventions` any time afterward to fill or update them — it is not limited to first bootstrap, and a stage that hits a placeholder will offer the same flow.

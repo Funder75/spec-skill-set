@@ -9,8 +9,8 @@ Phases for [reduce-spec-bloat.spec.md](./reduce-spec-bloat.spec.md).
 | Phase | Status | Name | Tier | Depends on | Combinable with |
 | ----- | ---- | ------ | ---- | ---------- | --------------- |
 | **1** | Done | Explore and skip-folder | Medium | — | — |
-| **2** | Started | Lite skim and one approval | Medium | — | 3 |
-| **3** | Started | Tech sibling bar | Low | — | 2 |
+| **2** | Done | Lite skim and one approval | Medium | — | 3 |
+| **3** | Done | Tech sibling bar | Low | — | 2 |
 
 ## Phase 1 — Explore and skip-folder
 
@@ -143,15 +143,15 @@ Do not:
 
 ### Done when
 
-- [ ] Verify tiers Medium is n/a (no command in Project conventions)
-- [ ] A2.1–A2.3 pass
-- [ ] Standard and full create Stop / Write paths still require design review before promote
+- [x] Verify tiers Medium is n/a (no command in Project conventions)
+- [x] A2.1–A2.3 pass
+- [x] Standard and full create Stop / Write paths still require design review before promote
 
 ### Close-out
 
-- Verified:
-- Deviations:
-- Follow-ups:
+- Verified: Project conventions › Verify tiers Medium is `n/a`. Manual checklist: A2.1 — create-spec Write lite omits empty optionals (R5) and Constraints lists only applying lines with no `n/a` padding (R6); template author comments match. A2.2 — Chat design approval one packet; Stop simple lite (single Low + Close automated) next offer is implement without a second plan-review gate (R8). A2.3 — harder lite (multi-phase / above Low / Close human) presents the plan once before implement. Standard/full Stop still asks design review before promote; thin plan still written (D1).
+- Deviations: none
+- Follow-ups: none
 
 ## Phase 3 — Tech sibling bar
 
@@ -206,12 +206,12 @@ Do not:
 
 ### Done when
 
-- [ ] Verify tiers Low is n/a (no command in Project conventions)
-- [ ] A3.1–A3.3 pass
-- [ ] Full Depth can still emit siblings when the bar is met, with `Created because:`
+- [x] Verify tiers Low is n/a (no command in Project conventions)
+- [x] A3.1–A3.3 pass
+- [x] Full Depth can still emit siblings when the bar is met, with `Created because:`
 
 ### Close-out
 
-- Verified:
-- Deviations:
-- Follow-ups:
+- Verified: Project conventions › Verify tiers Low is `n/a`. Manual checklist: A3.1 — tech-specs Sibling emit bar requires ~3+ rules / multi-step / non-obvious transitions for logic; otherwise fold or `not needed`. A3.2 — restatement of goals/journeys/non-goals is a fold-back defect (R10). A3.3 — README and `spec_docs/README.md` name explore and the lite skim / one-approval path without a second process. Full Depth still emits when the bar is met; `Created because:` must name the bar (R9).
+- Deviations: none
+- Follow-ups: none

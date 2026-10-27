@@ -114,7 +114,8 @@ Covers: {{G1 (short name), …}}
 
 ## Constraints
 
-<!-- required. One line each. Write n/a when it does not apply. -->
+<!-- required for standard/full: one line each; write n/a when it does not apply.
+     Depth lite (R6 (lite constraints)): list only lines that apply — no n/a padding rows. Drop the section only when no line applies. -->
 
 - **Preserve:** {{behaviour that must survive, or n/a}}
 - **i18n:** {{… or n/a}}
@@ -124,13 +125,13 @@ Covers: {{G1 (short name), …}}
 
 ## Notes
 
-<!-- include when: context a later reader needs, such as a departure from the usual pattern that is already accepted. Nothing here needs a decision or a change. -->
+<!-- include when: context a later reader needs. Depth lite (R5 (lite omit empty)): omit this section when empty — do not invent filler. -->
 
 - **{{Lead-in}}.** {{…}}
 
 ## Concerns
 
-<!-- include when: something needs a decision or a change. Each item says what would go wrong if it is left, and cites the goal, decision, or question it touches. -->
+<!-- include when: something needs a decision or a change. Each item says what would go wrong if it is left, and cites the goal, decision, or question it touches. Depth lite: omit when empty. -->
 
 - **{{Lead-in}}.** {{the problem}}. If left: {{consequence}}.
 
@@ -142,7 +143,7 @@ Covers: {{G1 (short name), …}}
 
 ### Capabilities (v1)
 
-<!-- include when: the solution has named capabilities the goals do not already state -->
+<!-- include when: the solution has named capabilities the goals do not already state. Depth lite: omit when empty. -->
 
 - **{{name}}.** {{…}}
 
@@ -162,13 +163,13 @@ Covers: {{G1 (short name), …}}
 
 ## Glossary
 
-<!-- include when: a term is ambiguous, or its code name differs from the spec name -->
+<!-- include when: a term is ambiguous, or its code name differs from the spec name. Depth lite (R5 (lite omit empty)): omit when empty. -->
 
 - **{{Term}}:** {{definition}}. In code: {{type or identifier, or omit}}.
 
 ## Technical notes (folded)
 
-<!-- include when: a tech doc was folded at promote-to-tech. One subsection per folded concern. Delete the subsections that were not folded. Name the file each item lands in, as the tech-doc templates do. -->
+<!-- include when: a tech doc was folded at promote-to-tech, or lite folded notes at create. One subsection per folded concern. Delete the subsections that were not folded. Omit the whole section when empty (lite R5). Name the file each item lands in, as the tech-doc templates do. -->
 
 ### Rules
 
@@ -188,7 +189,7 @@ Covers: {{G1 (short name), …}}
 
 ## Decisions
 
-<!-- include when: a choice is settled. Binding. One subsection per decision. No index table. -->
+<!-- include when: a choice is settled. Binding. One subsection per decision. No index table. Depth lite: omit when empty. -->
 
 ### D1 ({{short name}}) — {{decision in one line}}
 
@@ -198,7 +199,7 @@ Covers: {{G1 (short name), …}}
 
 ## Open questions
 
-<!-- include when: a decision needs a person. A long list at design is normal. Priority is high when the answer would change later specs, the plan, or other goals; otherwise —. Blocks names the phase or gate that cannot proceed, or —. -->
+<!-- include when: a decision needs a person. A long list at design is normal (especially full). Depth lite: omit when empty — still record unsettled assumptions as Q or D when they exist. Priority is high when the answer would change later specs, the plan, or other goals; otherwise —. Blocks names the phase or gate that cannot proceed, or —. -->
 
 ### Q1 ({{short name}}) — {{question in one line}}
 
