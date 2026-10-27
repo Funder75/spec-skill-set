@@ -1,13 +1,13 @@
-<!-- Author guidance is in HTML comments. Strip every HTML comment when writing the spec doc. {{…}} is fill-in. Follow writing-style.md in the skill folder. -->
-
-<!-- This doc is written and reviewed before any tech doc. It is elaborate: goals, journeys, edge cases, constraints, and the decisions a reviewer must accept. Tech docs translate it. Code sketches, per-field type tables, and component props belong in the tech docs, not here. A long {{feature-slug}}.spec.md is fine; a hard-to-skim one is not. Emitted filename is {{feature-slug}}.spec.md (R1 (filename pattern)). -->
-
 ---
 work_item: {{id, or "n/a"}}
 tracker_spec_url: n/a
 document_id: n/a
 document_url: n/a
 ---
+
+<!-- Author guidance is in HTML comments. Strip every HTML comment when writing the spec doc. {{…}} is fill-in. Follow writing-style.md in the skill folder. -->
+
+<!-- This doc is written and reviewed before any tech doc. It is elaborate: goals, journeys, edge cases, constraints, and the decisions a reviewer must accept. Tech docs translate it. Code sketches, per-field type tables, and component props belong in the tech docs, not here. A long {{feature-slug}}.spec.md is fine; a hard-to-skim one is not. Emitted filename is {{feature-slug}}.spec.md (R1 (filename pattern)). -->
 
 # {{Feature title}}
 

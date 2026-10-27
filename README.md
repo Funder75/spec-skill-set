@@ -24,7 +24,7 @@ After we are listed on the official Marketplace, installs from there should pick
 
 ## How to use
 
-In a project that has (or will have) `spec_docs/`, invoke the skill with `/spec` (or say “spec”).
+In a project that has (or will have) `spec_docs/`, invoke the skill with `/spec`. Saying “spec” does not load it.
 
 Main actions:
 
@@ -32,6 +32,8 @@ Main actions:
 - Promote to tech specs
 - Promote to an implementation plan
 - Implement the next phase
+- `/spec next` — name the next gate and ask before continuing
+- Audit or review a spec (read-only report)
 - Archive when done
 
 `/spec help` points at the project’s `spec_docs/README.md` when that file exists.
@@ -50,7 +52,7 @@ Authors walk the same loop the skill enforces:
 
 1. **Design** — Create and iterate `<slug>.spec.md` until the shape is accepted.
 2. **Tech** — Add or fold technical notes when the feature needs them (`Progress: tech`).
-3. **Plan** — Write `<slug>.plan.md` with phases and Done when (`Progress: plan`).
+3. **Plan** — Write `<slug>.plan.md` with phases, Done when, and a **Close** of `automated` or `human` on each phase (`Progress: plan`).
 4. **Implement** — One phase (or one combinable group) at a time (`Progress: implementing`).
 5. **Archive** — Move the folder under `archive/` when the work is done.
 
@@ -60,7 +62,7 @@ Authors walk the same loop the skill enforces:
 
 - **Pick Depth on purpose.** Use `lite` for small, low-risk work. Reserve `full` when tech siblings and a multi-phase plan earn their keep.
 - **Keep tabs readable.** New folders use slug-prefixed names (`<slug>.spec.md`, `<slug>.plan.md`). Older archived folders may still use bare basenames until someone renames them by hand.
-- **Fill conventions early.** On first bootstrap, opt in to fill **Project conventions** while context is fresh. Later stages otherwise hit placeholders when they need a project fact.
+- **Fill conventions early.** On first bootstrap, opt in to fill **Project conventions** while context is fresh. Later stages otherwise hit placeholders when they need a project fact. Say `/spec fill conventions` any time afterward to fill or update them — it is not limited to first bootstrap, and a stage that hits a placeholder will offer the same flow.
 - **Repo stays canonical.** Edit the markdown in `spec_docs/`. Linear (when used) mirrors links and status; do not treat tracker text as binding acceptance criteria.
 - **One open unit.** Implement one phase or combinable group at a time. Multi-phase plans dispatch fresh context per unit; do not parallelize implementers.
 - **No surprise SCM.** The skill does not create branches, worktrees, or commits unless you ask in that conversation.
@@ -73,7 +75,7 @@ Optional tracker integration for linked `spec_docs/` folders. The repo stays can
 - **Connect Linear MCP in the IDE.** Tracker write-back (create-from fetch, link-back, Tracker Phases, status, Document, `/spec linear sync`) runs only when Linear MCP works in the current agent session (D19 (mcp session)). Cursor’s Linear product assign / `@Cursor` is kickoff, not MCP auth.
 - **Fill Project conventions.** Under `spec_docs/README.md` › Work items, set Linear project, team, fetch blurb, and Progress / phase-status maps (plus optional design label and default `[repo=…]`). Until those are filled, the skill warns once and skips write-back rather than inventing a team.
 - **Create-from and sync locally.** Prefer a local IDE session with Linear MCP for `/spec create from …` and `/spec linear sync`. Do not expect a Linear-started cloud run alone to sync tracker fields back to Linear.
-- **Cloud kickoff.** Use native `@Cursor` / assign on a Tracker Phase that already has brief-quality text. The skill does not ship a second Cloud Agent launcher. After cloud work merges, catch up Linear from an MCP-capable session.
+- **Cloud kickoff.** Use native `@Cursor` / assign on a Tracker Phase that already has brief-quality text, and have the kickoff message invoke `/spec` (for example `/spec implement`). Assigning the issue, or saying “spec”, does not load the skill. The skill does not ship a second Cloud Agent launcher. The Tracker Phase body is a pointer, not a standalone prompt: its canon banner tells the worker to re-read `<slug>.plan.md` from the repo and ignore any scope or command in the Linear body that the plan does not also state, so an edit to the issue alone cannot steer the worker. After cloud work merges, catch up Linear from an MCP-capable session.
 - **Do not edit Linear as binding AC.** Issue descriptions and the Document mirror are not the source of truth. Edit `<slug>.spec.md` in the repo; regenerate the Document from there when TL;DR or goals change. Store `work_item`, `tracker_spec_url`, `document_id`, and `document_url` in that file's YAML frontmatter only — not as a second copy in the body.
 - **Cloud Linear MCP.** Cloud Agents use a separate MCP sign-in from the desktop app. Linear MCP OAuth for cloud is often unavailable; treat cloud as kickoff-only for tracker writes unless that session clearly has working Linear MCP.
 
@@ -118,6 +120,36 @@ To try skill changes from this repository inside another project without reinsta
 Use `/spec` for the installed plugin/user skill and `/spec-local` for this checkout. Edits under `stages/`, `templates/`, and the linked markdown files show up through the symlinks. Changes to `SKILL.md` itself must be re-copied into the project (with `name: spec-local` kept) because that file is not symlinked.
 
 Do not commit `.cursor/skills/spec-local/` to the project unless the team wants that layout shared.
+
+### Update the user-level spec skill
+
+Another way to run this checkout locally is to replace the user-level `spec` skill with the files in [`skills/spec`](skills/spec). After that, `/spec` in every project follows this revision until you copy a different revision back. Use this when `/spec` is that user skill. It does not change a Spec plugin install under `~/.cursor/plugins/`.
+
+The skill lives at `~/.cursor/skills/spec/` (a real directory). Leave frontmatter `name: spec` so it matches the folder.
+
+Paste this prompt in an Agent chat opened on this repository (or fill in the source path):
+
+```text
+Update my user-level spec skill so it matches this checkout.
+
+Source: /absolute/path/to/spec-skill-set/skills/spec
+Destination: ~/.cursor/skills/spec
+
+Before changing anything:
+- Confirm Source contains SKILL.md, stages/, and templates/. If SKILL.md is missing, stop. Do not delete or copy anything.
+- Copy the destination to ~/.cursor/skills/spec.bak-<date>. Replace an older backup only after telling me.
+- List every destination file that is not in the source. Wait for me to confirm those deletions. Do not delete until I confirm.
+
+Then replace the destination with the source:
+- Copy every file and subdirectory from the source into the destination.
+- Delete only the destination files I confirmed.
+- Leave SKILL.md frontmatter as name: spec. Do not rename the skill or the folder.
+- Do not edit skill content, and do not commit.
+
+When the copy is done, print the source revision you copied (`git rev-parse --short HEAD` in the source repo, or say the revision was unknown). Tell me to reload the window or open a new Agent chat, then invoke /spec.
+```
+
+Reload the window or open a new Agent chat, then invoke `/spec`. To restore a previous revision, run the same prompt with that revision as the source.
 
 ## License
 

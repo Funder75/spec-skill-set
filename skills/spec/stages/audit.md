@@ -2,11 +2,11 @@
 
 Read-only. Report in chat. Do not edit spec docs or code unless the user explicitly asks to fix findings. Do not write a report file or a canvas.
 
-Read [analysis-checklist.md](../analysis-checklist.md) for pass/fail cues. Read [design-quality.md](../design-quality.md) only when the user asked for a pre-implement check.
+Read [analysis-checklist.md](../analysis-checklist.md) for pass/fail cues. When a plan is in scope, read [design-quality.md](../design-quality.md) before the phase tier, close, and sizing checks. Skip it when the audit has no plan.
 
 ## When
 
-The user asked to audit or review a named spec. Do not run this as part of `/spec next`.
+The user asked to audit or review a named spec. Do not run this as part of `/spec next`. If `spec_docs/README.md` is missing, report that there is no spec and stop. Do not bootstrap.
 
 Optional scope, when the user gives it: docs only, implementation only, one phase, pre-implement, or bloat. Default is docs plus implementation.
 

@@ -20,7 +20,7 @@ Read **Stack notes for spec docs** in `spec_docs/README.md` before filling this 
 
 ## Journey steps covered
 
-<!-- required when spec.md has user journeys. Every journey step that touches a screen appears once. -->
+<!-- required when <slug>.spec.md has user journeys. Every journey step that touches a screen appears once. -->
 
 | Journey | Step | Surface | State |
 | ------- | ---- | ------- | ----- |
@@ -96,7 +96,7 @@ Read **Stack notes for spec docs** in `spec_docs/README.md` before filling this 
 
 ## Accessibility
 
-<!-- include when: focus, labels, or reduced motion need more than the Accessibility line in spec.md Constraints -->
+<!-- include when: focus, labels, or reduced motion need more than the Accessibility line in <slug>.spec.md Constraints -->
 
 - {{…}}
 

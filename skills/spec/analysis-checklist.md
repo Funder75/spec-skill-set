@@ -16,7 +16,7 @@ Do not copy this file into `spec_docs/<slug>/`.
 | **Required docs** | No `<slug>.spec.md`. No `<slug>.plan.md` once `Progress` is `plan` or later (R9 (helper doc cites)) |
 | **Skipped gate** | An implementation plan exists while tech was never recorded as promoted, folded, or `not needed`, **and** Depth is missing or `full`. Do **not** flag when `Depth: lite` (create writes the thin plan with folded / `not needed` tech) or when `Depth: standard` and the doc index shows folded / `not needed` with `Progress: tech` or later |
 | **Business rules home** | Multi-step rules are scattered, and `<slug>.logic.md` is missing with no `folded →` line pointing at **Technical notes › Rules** |
-| **Optional doc gap** | `<slug>.contracts.md` (or legacy `<slug>.data.md` / bare `data.md` until renamed) or `<slug>.ui.md` is omitted, the doc index does not say `folded` or `not needed`, and the only detail is a plan snippet. Do **not** flag when Depth is `lite` or `standard` and the index already says `folded` or `not needed` |
+| **Optional doc gap** | `<slug>.contracts.md` (or legacy `<slug>.data.md`, per [SKILL.md](SKILL.md) › Spec docs) or `<slug>.ui.md` is omitted, the doc index does not say `folded` or `not needed`, and the only detail is a plan snippet. Do **not** flag when Depth is `lite` or `standard` and the index already says `folded` or `not needed` |
 | **Failure modes** | User-facing flows lack empty, error, or permission handling, and there is no explicit n/a |
 | **Journeys** | `<slug>.spec.md` has no **User journeys** section and no n/a line, or a user-facing goal appears in no journey |
 | **Thin spec** | `<slug>.spec.md` leaves behaviour to be discovered at promote: missing edge cases, journeys, or decisions a reviewer must accept |
@@ -24,6 +24,7 @@ Do not copy this file into `spec_docs/<slug>/`.
 | **Journey trace** | An acceptance scenario names no journey step and no `Journey: —`, or `<slug>.ui.md` skips a screen-touching journey step |
 | **Acceptance scenarios** | A phase has no `A<phase>.<n>` Given / When / Then |
 | **Done when gaps** | A phase has deliverables and no testable Done when |
+| **Phase close** | No **Close**, the overview cell differs from the phase line, a scenario has no **Check**, **Check** and the **Gates** owner disagree, or **Close** is `automated` while any owner is `human`. A person-only result ("manual", "eyes", a host the agent cannot run) with **Close** `automated` |
 | **Traceability** | A goal ID is in no phase **Covers** line, or **Covers** names an ID the spec does not define |
 | **Open vs blocker** | A **Q** item **Blocks** the active phase, or `> **Open:**` points at a question that does |
 | **Placeholders** | `{{…}}` or an unaccepted `[SUGGESTION:` left in docs the folder treats as ready |
@@ -38,7 +39,7 @@ Do not copy this file into `spec_docs/<slug>/`.
 | **Undocumented surface** | A shipped route, command, table, or screen has no mention in the spec |
 | **Phase partial** | A `Done` phase has unchecked Done-when items, or the behaviour is not observable |
 | **Dependency** | The spec depends on another slug's outcome that is not in the code |
-| **Close-out** | A `Done` or `Reviewing` phase has no **Close-out** record of what was verified |
+| **Close-out** | A `Done` or `Reviewing` phase has no **Close-out** record of what was verified. A `Done` phase with a human **Gates** row has no note that a person accepted it |
 
 ---
 
@@ -120,6 +121,7 @@ Follow [writing-style.md](writing-style.md). Length alone is not a finding.
 | ----- | -------- |
 | **Phase sizing** | More than about five phases with no reason, or a phase that spans unrelated surfaces. See [design-quality.md](design-quality.md) |
 | **Phase tier** | A tier with no reason, a reason the deliverables do not support, an overview label that differs from the phase block, or a clear mis-rating. See [Phase tier](design-quality.md#phase-tier) |
+| **Phase close** | **Close** `human` with no person check named, or **Close** `automated` on work the tier reason says only a person can verify. See [Phase close](design-quality.md#phase-close) |
 | **Phase merge** | Adjacent phases that always ship together and have no separate verify |
 | **Duplication** | The same deliverable in more than one phase or doc |
 | **Scope creep** | A phase builds something the non-goals exclude |

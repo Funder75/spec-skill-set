@@ -1,6 +1,8 @@
 # Fill Project conventions
 
-Shared interview for Bootstrap after the README copy. Bootstrap calls this on opt-in; do not invent a second fill path.
+Shared interview, called two ways: by Bootstrap on opt-in after the README copy, and directly by the `fill conventions` / `set up conventions` route in [SKILL.md](../SKILL.md) › Infer, otherwise ask — at any time, not only at first bootstrap. Do not invent a third fill path.
+
+**Direct entry.** If `spec_docs/README.md` does not exist yet, run [SKILL.md](../SKILL.md) › Bootstrap step 1 (copy the template, add `spec_docs/archive/.gitkeep`) first, then start this interview — skip the opt-in ask below; asking to fill conventions already is the opt-in. If the README exists, re-run the interview on request: re-ask every group (answers already filled may be confirmed with one reply of "keep" per group instead of restating them), and overwrite only the fields the user answers.
 
 Write only **Project conventions** in `spec_docs/README.md`. Strip HTML author comments as the template intends. Do not edit other README sections or the template on disk.
 
@@ -99,13 +101,13 @@ If MCP works and team is known: call `list_issue_statuses` for that team. Propos
 
 **Ask:** How should each plan phase status map to a Linear state on a Tracker Phase child?
 
-Cover: `Not started`, `Started`, `Reviewing`, `Done`, `Deferred`, `Blocked`.
+Cover: `Not started`, `Started`, `Reviewing`, `Done`, `Deferred`, `Blocked`, and `Removed` (a phase taken out of the plan).
 
-**Why:** When a phase status changes in the plan, the skill updates that child issue. Same rule: only your map names the Linear states.
+**Why:** When a phase status changes in the plan, the skill updates that child issue. Same rule: only your map names the Linear states. Canceling a removed unit uses the `Removed` key. If that key is missing, the skill still comments and drops the plan link, and does not change the Linear state.
 
 If MCP works: reuse the team’s `list_issue_statuses` result; propose a suggestion; user accepts, edits, or leaves placeholders.
 
-**Leave / skip** → keep `{{Not started → …; Started → …; Reviewing → …; Done → …; Deferred → …; Blocked → …}}`.
+**Leave / skip** → keep `{{Not started → …; Started → …; Reviewing → …; Done → …; Deferred → …; Blocked → …; Removed → …}}`.
 
 ### Q6 — Optional design-stage label
 
@@ -154,7 +156,7 @@ Omit the optional bullets when the user chose omit / none for those questions.
 
 **Why:** Each plan phase picks a tier. The skill tells the implementer to run the matching row and record it under phase Close-out.
 
-Offer the three rows plus a one-line “where to run” note. User may fill some rows and leave others as `{{command}}`.
+Offer the three rows plus a one-line “where to run” note. User may fill some rows, set a row to the explicit value `none` (this repo has no command for that tier — different from leaving it a placeholder), and leave others as `{{command}}`.
 
 **Leave / skip** → leave the template table and where-to-run line as `{{…}}`.
 
