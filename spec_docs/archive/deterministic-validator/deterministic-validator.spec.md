@@ -7,7 +7,7 @@ document_url: n/a
 
 # Deterministic validator
 
-**Progress:** implementing
+**Progress:** archived
 **Depth:** lite
 **Depends on:** —
 
