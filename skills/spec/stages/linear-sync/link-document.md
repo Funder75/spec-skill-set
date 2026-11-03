@@ -8,7 +8,7 @@ Part of the shared Linear write-back doctrine — see [../linear-sync.md](../lin
 
 First successful link after create-spec sets frontmatter `work_item` and write-back is allowed (G1 (create from linear), R3 (first link back)).
 
-**In short:** Comment with the repo path; optional real URL `links` and design label; store the returned URL in frontmatter `tracker_spec_url`. Never rewrite the issue description. Explicit sync may already have set that description when the user said yes (R25 (issue body ask)); this section still does not.
+**In short:** Comment with the repo path; optional real URL `links` and design label; store the returned URL in frontmatter `tracker_spec_url`. Never rewrite the issue description. Explicit sync may already have set that description when the Issue body answer was Full, Abstract, or Custom (R25 (issue body ask)); this section still does not.
 
 ### When
 
@@ -32,22 +32,31 @@ First successful link after create-spec sets frontmatter `work_item` and write-b
 
 The Linear description is the one Linear mirror of the repo overview: the issue description, or the project description when the epic is a Linear project. One way, repo → Linear. Never pull Linear prose into `<slug>.spec.md` or `<slug>.epic.md`.
 
-**In short:** Written only by explicit sync when its Issue body answer was yes (R25 (issue body ask)). Create-spec, link-back, and routine hooks never write it. Status-only ticks do not touch it.
+**In short:** Written only by explicit sync when its Issue body answer was Full, Abstract, or Custom (R25 (issue body ask)). Create-spec, link-back, and routine hooks never write it. Status-only ticks do not touch it.
 
 ### Content
 
-The canon line `Repo canonical. Do not edit binding content in Linear.` (D16 (no linear edits)), then the overview file after its YAML frontmatter: `<slug>.spec.md`, or `<slug>.epic.md` when the folder is an epic. An epic file already carries its suggested specs and tasks. Not the tech siblings and not the plan. Omit secret values (R19 (no secrets)).
+Always start with the canon line `Repo canonical. Do not edit binding content in Linear.` (D16 (no linear edits)). Then, by Issue body choice:
+
+| Choice | Body after the canon line |
+| ------ | ------------------------- |
+| **Full** | The overview file after its YAML frontmatter: `<slug>.spec.md`, or `<slug>.epic.md` when the folder is an epic. An epic file already carries its suggested specs and tasks. Not the tech siblings and not the plan. |
+| **Abstract** | The `#` title and the `## TL;DR` section (the four bullets) from that overview file. Not goals, suggested specs, tech siblings, or the plan. |
+| **Custom** | Exactly the text the user gave this sync. Do not invent prose. |
+| **Skip** | No write (R2 (no body rewrite)). |
+
+Omit secret values in every write choice (R19 (no secrets)).
 
 ### Write
 
-When an explicit sync's Issue body answer was yes:
+When an explicit sync's Issue body answer was Full, Abstract, or Custom:
 
 1. Issue: create with the description, or replace the existing issue description. Project epic: pass the same content as the project `description` on `save_project` (create or update).
 2. When a Linear prose conflict is known, run **Conflict** (below) before the replace.
 
 ### Refresh
 
-When TL;DR or goals change on a linked folder (on an epic, when suggested specs or tasks change), the Linear description is now stale. Routine stages do not write it, because the Issue body answer is not stored. Tell the user to run `/spec linear sync` to refresh it; that sync asks Issue body again. Progress-only and phase-status-only ticks do not trigger this.
+When TL;DR or goals change on a linked folder (on an epic, when suggested specs or tasks change), a Full or Abstract Linear description is now stale. A Custom body may also be stale. Routine stages do not write it, because the Issue body answer is not stored. Tell the user to run `/spec linear sync` to refresh it; that sync asks Issue body again. Progress-only and phase-status-only ticks do not trigger this.
 
 ### MUST NOT (Description)
 
@@ -66,7 +75,7 @@ When a Linear prose conflict with a mirrored surface is **known** (human report 
 
 Offer exactly these options (D20 (conflict choices)):
 
-1. **Regenerate from repo.** Replace the description from `<slug>.spec.md`, or from `<slug>.epic.md` when the folder is an epic. This applies only in an explicit sync whose Issue body answer was yes (R25 (issue body ask)). Leave Linear status and comments alone.
+1. **Regenerate.** Rebuild Full or Abstract from `<slug>.spec.md`, or from `<slug>.epic.md` when the folder is an epic. On Custom, ask again for the description text and replace with that answer. This applies only in an explicit sync whose Issue body answer was Full, Abstract, or Custom (R25 (issue body ask)). Leave Linear status and comments alone.
 2. **Skip this regenerate.** Leave Linear prose as-is this run; status-only and progress comments may continue.
 3. **Stop Linear writes.** Ask before further description touches until the person unblocks.
 

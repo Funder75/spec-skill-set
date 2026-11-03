@@ -38,24 +38,6 @@ Today, archive moves the folder once every phase is Done or Deferred. Nothing ch
 - In the same subsection, *point at* existing `AGENTS.md` or `.cursor/rules/` files instead of duplicating them.
 - Also capture **create-time options** the interview should always include or offer (for example: docs on public interfaces; update `README.md` and related docs). Principles bind later reviews; options shape the create packet.
 
-## Deterministic validator
-
-**Borrowed from:** OpenSpec `validate --strict` and Superpowers' helper scripts.
-
-Many of Spec's rules are mechanical:
-
-- leftover `{{…}}` placeholders, HTML comments, or `[SUGGESTION:` markers
-- bare `G1` citations
-- duplicate or reused IDs
-- a missing or duplicated `Progress` line
-- an overview `Close` that disagrees with the phase line
-- a Gates row for every scenario Check
-- bare basenames such as `implementation-plan.md`
-
-A small script in the plugin (for example `skills/spec/scripts/validate`) can check all of these in milliseconds. That frees the agent's tokens for judgement. Self-review in create-spec and plan, and the start of audit, would call the script and then handle only what it cannot check.
-
-Ship a plain `sh` or POSIX script with no new runtime dependency. If it is missing or fails to run, the skill falls back to today's manual self-review.
-
 ## Builder check on full-Depth specs
 
 **Borrowed from:** the Superpowers brainstorming builder check.
@@ -97,13 +79,4 @@ When create-spec detects a UI-primary feature, offer once, in its own message, a
 **Borrowed from:** BMAD retrospective and Superpowers finishing-a-branch.
 
 After converge (above), ask one question: "Anything to add to **Project conventions**?" Examples are a missing verify command, a new hotspot, or a principle. If the answer is yes, route to `fill-conventions.md`. This makes each finished spec improve the next one.
-
-
-## When creating a spec from an Epic, make sure it links back
-
-Also make sure that the tracker info knows it is a sub issue of the epiv
-
-## Tracker description choice
-
-Give the user a choice of either writing the full description from an epic / spec, an abstract or something else
 

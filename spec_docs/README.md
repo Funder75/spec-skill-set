@@ -28,7 +28,7 @@ For a short first-read overview (folder role, write loop, tips), see the [projec
 
 `Kind` in `<slug>.spec.md` is `feature` (default) or `bugfix`. Say `create … as bugfix` (alone or with a Depth) to set Kind without a recommend ask. Lite is recommended for many bugs, not required. Bugfix design uses behaviour lists and Root cause instead of User journeys and Work split. Older folders without Kind are treated as feature.
 
-`create epic` writes `<slug>.epic.md` only. Each suggested spec is a numbered section such as `S1 (short name)`. `/spec create spec for` an epic file adds one child from that section. Tasks that are not specs are done by hand or in a chat. They do not get a folder. `/spec linear sync` asks whether the epic is a new Linear project or an issue, then pushes that choice. A project is not also created as an issue. Tracker text is not pulled back.
+`create epic` writes `<slug>.epic.md` only. Each suggested spec is a numbered section such as `S1 (short name)`. `/spec create spec for` an epic file adds one child from that section: the child's frontmatter `epic` and **Source** point back at the epic. Tasks that are not specs are done by hand or in a chat. They do not get a folder. `/spec linear sync` asks whether the epic is a new Linear project or an issue, then pushes that choice. A project is not also created as an issue. Syncing a child whose `epic` is set nests its Tracker Spec as a sub-issue of the epic issue, or under the epic's Linear project. Tracker text is not pulled back.
 
 Not sure a folder is needed? `/spec explore` is read-only: no-spec / Depth+slug / spike; nothing under `spec_docs/`. When create's Depth heuristics prefer lite, the Depth round also offers **no folder**.
 

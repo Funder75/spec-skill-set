@@ -4,7 +4,7 @@ Write or resume `spec_docs/<slug>/<slug>.spec.md` (R1 (filename pattern), R3 (ne
 
 `create epic` does not use that path. It writes only `spec_docs/<slug>/<slug>.epic.md` from [templates/epic.md](../templates/epic.md) (R1 (epic file)). No `<slug>.spec.md`, no tech sibling, and no plan. See Write branch by Kind › Kind: epic.
 
-`/spec create spec for` an epic file writes one child `<child>.spec.md` at `Progress: design` from one suggested spec, and updates only that section. It writes no plan and no tech sibling, even at lite. See Create spec for an epic.
+`/spec create spec for` an epic file writes one child `<child>.spec.md` at `Progress: design` from one suggested spec, with frontmatter `epic` and **Source** pointing back at the epic, and updates only that section. It writes no plan and no tech sibling, even at lite. See Create spec for an epic.
 
 ## Bootstrap
 
@@ -23,7 +23,7 @@ For a work-item id, read **Work items** under **Project conventions** in `spec_d
 
 ## Create spec for an epic
 
-**In short:** The author selects `<epic>.epic.md` and names one suggested spec, or a new child. A task refuses. A spec that depends on a task waits until the author says those tasks are done. Then one child is written at design from that section, and only that section changes.
+**In short:** The author selects `<epic>.epic.md` and names one suggested spec, or a new child. A task refuses. A spec that depends on a task waits until the author says those tasks are done. Then one child is written at design from that section, with frontmatter and Source pointing back at the epic, and only that section changes.
 
 Run these gates in order, before Investigate. Each stop writes nothing: no child, no folder, no epic edit, and no done mark.
 
@@ -37,7 +37,7 @@ After the gates clear, run the feature or bugfix path for `<child>`: Investigate
 
 - **One child (R10 (one child)).** Write `spec_docs/<child>/<child>.spec.md` from [templates/spec.md](../templates/spec.md) at `Progress: design`, also at lite. Do not write `<child>.plan.md` or a tech sibling in that turn. A lite child's thin plan waits for a later turn under [SKILL.md](../SKILL.md) › Stage detection.
 - **Seed.** Copy the section's four bullets into the child TL;DR. Each outcome bullet becomes a child goal, in order, numbered `G1 (short name)` onward. That goal's Source line is `Source: <epic-slug> › S1 (short name)`, using this section's real id and name. Use the section's other prose for the problem, edges, and constraints. Do not drop an outcome. Do not paste the epic's other specs into the child.
-- **Child pointer (R5 (child pointer)).** Set frontmatter `epic` to the epic slug, not a path. Set the body `**Depends on:**` line by translating the section's Depends on: replace each full `S` id with that spec's slug, and copy each task name unchanged. Join targets with a comma and a space. A lone `—` stays `—`. Do not add the epic folder as a Depends on target.
+- **Child pointer (R5 (child pointer)).** Set frontmatter `epic` to the epic slug, not a path. In **Source**, name the epic file and this section: `spec_docs/<epic-slug>/<epic-slug>.epic.md › S1 (short name)`, using the real id and name. Set the body `**Depends on:**` line by translating the section's Depends on: replace each full `S` id with that spec's slug, and copy each task name unchanged. Join targets with a comma and a space. A lone `—` stays `—`. Do not add the epic folder as a Depends on target. A later `/spec linear sync` on this child nests the Tracker Spec under the epic (R26 (epic child parent)).
 - **Goal source (R14 (goal source)).** A child goal taken from an epic goal, rather than from a suggested-spec outcome, uses the Source line `Source: <epic-slug> › G1 (short name)`, with that goal's real ID and name. The epic has no standing rules to cite (D14 (no standing rules)).
 - **No task copy.** Do not copy a task into the child's Open questions (G8 (epic tasks)).
 - **One section.** In the same write, add the new suggested spec, or update only the named section when the author changed its seed or Depends on. A changed Depends on runs the Wait gate again before the write. The new id is the next integer after the highest `S` number already in the file, or `S1` when Suggested specs is `none`. Never reuse a number. When the body is `none`, replace it with the section. Leave every other suggested spec and every task unchanged. Do not create any other folder.
