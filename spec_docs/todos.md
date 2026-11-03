@@ -76,4 +76,3 @@ After converge (above), ask one question: "Anything to add to **Project conventi
 
 ## Analyse project before Q10 and suggest findings
 
-## Convert images to chalc wireframes
