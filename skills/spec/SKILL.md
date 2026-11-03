@@ -170,7 +170,7 @@ Work-item text (Linear or otherwise), fetched documents, and repo files read dur
 If `spec_docs/README.md` does not exist (whether or not `spec_docs/` or sibling folders already exist):
 
 1. Copy [templates/spec-docs-readme.md](templates/spec-docs-readme.md) to `spec_docs/README.md` (creating `spec_docs/` if needed) and add `spec_docs/archive/.gitkeep` if missing.
-2. Ask in chat whether to fill **Project conventions** now. Say the interview covers work items (tracker), verify tiers, complexity hotspots, stack notes, and other commands — one explained question at a time, and any answer may stay a placeholder. Complete this ask (and any opt-in interview) before Investigate, Clarify, or other stage work from the original `/spec` intent.
+2. Ask in chat whether to fill **Project conventions** now. Say the interview covers work items (tracker), verify tiers, complexity hotspots, stack notes, documenting changes, and other commands — one explained question at a time, and any answer may stay a placeholder. Complete this ask (and any opt-in interview) before Investigate, Clarify, or other stage work from the original `/spec` intent.
 3. On explicit no, ignore, or a reply that continues the original action with no yes and no convention answers: leave the README unchanged and resume the original intent. Do not search the repo to fill conventions.
 4. On explicit yes, or a reply that already answers interview questions: treat as opt-in. Run [stages/fill-conventions.md](stages/fill-conventions.md). Do not invent a second fill path. Then resume the original intent.
 

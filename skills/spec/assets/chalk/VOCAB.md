@@ -4,7 +4,7 @@ Source: chalk-css / okatarismet/chalk **v0.2.0** (see `VERSION`). Read this file
 
 ## Constraints
 
-- Complete HTML file; link stylesheet as `<link rel="stylesheet" href="./chalk.css">`.
+- Complete HTML file; link stylesheet as `<link rel="stylesheet" href="https://unpkg.com/chalk-css@0.2.0/chalk.css">` (pin must match `VERSION`).
 - Use only `wf-*` class names from the vocabulary below (plus documented modifiers such as `.primary`, `.active`).
 - No custom CSS. No `<style>` blocks. Inline `style` only for `width` and `min-height`.
 - Black and white only — no color values.

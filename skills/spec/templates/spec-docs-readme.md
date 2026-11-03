@@ -11,8 +11,7 @@ Planning documents for this repo. One folder per feature spec. The spec workflow
 | `<slug>/<slug>.contracts.md` | Types, API contracts, state ownership, storage (when needed) |
 | `<slug>/<slug>.ui.md` | Layout, interaction, states, copy (when needed) |
 | `<slug>/<slug>.plan.md` | Phases and the only phase status. Always emitted; for lite, written in the same create session as a thin 1-phase plan |
-| `<slug>/<slug>.wire.html` | Optional Chalk wireframe (advisory). Offered once at create for UI-primary features |
-| `<slug>/chalk.css` | Stylesheet copy for that wireframe. Do not hand-edit |
+| `<slug>/<slug>.wire.html` | Optional Chalk wireframe (advisory). Offered once at create for UI-primary features. Styles via pinned chalk-css CDN |
 | `<slug>/<slug>.data.md` | Legacy data doc (same as contracts) after a hand rename of bare `data.md` |
 | `archive/<slug>/` | Finished specs |
 
@@ -135,6 +134,23 @@ The skill reads this when filling `<slug>.contracts.md` and `<slug>.ui.md`.
 - **Validation:** {{how untrusted data is checked at the boundary}}
 - **Errors:** {{the type used for expected failures}}
 - **i18n:** {{where user-facing copy lives, or "none"}}
+
+### Documenting changes
+
+<!--
+Where and how (or if) code and product changes are documented outside the spec folder.
+The planner reads this and adds matching Deliverables / Done when items on the phase that
+touches those surfaces. It does not put docs prose into the spec. A bullet may be the
+explicit value `none` (no docs work for that surface by design) or still `{{…}}` (ask).
+Policy `none` means skip docs todos for the whole subsection.
+-->
+
+- **Policy:** {{required on public/API surface changes | always when behaviour changes | none}}
+- **Project docs:** {{README.md and related paths, or none}}
+- **Code docs:** {{JSDoc / TSDoc / rustdoc / … — which surfaces, or none}}
+- **Other markdown:** {{docs/…, CONTRIBUTING, changelog, or none}}
+
+{{Any project-specific rule, for example "public exports only" or "no changelog".}}
 
 ### Other commands
 

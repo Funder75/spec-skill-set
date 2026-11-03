@@ -11,7 +11,7 @@ Write or resume `spec_docs/<slug>/<slug>.spec.md` (R1 (filename pattern), R3 (ne
 If `spec_docs/README.md` does not exist:
 
 1. Copy [templates/spec-docs-readme.md](../templates/spec-docs-readme.md) to `spec_docs/README.md` (creating `spec_docs/` if needed) and add `spec_docs/archive/.gitkeep` if missing.
-2. Ask in chat whether to fill **Project conventions** now. Say the interview covers work items (tracker), verify tiers, complexity hotspots, stack notes, and other commands — one explained question at a time, and any answer may stay a placeholder. Complete this ask (and any opt-in interview) before Investigate, Clarify, or other stage work from the original `/spec` intent.
+2. Ask in chat whether to fill **Project conventions** now. Say the interview covers work items (tracker), verify tiers, complexity hotspots, stack notes, documenting changes, and other commands — one explained question at a time, and any answer may stay a placeholder. Complete this ask (and any opt-in interview) before Investigate, Clarify, or other stage work from the original `/spec` intent.
 3. On explicit no, ignore, or a reply that continues the original action with no yes and no convention answers: leave the README unchanged and resume the original intent. Do not search the repo to fill conventions.
 4. On explicit yes, or a reply that already answers interview questions: treat as opt-in. Run [fill-conventions.md](fill-conventions.md). Do not invent a second fill path. Then resume the original intent.
 
@@ -271,8 +271,7 @@ Offer text shape: UI-primary — want a Chalk wireframe (`<slug>.wire.html`) wit
 **On yes:**
 
 1. Read [`assets/chalk/VOCAB.md`](../assets/chalk/VOCAB.md) (skill-relative; same skill-root as `stages/`).
-2. Copy [`assets/chalk/chalk.css`](../assets/chalk/chalk.css) to `spec_docs/<slug>/chalk.css` (overwrite if present).
-3. Write `spec_docs/<slug>/<slug>.wire.html`: complete HTML; `<link rel="stylesheet" href="./chalk.css">`; only `wf-*` classes from VOCAB; inline style only for `width` / `min-height`; black and white; show default, empty, and error side by side (or labeled sections) from settled screen-depth text. Do not invent answers to Open questions. Do not write custom CSS.
+2. Write `spec_docs/<slug>/<slug>.wire.html`: complete HTML; `<link rel="stylesheet" href="https://unpkg.com/chalk-css@0.2.0/chalk.css">` (pin must match [`assets/chalk/VERSION`](../assets/chalk/VERSION)); only `wf-*` classes from VOCAB; inline style only for `width` / `min-height`; black and white; show default, empty, and error side by side (or labeled sections) from settled screen-depth text. Do not invent answers to Open questions. Do not write custom CSS. Do not copy `chalk.css` into the folder.
 
 **On no / skip / ignore:** write nothing. Do not offer again for that folder.
 

@@ -13,8 +13,7 @@ For a short first-read overview (folder role, write loop, tips), see the [projec
 | `<slug>/<slug>.contracts.md` | Types, API contracts, state ownership, storage (when needed) |
 | `<slug>/<slug>.ui.md` | Layout, interaction, states, copy (when needed) |
 | `<slug>/<slug>.plan.md` | Phases and the only phase status. Always emitted; for lite, written in the same create session as a thin 1-phase plan |
-| `<slug>/<slug>.wire.html` | Optional Chalk wireframe (advisory). Offered once at create for UI-primary features |
-| `<slug>/chalk.css` | Stylesheet copy for that wireframe. Do not hand-edit |
+| `<slug>/<slug>.wire.html` | Optional Chalk wireframe (advisory). Offered once at create for UI-primary features. Styles via pinned chalk-css CDN |
 | `<slug>/<slug>.data.md` | Legacy data doc (same as contracts) after a hand rename of bare `data.md` |
 | `archive/<slug>/` | Finished specs |
 
@@ -81,24 +80,17 @@ Phase status: `Not started`, `Started`, `Reviewing`, `Done`, `Deferred`, `Blocke
 
 ### Work items
 
-Ticket system for this repo is Linear. On fetch, keep title, description, and acceptance criteria. Map each acceptance criterion into a goal's Source line (for example `WI AC2`).
-
-- **Linear project:** The Spec skill set (`P-OAK-5`)
-- **Team:** Oakhillgames (`OAK`)
-- **Fetch:** use Linear MCP `get_issue` by id or URL
-- **Tracker Spec Progress → state/label map:** design → Todo; tech → Todo; plan → In Progress; implementing → In Progress; archived → Done
-- **Tracker Phase status → state map:** Not started → Todo; Started → In Progress; Reviewing → In Review; Done → Done; Deferred → Canceled; Blocked → Blocked
-- **Optional default `[repo=…]`:** Funder75/spec-skill-set
+This repo has no work-item system. Specs come from chat or free text. If a future id scheme appears, keep title, description, and acceptance criteria, and map each criterion to a goal **Source** line (for example `WI AC2`).
 
 ### Verify tiers
 
 | Tier | Verify |
 | ---- | ------ |
-| Low | n/a |
-| Medium | n/a |
-| High | n/a |
+| Low | {{command}} |
+| Medium | {{command}} |
+| High | {{command}} |
 
-n/a
+{{Where to run the commands, and any setup they assume.}}
 
 ### Complexity hotspots
 
@@ -106,14 +98,23 @@ n/a
 
 The skill reads this when filling `<slug>.contracts.md` and `<slug>.ui.md`.
 
-- **UI library:** n/a
-- **Data access:** n/a
-- **Validation:** n/a
-- **Errors:** n/a
-- **i18n:** n/a
+- **UI library:** {{component library, and where to look up props}}
+- **Data access:** {{how this repo calls APIs or storage}}
+- **Validation:** {{how untrusted data is checked at the boundary}}
+- **Errors:** {{the type used for expected failures}}
+- **i18n:** {{where user-facing copy lives, or "none"}}
+
+### Documenting changes
+
+- **Policy:** {{required on public/API surface changes | always when behaviour changes | none}}
+- **Project docs:** README.md and related paths
+- **Code docs:** {{JSDoc / TSDoc / rustdoc / … — which surfaces, or none}}
+- **Other markdown:** {{docs/…, CONTRIBUTING, changelog, or none}}
+
+{{Any project-specific rule, for example "public exports only" or "no changelog".}}
 
 ### Other commands
 
 | Task | Command | Notes |
 | ---- | ------- | ----- |
-| {{dev server}} | {{…}} | {{…}} |
+| Update user skill | `./scripts/update-user-spec-skill.sh` | Copies `skills/spec` into `~/.cursor/skills/spec` |

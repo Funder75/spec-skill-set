@@ -30,7 +30,8 @@ Run groups in this order. Skip questions already answered in the opt-in reply. S
 2. Verify tiers
 3. Complexity hotspots
 4. Stack notes for spec docs
-5. Other commands
+5. Documenting changes
+6. Other commands
 
 ---
 
@@ -195,9 +196,29 @@ One turn covers all five. Fill what the user knows; leave the rest as placeholde
 
 ---
 
+## Documenting changes
+
+### Q11 — Documenting changes
+
+**Ask:** Where and how (or if) should this repo document code and product changes outside the spec folder?
+
+- **Policy** — required on public/API surface changes, always when behaviour changes, or **none**
+- **Project docs** — README.md and related paths, or **none**
+- **Code docs** — JSDoc / TSDoc / rustdoc / … and which surfaces, or **none**
+- **Other markdown** — docs/…, CONTRIBUTING, changelog, or **none**
+- Optional one-line project-specific rule (for example “public exports only” or “no changelog”)
+
+**Why:** The planner adds matching Deliverables and Done when items on the phase that touches those surfaces. It does not put docs prose into the spec. Explicit `none` means no docs work by design; leaving a field as `{{…}}` means ask later.
+
+One turn covers Policy and the three location bullets (plus the optional prose line). Fill what the user knows; leave the rest as placeholders, or set a bullet / the whole group to `none`.
+
+**Leave / skip** → leave the template bullets and prose line as `{{…}}`.
+
+---
+
 ## Other commands
 
-### Q11 — Other commands
+### Q12 — Other commands
 
 **Ask:** Any other recurring commands the skill should know (dev server, reload plugin, migrate, …)?
 
@@ -215,6 +236,6 @@ After the interview (or early done):
 
 1. Apply answers into **Project conventions** only in `spec_docs/README.md`.
 2. Strip HTML author comments in that section as the template intends.
-3. Unanswered items stay `{{…}}` except: None tracker → no-tracker prose; Complexity hotspots none → empty list under the heading.
+3. Unanswered items stay `{{…}}` except: None tracker → no-tracker prose; Complexity hotspots none → empty list under the heading; Documenting changes may use explicit `none` per bullet or for Policy (do not treat `none` as an unresolved placeholder).
 4. Do not invent facts that contradict answers already given.
 5. Return to Bootstrap; resume the original `/spec` intent.

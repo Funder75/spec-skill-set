@@ -46,7 +46,7 @@ Create-spec runs dialogue and chat approval before writing the design file. You 
 
 `spec_docs/` holds one folder per unit of work. A feature or bugfix folder is one implementable spec. An epic folder groups child specs and tasks; implementation stays on the children. Active work lives under `spec_docs/<slug>/`. Finished work moves to `spec_docs/archive/<slug>/`.
 
-A feature or bugfix folder starts at `<slug>.spec.md` (scope and gates). An epic folder starts at `<slug>.epic.md`. Sibling files cover tech notes and the plan when a spec needs them. For UI-primary features, create may also offer an optional Chalk wireframe (`<slug>.wire.html` plus `chalk.css`) — advisory only; binding UI text stays in the markdown. Gates, Depth paths, Kind, markers, and **Project conventions** live in [`spec_docs/README.md`](spec_docs/README.md).
+A feature or bugfix folder starts at `<slug>.spec.md` (scope and gates). An epic folder starts at `<slug>.epic.md`. Sibling files cover tech notes and the plan when a spec needs them. For UI-primary features, create may also offer an optional Chalk wireframe (`<slug>.wire.html`, styles from pinned chalk-css CDN) — advisory only; binding UI text stays in the markdown. Gates, Depth paths, Kind, markers, and **Project conventions** live in [`spec_docs/README.md`](spec_docs/README.md).
 
 ### Kind
 
