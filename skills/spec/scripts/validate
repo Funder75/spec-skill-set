@@ -3,6 +3,7 @@
 # Usage: validate <folder>
 # Exit 0 = clean. Non-zero = findings printed one per line.
 # Missing folder / bad argv → exit 2 (launch-style failure for stages).
+# An epic folder is checked from <slug>.epic.md and does not need <slug>.spec.md.
 
 set -eu
 
@@ -30,6 +31,16 @@ FOLDER="${FOLDER}/"
 SLUG=$(basename "${FOLDER%/}")
 SPEC="${FOLDER}${SLUG}.spec.md"
 PLAN="${FOLDER}${SLUG}.plan.md"
+EPIC="${FOLDER}${SLUG}.epic.md"
+SPEC_DOCS=$(dirname "${FOLDER%/}")
+# An archived child lives under spec_docs/archive/<slug>/. Its epic is still a sibling of archive.
+if [ "$(basename "$SPEC_DOCS")" = "archive" ]; then
+  SPEC_DOCS=$(dirname "$SPEC_DOCS")
+fi
+# Em dash. A Depends on cell of only this character has no targets.
+EMDASH=$(printf '\342\200\224')
+# Unit separator. Tab would drop an empty overview cell when read splits the row.
+ROW_FS=$(printf '\034')
 
 OUT=$(mktemp)
 NAMES=$(mktemp)
@@ -37,8 +48,10 @@ OVERVIEW=$(mktemp)
 PHASE_CLOSE=$(mktemp)
 CHECKS=$(mktemp)
 GATES=$(mktemp)
+EPIC_ROWS=$(mktemp)
+DEP_NAMES=$(mktemp)
 cleanup() {
-  rm -f "$OUT" "$NAMES" "$OVERVIEW" "$PHASE_CLOSE" "$CHECKS" "$GATES"
+  rm -f "$OUT" "$NAMES" "$OVERVIEW" "$PHASE_CLOSE" "$CHECKS" "$GATES" "$EPIC_ROWS" "$DEP_NAMES"
 }
 trap cleanup EXIT
 
@@ -55,7 +68,7 @@ done
 
 # List markdown files into a stable list (avoid find|while FINDINGS issues).
 MD_LIST=$(mktemp)
-trap 'rm -f "$OUT" "$NAMES" "$OVERVIEW" "$PHASE_CLOSE" "$CHECKS" "$GATES" "$MD_LIST"' EXIT
+trap 'rm -f "$OUT" "$NAMES" "$OVERVIEW" "$PHASE_CLOSE" "$CHECKS" "$GATES" "$EPIC_ROWS" "$DEP_NAMES" "$MD_LIST"' EXIT
 find "$FOLDER" -type f \( -name '*.md' -o -name '*.MD' \) > "$MD_LIST" 2>/dev/null || true
 
 # Strip inline `code` spans so docs can mention {{…}} / [SUGGESTION: as examples.
@@ -108,7 +121,7 @@ while IFS= read -r f || [ -n "$f" ]; do
   done < "$f"
 done < "$MD_LIST"
 
-# --- Bare G/R/D/Q citations ---
+# --- Bare G/R/D/Q/S citations ---
 # Acceptable: "G1 (short name)". Also accept en/em-dash ranges only when each
 # bound is written in full form elsewhere on the same line — otherwise flag.
 # Skip fenced code and inline `code` (letter-only examples like `G`/`R`).
@@ -131,7 +144,7 @@ while IFS= read -r f || [ -n "$f" ]; do
     [ "$in_fence" -eq 1 ] && continue
 
     plain=$(strip_inline_code "$line")
-    ids=$(printf '%s' "$plain" | grep -oE '[GRDQ][0-9]+' 2>/dev/null || true)
+    ids=$(printf '%s' "$plain" | grep -oE '[GRDQS][0-9]+' 2>/dev/null || true)
     [ -n "$ids" ] || continue
     while IFS= read -r id || [ -n "$id" ]; do
       [ -n "$id" ] || continue
@@ -151,12 +164,12 @@ done < "$MD_LIST"
 : > "$NAMES"
 while IFS= read -r f || [ -n "$f" ]; do
   [ -n "$f" ] || continue
-  pairs=$(grep -oE '[GRDQ][0-9]+[[:space:]]*\([^)]+\)' "$f" 2>/dev/null || true)
+  pairs=$(grep -oE '[GRDQS][0-9]+[[:space:]]*\([^)]+\)' "$f" 2>/dev/null || true)
   [ -n "$pairs" ] || continue
   while IFS= read -r pair || [ -n "$pair" ]; do
     [ -n "$pair" ] || continue
     id=$(printf '%s' "$pair" | sed -E 's/[[:space:]]*\(.*//')
-    name=$(printf '%s' "$pair" | sed -E 's/^[GRDQ][0-9]+[[:space:]]*\(([^)]+)\)$/\1/')
+    name=$(printf '%s' "$pair" | sed -E 's/^[GRDQS][0-9]+[[:space:]]*\(([^)]+)\)$/\1/')
     printf '%s\t%s\n' "$id" "$name" >> "$NAMES"
   done <<EOF
 $pairs
@@ -187,17 +200,603 @@ $BAD_IDS
 EOF
 fi
 
-# --- Progress line ---
-if [ ! -f "$SPEC" ]; then
-  emit "${SPEC}: missing design overview (expected ${SLUG}.spec.md)"
+# Epic value from the first frontmatter block only. Empty when the key is absent.
+frontmatter_epic() {
+  awk '
+    BEGIN { state = 0 }
+    state == 0 && /^---[[:space:]]*$/ { state = 1; next }
+    state == 1 && /^---[[:space:]]*$/ { exit }
+    state == 1 && /^epic:/ {
+      val = $0
+      sub(/^epic:[[:space:]]*/, "", val)
+      sub(/\r$/, "", val)
+      gsub(/^[[:space:]]+|[[:space:]]+$/, "", val)
+      print val
+      exit
+    }
+  ' "$1"
+}
+
+# Body value of the first Depends on line. Empty when the line is absent.
+body_depends_on() {
+  awk '
+    /^\*\*Depends on:\*\*/ {
+      val = $0
+      sub(/^\*\*Depends on:\*\*[[:space:]]*/, "", val)
+      sub(/\r$/, "", val)
+      gsub(/^[[:space:]]+|[[:space:]]+$/, "", val)
+      print val
+      exit
+    }
+  ' "$1"
+}
+
+# 0 when a comma-separated Depends on value has an empty name.
+# A lone em dash has no names.
+depends_has_empty_name() {
+  dep_value=$1
+  if [ "$dep_value" = "$EMDASH" ]; then
+    return 1
+  fi
+  if [ -z "$dep_value" ]; then
+    return 0
+  fi
+  # split() keeps a trailing comma as an empty name. RS would drop it.
+  printf '%s' "$dep_value" | awk '
+    {
+      n = split($0, parts, ",")
+      for (i = 1; i <= n; i++) {
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", parts[i])
+        if (parts[i] == "") empty = 1
+      }
+    }
+    END { exit empty ? 0 : 1 }
+  '
+}
+
+# Records for ## Suggested specs and ## Tasks.
+# specs|tasks <TAB> ok|none|missing|both
+# spec <TAB> id <TAB> name <TAB> slug <TAB> depends <TAB> what <TAB> why <TAB> inc <TAB> exc <TAB> outcomes <TAB> hasdep <TAB> hasoutcomes
+# task <TAB> name <TAB> depends <TAB> described <TAB> hasdep
+# bad <TAB> message
+parse_epic_sections() {
+  awk -v emdash="$EMDASH" '
+    function trim(s) {
+      sub(/\r$/, "", s)
+      gsub(/^[[:space:]]+|[[:space:]]+$/, "", s)
+      return s
+    }
+    function clear_spec() {
+      sid = ""
+      sname = ""
+      sslug = ""
+      sdepends = ""
+      swhat = 0
+      swhy = 0
+      sinc = 0
+      sexc = 0
+      soutcomes = 0
+      shasdep = 0
+      shasout = 0
+      sinout = 0
+    }
+    function clear_task() {
+      tname = ""
+      tdepends = ""
+      tdesc = 0
+      thasdep = 0
+    }
+    function flush_spec() {
+      if (sid == "") return
+      print "spec\t" sid "\t" sname "\t" sslug "\t" sdepends "\t" swhat "\t" swhy "\t" sinc "\t" sexc "\t" soutcomes "\t" shasdep "\t" shasout
+      clear_spec()
+    }
+    function flush_task() {
+      if (tname == "") return
+      print "task\t" tname "\t" tdepends "\t" tdesc "\t" thasdep
+      clear_task()
+    }
+    function is_meta(line, label) {
+      return index(line, "**" label ":**") == 1
+    }
+    function meta_value(line, label,    prefix, rest) {
+      prefix = "**" label ":**"
+      rest = substr(line, length(prefix) + 1)
+      gsub(/^[[:space:]]+|[[:space:]]+$/, "", rest)
+      return rest
+    }
+    function bullet_filled(line, label,    prefix, rest) {
+      prefix = "- **" label ":**"
+      if (index(line, prefix) != 1) return 0
+      rest = substr(line, length(prefix) + 1)
+      gsub(/^[[:space:]]+|[[:space:]]+$/, "", rest)
+      return rest != ""
+    }
+    function note_specs_heading() {
+      if (specs_mode == "" || specs_mode == "none") {
+        if (specs_mode == "none") specs_mode = "both"
+        else specs_mode = "ok"
+      }
+    }
+    function note_tasks_heading() {
+      if (tasks_mode == "" || tasks_mode == "none") {
+        if (tasks_mode == "none") tasks_mode = "both"
+        else tasks_mode = "ok"
+      }
+    }
+    BEGIN {
+      section = ""
+      specs_mode = ""
+      tasks_mode = ""
+      clear_spec()
+      clear_task()
+    }
+    /^## / {
+      flush_spec()
+      flush_task()
+      if ($0 ~ /^## Dependency overview[[:space:]]*$/) {
+        print "bad\tdependency overview is not allowed"
+        section = "other"
+      } else if ($0 ~ /^## Suggested specs[[:space:]]*$/) {
+        section = "specs"
+      } else if ($0 ~ /^## Tasks[[:space:]]*$/) {
+        section = "tasks"
+      } else {
+        section = "other"
+      }
+      next
+    }
+    section == "specs" && /^### / {
+      flush_spec()
+      line = trim($0)
+      if (line ~ ("^### S[0-9]+ \\([^)]+\\) " emdash " .+$")) {
+        rest = line
+        sub(/^### /, "", rest)
+        sid = rest
+        sub(/ \(.*/, "", sid)
+        sname = rest
+        sub("^" sid " \\(", "", sname)
+        sub("\\) " emdash ".*", "", sname)
+        if (sname == "") {
+          print "bad\tsuggested spec " sid " is missing a name"
+          clear_spec()
+        } else {
+          note_specs_heading()
+        }
+      } else {
+        print "bad\tsuggested spec heading is not S<number> (name) " emdash " title"
+        clear_spec()
+      }
+      next
+    }
+    section == "tasks" && /^### / {
+      flush_task()
+      line = trim($0)
+      sub(/^### /, "", line)
+      if (line ~ ("^S[0-9]+ \\([^)]+\\) " emdash " ")) {
+        print "bad\ttask heading uses a suggested spec id"
+      } else if (line == "" || index(line, ",") > 0) {
+        print "bad\ttask name is empty or contains a comma"
+      } else {
+        tname = line
+        note_tasks_heading()
+      }
+      next
+    }
+    {
+      line = trim($0)
+      if (line == "") next
+      if (section == "specs") {
+        if (sid == "") {
+          if (line == "none" && specs_mode == "") specs_mode = "none"
+          else if (line == "none") specs_mode = "both"
+          else print "bad\ttext outside a suggested spec"
+          next
+        }
+        if (is_meta(line, "Slug")) {
+          if (sslug != "") print "bad\tduplicate Slug on " sid " (" sname ")"
+          sslug = meta_value(line, "Slug")
+          next
+        }
+        if (is_meta(line, "Depends on")) {
+          if (shasdep) print "bad\tduplicate Depends on on " sid " (" sname ")"
+          shasdep = 1
+          sdepends = meta_value(line, "Depends on")
+          sinout = 0
+          next
+        }
+        if (line == "**Outcomes:**") {
+          shasout = 1
+          sinout = 1
+          next
+        }
+        if (bullet_filled(line, "What")) { swhat = 1; next }
+        if (bullet_filled(line, "Why")) { swhy = 1; next }
+        if (bullet_filled(line, "v1 includes")) { sinc = 1; next }
+        if (bullet_filled(line, "v1 excludes")) { sexc = 1; next }
+        if (sinout && index(line, "- ") == 1) {
+          rest = substr(line, 3)
+          gsub(/^[[:space:]]+|[[:space:]]+$/, "", rest)
+          if (rest != "") soutcomes++
+        }
+        next
+      }
+      if (section == "tasks") {
+        if (tname == "") {
+          if (line == "none" && tasks_mode == "") tasks_mode = "none"
+          else if (line == "none") tasks_mode = "both"
+          else print "bad\ttext outside a task"
+          next
+        }
+        if (is_meta(line, "Depends on")) {
+          if (thasdep) print "bad\tduplicate Depends on on task " tname
+          thasdep = 1
+          tdepends = meta_value(line, "Depends on")
+          next
+        }
+        tdesc = 1
+        next
+      }
+    }
+    END {
+      flush_spec()
+      flush_task()
+      if (specs_mode == "") print "specs\tmissing"
+      else print "specs\t" specs_mode
+      if (tasks_mode == "") print "tasks\tmissing"
+      else print "tasks\t" tasks_mode
+    }
+  ' "$1"
+}
+
+# Targets of a Depends on value, one per line. A lone em dash yields nothing.
+depends_targets() {
+  dep_value=$1
+  if [ "$dep_value" = "$EMDASH" ] || [ -z "$dep_value" ]; then
+    return
+  fi
+  printf '%s' "$dep_value" | awk '{
+    n = split($0, parts, ",")
+    for (i = 1; i <= n; i++) {
+      gsub(/^[[:space:]]+|[[:space:]]+$/, "", parts[i])
+      if (parts[i] != "") print parts[i]
+    }
+  }'
+}
+
+# Rejoin a Depends on value with comma-space. Does not translate ids.
+canon_depends() {
+  raw=$1
+  if [ "$raw" = "$EMDASH" ] || [ -z "$raw" ]; then
+    printf '%s' "$raw"
+    return
+  fi
+  printf '%s' "$raw" | awk '
+    function trim(s) {
+      gsub(/^[[:space:]]+|[[:space:]]+$/, "", s)
+      return s
+    }
+    {
+      n = split($0, parts, ",")
+      out = ""
+      for (i = 1; i <= n; i++) {
+        p = trim(parts[i])
+        if (p == "") continue
+        if (out != "") out = out ", "
+        out = out p
+      }
+      print out
+    }
+  '
+}
+
+# Replace each suggested-spec id with that spec slug. Other tokens stay.
+# Reads the current EPIC_ROWS parse.
+translate_depends() {
+  raw=$1
+  if [ "$raw" = "$EMDASH" ] || [ -z "$raw" ]; then
+    printf '%s' "$raw"
+    return
+  fi
+  printf '%s' "$raw" | awk -v rows="$EPIC_ROWS" '
+    function trim(s) {
+      gsub(/^[[:space:]]+|[[:space:]]+$/, "", s)
+      return s
+    }
+    BEGIN {
+      while ((getline line < rows) > 0) {
+        n = split(line, a, "\t")
+        if (a[1] != "spec") continue
+        full = a[2] " (" a[3] ")"
+        slug_of[full] = a[4]
+      }
+      close(rows)
+    }
+    {
+      n = split($0, parts, ",")
+      out = ""
+      for (i = 1; i <= n; i++) {
+        p = trim(parts[i])
+        if (p == "") continue
+        if (p in slug_of) p = slug_of[p]
+        if (out != "") out = out ", "
+        out = out p
+      }
+      print out
+    }
+  '
+}
+
+# $1 owner label, $2 raw Depends on, $3 self token (full spec id or task name).
+check_depends_list() {
+  owner=$1
+  raw=$2
+  self=$3
+  if [ "$raw" = "$EMDASH" ]; then
+    return
+  fi
+  if depends_has_empty_name "$raw"; then
+    emit "${EPIC}: ${owner} Depends on has an empty name"
+  fi
+  depends_targets "$raw" > "$DEP_NAMES"
+  while IFS= read -r dep_target || [ -n "$dep_target" ]; do
+    [ -n "$dep_target" ] || continue
+    if [ "$dep_target" = "$self" ]; then
+      emit "${EPIC}: ${owner} depends on itself"
+      continue
+    fi
+    if printf '%s' "$dep_target" | grep -qE '^S[0-9]+ \(.+\)$'; then
+      if ! awk -F '\t' -v id="$dep_target" '$1 == "spec" && ($2 " (" $3 ")") == id { found = 1 } END { exit found ? 0 : 1 }' "$EPIC_ROWS"; then
+        emit "${EPIC}: ${owner} Depends on target ${dep_target} is not a suggested spec"
+      fi
+    elif ! awk -F '\t' -v n="$dep_target" '$1 == "task" && $2 == n { found = 1 } END { exit found ? 0 : 1 }' "$EPIC_ROWS"; then
+      emit "${EPIC}: ${owner} Depends on target ${dep_target} is not a task"
+    fi
+  done < "$DEP_NAMES"
+}
+
+check_task_name_collision() {
+  task_name=$1
+  task_match=0
+  if awk -F '\t' -v n="$task_name" '$1 == "spec" && $4 == n { found = 1 } END { exit found ? 0 : 1 }' "$EPIC_ROWS"; then
+    task_match=1
+  fi
+  case "$task_name" in
+    */*|""|.)
+      ;;
+    *)
+      if [ -f "${SPEC_DOCS}/${task_name}/${task_name}.spec.md" ] || [ -f "${SPEC_DOCS}/archive/${task_name}/${task_name}.spec.md" ]; then
+        task_match=1
+      fi
+      ;;
+  esac
+  if [ "$task_match" -eq 1 ]; then
+    emit "${EPIC}: task name matches a spec slug ${task_name}"
+  fi
+}
+
+# $1 child spec path, $2 translated Depends on, $3 epic slug.
+check_listed_child() {
+  child_spec=$1
+  child_want=$2
+  child_slug=$3
+  if [ ! -f "$child_spec" ]; then
+    emit "${child_spec}: frontmatter epic must be ${child_slug}"
+    return
+  fi
+  child_got=$(frontmatter_epic "$child_spec")
+  if [ "$child_got" != "$child_slug" ]; then
+    emit "${child_spec}: frontmatter epic must be ${child_slug}"
+  fi
+  child_have=$(canon_depends "$(body_depends_on "$child_spec")")
+  if [ "$child_have" != "$child_want" ]; then
+    emit "${child_spec}: Depends on disagrees with the suggested spec"
+  fi
+  if depends_has_empty_name "$(body_depends_on "$child_spec")"; then
+    emit "${child_spec}: Depends on has an empty name"
+  fi
+}
+
+# A child folder is a sibling. The epic folder and spec_docs/archive are not children.
+maybe_check_child() {
+  child_name=$1
+  child_depends=$2
+  if [ -z "$child_name" ] || [ "$child_name" = "archive" ] || [ "$child_name" = "." ] || [ "$child_name" = "$SLUG" ]; then
+    return
+  fi
+  case "$child_name" in
+    */*) return ;;
+  esac
+  if [ -d "${SPEC_DOCS}/${child_name}" ]; then
+    check_listed_child "${SPEC_DOCS}/${child_name}/${child_name}.spec.md" "$child_depends" "$SLUG"
+  fi
+}
+
+check_epic_sections() {
+  parse_epic_sections "$EPIC" > "$EPIC_ROWS"
+  specs_status=$(awk -F '\t' '$1 == "specs" { print $2; exit }' "$EPIC_ROWS")
+  tasks_status=$(awk -F '\t' '$1 == "tasks" { print $2; exit }' "$EPIC_ROWS")
+  if [ "$specs_status" != "ok" ] && [ "$specs_status" != "none" ]; then
+    if [ "$specs_status" = "both" ]; then
+      emit "${EPIC}: suggested specs say none and also list a spec"
+    else
+      emit "${EPIC}: missing suggested specs"
+    fi
+  fi
+  if [ "$tasks_status" != "ok" ] && [ "$tasks_status" != "none" ]; then
+    if [ "$tasks_status" = "both" ]; then
+      emit "${EPIC}: tasks say none and also list a task"
+    else
+      emit "${EPIC}: missing tasks"
+    fi
+  fi
+  while IFS="$(printf '\t')" read -r bad_kind bad_msg || [ -n "${bad_kind:-}" ]; do
+    [ "$bad_kind" = "bad" ] || continue
+    emit "${EPIC}: ${bad_msg}"
+  done < "$EPIC_ROWS"
+  awk -F '\t' '$1 == "spec" { print $2 }' "$EPIC_ROWS" | sort | uniq -d | while IFS= read -r dup || [ -n "$dup" ]; do
+    [ -n "$dup" ] || continue
+    emit "${EPIC}: duplicate suggested spec id ${dup}"
+  done
+  awk -F '\t' '$1 == "spec" { print $3 }' "$EPIC_ROWS" | sort | uniq -d | while IFS= read -r dup || [ -n "$dup" ]; do
+    [ -n "$dup" ] || continue
+    emit "${EPIC}: duplicate suggested spec name ${dup}"
+  done
+  awk -F '\t' '$1 == "spec" && $4 != "" { print $4 }' "$EPIC_ROWS" | sort | uniq -d | while IFS= read -r dup || [ -n "$dup" ]; do
+    [ -n "$dup" ] || continue
+    emit "${EPIC}: duplicate suggested spec slug ${dup}"
+  done
+  awk -F '\t' '$1 == "task" { print $2 }' "$EPIC_ROWS" | sort | uniq -d | while IFS= read -r dup || [ -n "$dup" ]; do
+    [ -n "$dup" ] || continue
+    emit "${EPIC}: duplicate task name ${dup}"
+  done
+  while IFS="$(printf '\t')" read -r skind sid sname sslug sdepends swhat swhy sinc sexc soutcomes shasdep shasout || [ -n "${skind:-}" ]; do
+    [ "$skind" = "spec" ] || continue
+    owner="${sid} (${sname})"
+    if [ -z "$sslug" ]; then
+      emit "${EPIC}: suggested spec ${owner} missing slug"
+    elif [ "$sslug" = "$SLUG" ]; then
+      emit "${EPIC}: suggested spec ${owner} uses the epic slug"
+    elif ! printf '%s' "$sslug" | grep -qE '^[a-z0-9]+(-[a-z0-9]+)*$'; then
+      emit "${EPIC}: suggested spec ${owner} slug is not kebab-case"
+    fi
+    if [ "$swhat" != "1" ]; then
+      emit "${EPIC}: suggested spec ${owner} missing What"
+    fi
+    if [ "$swhy" != "1" ]; then
+      emit "${EPIC}: suggested spec ${owner} missing Why"
+    fi
+    if [ "$sinc" != "1" ]; then
+      emit "${EPIC}: suggested spec ${owner} missing v1 includes"
+    fi
+    if [ "$sexc" != "1" ]; then
+      emit "${EPIC}: suggested spec ${owner} missing v1 excludes"
+    fi
+    if [ "$shasout" != "1" ] || [ "$soutcomes" = "0" ]; then
+      emit "${EPIC}: suggested spec ${owner} missing an outcome"
+    fi
+    if [ "$shasdep" != "1" ]; then
+      emit "${EPIC}: suggested spec ${owner} missing Depends on"
+    else
+      check_depends_list "suggested spec ${owner}" "$sdepends" "$owner"
+      translated=$(translate_depends "$sdepends")
+      maybe_check_child "$sslug" "$translated"
+    fi
+  done < "$EPIC_ROWS"
+  while IFS="$(printf '\t')" read -r tkind tname tdepends tdesc thasdep || [ -n "${tkind:-}" ]; do
+    [ "$tkind" = "task" ] || continue
+    if [ "$tdesc" != "1" ]; then
+      emit "${EPIC}: task ${tname} missing a description"
+    fi
+    check_task_name_collision "$tname"
+    if [ "$thasdep" != "1" ]; then
+      emit "${EPIC}: task ${tname} missing Depends on"
+    else
+      check_depends_list "task ${tname}" "$tdepends" "$tname"
+    fi
+  done < "$EPIC_ROWS"
+}
+
+# "omit", or "found" plus the child Depends on value translated from the suggested spec.
+suggested_depends_for() {
+  epic_file=$1
+  child_slug=$2
+  parse_epic_sections "$epic_file" > "$EPIC_ROWS"
+  raw=$(awk -F '\t' -v slug="$child_slug" '$1 == "spec" && $4 == slug { print $5; found = 1; exit } END { if (!found) print "OMIT" }' "$EPIC_ROWS")
+  if [ "$raw" = "OMIT" ]; then
+    printf '%s' "omit"
+    return
+  fi
+  printf 'found\t%s' "$(translate_depends "$raw")"
+}
+
+check_epic_kind() {
+  kind_vals=$(grep -E '^\*\*Kind:\*\*' "$EPIC" || true)
+  if [ -z "$kind_vals" ]; then
+    emit "${EPIC}: missing Kind line"
+    return
+  fi
+  kind_bad=0
+  while IFS= read -r kind_line || [ -n "$kind_line" ]; do
+    [ -n "$kind_line" ] || continue
+    kind_val=$(printf '%s' "$kind_line" | sed -E 's/\r$//; s/^\*\*Kind:\*\*[[:space:]]*//; s/[[:space:]]*$//')
+    if [ "$kind_val" != "epic" ]; then
+      kind_bad=1
+    fi
+  done <<EOF
+$kind_vals
+EOF
+  if [ "$kind_bad" -eq 1 ]; then
+    emit "${EPIC}: Kind is not epic"
+  fi
+}
+
+check_epic_folder() {
+  if [ -f "$SPEC" ]; then
+    emit "${SPEC}: not allowed in an epic folder"
+  fi
+  check_epic_kind
+  if grep -qE '^\*\*Progress:\*\*' "$EPIC"; then
+    emit "${EPIC}: Progress line is not allowed"
+  fi
+  if grep -qE '^\*\*Depth:\*\*' "$EPIC"; then
+    emit "${EPIC}: Depth line is not allowed"
+  fi
+  check_epic_sections
+}
+
+# Child folder whose frontmatter epic is set. Today's spec checks still apply.
+check_child_folder_links() {
+  [ -f "$SPEC" ] || return 0
+  epic_ref=$(frontmatter_epic "$SPEC")
+  [ -n "$epic_ref" ] || return 0
+  if [ "$epic_ref" = "n/a" ]; then
+    return 0
+  fi
+  child_raw=$(body_depends_on "$SPEC")
+  child_have=$(canon_depends "$child_raw")
+  case "$epic_ref" in
+    */*|..|.*)
+      emit "${SPEC}: epic folder missing (${epic_ref})"
+      ;;
+    *)
+      epic_file="${SPEC_DOCS}/${epic_ref}/${epic_ref}.epic.md"
+      if [ ! -f "$epic_file" ]; then
+        emit "${SPEC}: epic folder missing (${epic_ref})"
+      else
+        epic_result=$(suggested_depends_for "$epic_file" "$SLUG")
+        epic_flag=$(printf '%s' "$epic_result" | awk -F '\t' '{ print $1; exit }')
+        if [ "$epic_flag" = "omit" ]; then
+          emit "${SPEC}: suggested specs omit this child"
+        else
+          epic_cell=$(printf '%s' "$epic_result" | cut -f2-)
+          if [ "$child_have" != "$epic_cell" ]; then
+            emit "${SPEC}: Depends on disagrees with the suggested spec"
+          fi
+        fi
+      fi
+      ;;
+  esac
+  if depends_has_empty_name "$child_raw"; then
+    emit "${SPEC}: Depends on has an empty name"
+  fi
+}
+
+# --- Epic file, or design overview + Progress ---
+if [ -f "$EPIC" ]; then
+  check_epic_folder
 else
-  progress_count=$(grep -cE '^\*\*Progress:\*\*' "$SPEC" 2>/dev/null || true)
-  progress_count=$(echo "$progress_count" | tr -d '[:space:]')
-  progress_count=${progress_count:-0}
-  if [ "$progress_count" -eq 0 ]; then
-    emit "${SPEC}: missing Progress line"
-  elif [ "$progress_count" -gt 1 ]; then
-    emit "${SPEC}: duplicated Progress line (${progress_count} times)"
+  if [ ! -f "$SPEC" ]; then
+    emit "${SPEC}: missing design overview (expected ${SLUG}.spec.md)"
+  else
+    progress_count=$(grep -cE '^\*\*Progress:\*\*' "$SPEC" 2>/dev/null || true)
+    progress_count=$(echo "$progress_count" | tr -d '[:space:]')
+    progress_count=${progress_count:-0}
+    if [ "$progress_count" -eq 0 ]; then
+      emit "${SPEC}: missing Progress line"
+    elif [ "$progress_count" -gt 1 ]; then
+      emit "${SPEC}: duplicated Progress line (${progress_count} times)"
+    fi
   fi
 fi
 
@@ -294,6 +893,8 @@ if [ -f "$PLAN" ]; then
     fi
   done < "$CHECKS"
 fi
+
+check_child_folder_links
 
 if [ -s "$OUT" ]; then
   # Deduplicate while preserving order

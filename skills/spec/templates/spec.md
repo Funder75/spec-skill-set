@@ -1,8 +1,7 @@
 ---
 work_item: {{id, or "n/a"}}
 tracker_spec_url: n/a
-document_id: n/a
-document_url: n/a
+epic: n/a
 ---
 
 <!-- Author guidance is in HTML comments. Strip every HTML comment when writing the spec doc. {{…}} is fill-in. Follow writing-style.md in the skill folder. -->
@@ -41,7 +40,7 @@ document_url: n/a
 
 ## Source
 
-<!-- required. Where this came from: a short note, a document path, or a work-item title plus description. Not the raw work-item payload. Acceptance criteria go under the goals, not here. -->
+<!-- required. Where this came from: a short note, a document path, or a work-item title plus description. Not the raw work-item payload. Acceptance criteria go under the goals, not here. When this folder was created from an epic (frontmatter epic is a slug), name that epic file and suggested-spec id: spec_docs/<epic-slug>/<epic-slug>.epic.md › S1 (short name). -->
 
 > {{…}}
 

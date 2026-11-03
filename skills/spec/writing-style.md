@@ -28,8 +28,8 @@ A developer who was not in the chat and does not know this code. They skim first
 
 ## IDs
 
-- Define and cite goals, rules, decisions, and questions in the full form: `G1 (writing style)`. Letter, number, and a 2–4 word lowercase name.
-- A bare `G1` in prose is a defect. Acceptance scenarios (`A2.1`) and audit findings (`C1`, `W1`, `O1`) keep their short form.
+- Define and cite goals, rules, decisions, questions, and suggested specs in the full form: `G1 (writing style)`, or `S3 (invoice export)` in an epic. Letter, number, and a 2–4 word lowercase name.
+- A bare `G1` or `S3` in prose is a defect. Acceptance scenarios (`A2.1`) and audit findings (`C1`, `W1`, `O1`) keep their short form.
 - Never reuse a number. A rename updates every citation in the folder; search for `G1 (`.
 
 ## Examples

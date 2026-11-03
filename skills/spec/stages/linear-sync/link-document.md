@@ -1,12 +1,14 @@
-# Linear sync › Link-back, Document, Conflict
+# Linear sync › Link-back, Description, Conflict
 
 Part of the shared Linear write-back doctrine — see [../linear-sync.md](../linear-sync.md) for Preconditions, Store, and the hook index. create-spec and explicit sync call this file.
+
+**Epic folder.** When `<slug>.epic.md` is present, every frontmatter read and write in this file uses that file instead of `<slug>.spec.md`. Do not create Tracker Phases. Do not map Progress. Do not pull Linear prose into the epic.
 
 ## Link-back
 
 First successful link after create-spec sets frontmatter `work_item` and write-back is allowed (G1 (create from linear), R3 (first link back)).
 
-**In short:** Comment with the repo path; optional real URL `links` and design label; store the returned URL in frontmatter `tracker_spec_url`. Never rewrite the issue description.
+**In short:** Comment with the repo path; optional real URL `links` and design label; store the returned URL in frontmatter `tracker_spec_url`. Never rewrite the issue description. Explicit sync may already have set that description when the Issue body answer was Full, Abstract, or Custom (R25 (issue body ask)); this section still does not.
 
 ### When
 
@@ -18,64 +20,50 @@ First successful link after create-spec sets frontmatter `work_item` and write-b
 1. `save_comment` on the Tracker Spec: body names `spec_docs/<slug>/` (path text only).
 2. If conventions define a design-stage label: `save_issue` with `addLabels` for that label only (not a full label replace).
 3. Append Linear `links` only when a real URI exists (hosted remote or equivalent). NEVER invent a bare-path link such as `spec_docs/foo/`.
-4. After Linear returns the Tracker Spec URL, write it into `<slug>.spec.md` frontmatter as `tracker_spec_url`. Do not invent the URL beforehand.
+4. After Linear returns the Tracker Spec URL, write it into the overview file's frontmatter as `tracker_spec_url` (`<slug>.spec.md`, or `<slug>.epic.md` when the folder is an epic). Do not invent the URL beforehand.
 
 ### MUST NOT
 
 - Set Tracker Spec `description` to the full spec or binding AC from the repo (R2 (no body rewrite)).
-- Paste the raw Linear payload into `<slug>.spec.md` (create-spec maps AC onto goals’ `Source:` lines once; that stays in create-spec).
+- Paste the raw Linear payload into `<slug>.spec.md` or `<slug>.epic.md`. Feature and bugfix create maps acceptance criteria onto goals’ `Source:` lines once; that stays in create-spec. Epic create does not.
 - Invent team, project, or half-links when conventions or MCP are missing.
 
-After Link-back steps succeed, run **Document** › Create on first link (below).
+## Description
 
-## Document
+The Linear description is the one Linear mirror of the repo overview: the issue description, or the project description when the epic is a Linear project. One way, repo → Linear. Never pull Linear prose into `<slug>.spec.md` or `<slug>.epic.md`.
 
-Create and regenerate the Linear Document mirror from the repo (G5 (document mirror), R17 (document mirror), D15 (document trigger)). One-way repo → Linear only. Never pull Linear prose into `<slug>.spec.md`.
-
-**In short:** Create on first link; regenerate when TL;DR or goals change; store `document_id` and `document_url` in frontmatter after Linear returns them. Status-only ticks do not regenerate.
+**In short:** Written only by explicit sync when its Issue body answer was Full, Abstract, or Custom (R25 (issue body ask)). Create-spec, link-back, and routine hooks never write it. Status-only ticks do not touch it.
 
 ### Content
 
-Build Document body via Linear MCP `save_document` with `issue` = Tracker Spec id (R19 (no secrets)):
+Always start with the canon line `Repo canonical. Do not edit binding content in Linear.` (D16 (no linear edits)). Then, by Issue body choice:
 
-| Field | Required | Source |
-| ----- | -------- | ------ |
-| Title | yes | Includes “mirror” or equivalent |
-| Mirror banner | yes | Repo canonical; do not edit binding content in Linear (D16 (no linear edits)) |
-| TL;DR | yes | From `<slug>.spec.md` TL;DR bullets |
-| Goals / AC summary | yes | Goal titles + short criteria; not full journeys or the whole spec |
+| Choice | Body after the canon line |
+| ------ | ------------------------- |
+| **Full** | The overview file after its YAML frontmatter: `<slug>.spec.md`, or `<slug>.epic.md` when the folder is an epic. An epic file already carries its suggested specs and tasks. Not the tech siblings and not the plan. |
+| **Abstract** | The `#` title and the `## TL;DR` section (the four bullets) from that overview file. Not goals, suggested specs, tech siblings, or the plan. |
+| **Custom** | Exactly the text the user gave this sync. Do not invent prose. |
+| **Skip** | No write (R2 (no body rewrite)). |
 
-MUST NOT include full `<slug>.spec.md`, secrets, or private dumps.
+Omit secret values in every write choice (R19 (no secrets)).
 
-### Create on first link
+### Write
 
-When Link-back succeeds (or Explicit sync creates a Tracker Spec) and write-back is still allowed:
+When an explicit sync's Issue body answer was Full, Abstract, or Custom:
 
-1. If frontmatter `document_id` is already a real id (not `n/a`) → skip create; use Regenerate when TL;DR/goals warrant it. If it is `pending`, see **Repairing a `pending` marker** below instead of creating again.
-2. Write frontmatter `document_id: pending` and save `<slug>.spec.md`, before calling Linear.
-3. `save_document` create with the Content above.
-4. After Linear returns Document id and URL, write `document_id` and `document_url` into `<slug>.spec.md` frontmatter, replacing `pending` (D17 (repo-stored tracker ids)). Do not invent them beforehand.
-5. Missing MCP or conventions → warn once; skip Document write-back; clear the `pending` marker back to `n/a` (no Linear call was made) (R1 (conventions gate), R21 (mcp session)).
+1. Issue: create with the description, or replace the existing issue description. Project epic: pass the same content as the project `description` on `save_project` (create or update).
+2. When a Linear prose conflict is known, run **Conflict** (below) before the replace.
 
-#### Repairing a `pending` marker
+### Refresh
 
-`document_id: pending` found means a previous create was interrupted. Do not auto-retry. Ask the user. If they ask to repair: the one narrow lookup allowed is listing Documents attached to `issue` = the Tracker Spec id (not a title search). If one is found, write its id and URL. If none is found, treat it as `n/a` and run Create again.
+When TL;DR or goals change on a linked folder (on an epic, when suggested specs or tasks change), a Full or Abstract Linear description is now stale. A Custom body may also be stale. Routine stages do not write it, because the Issue body answer is not stored. Tell the user to run `/spec linear sync` to refresh it; that sync asks Issue body again. Progress-only and phase-status-only ticks do not trigger this.
 
-### Regenerate
+### MUST NOT (Description)
 
-When frontmatter `document_id` is a real id and TL;DR or goals in `<slug>.spec.md` changed (design edit, promote that revises goals, or Explicit sync that notices the delta):
-
-1. Run **Conflict** (below) if a Linear prose conflict is known.
-2. If Conflict allows overwrite (or no conflict known): `save_document` / update that Document id from Content above.
-3. Refresh frontmatter `document_url` only when Linear returns a new URL.
-4. MUST NOT regenerate on Progress-only or phase-status-only ticks (D15 (document trigger)).
-5. Callers: create-spec does not regenerate; stages that rewrite TL;DR/goals on a linked folder, and Explicit sync when those fields changed, call this section.
-
-### MUST NOT (Document)
-
-- Treat Linear Document or issue body as editable AC truth.
+- Treat the Linear description as editable AC truth.
+- Write the description from create-spec, link-back, or a routine hook.
 - Require a body-hash fingerprint field in `<slug>.spec.md` (D16 (no linear edits), Q1 (auto detect) open).
-- Push secrets or full private dumps (R19 (no secrets)).
+- Push secrets (R19 (no secrets)).
 
 ## Conflict
 
@@ -87,9 +75,9 @@ When a Linear prose conflict with a mirrored surface is **known** (human report 
 
 Offer exactly these options (D20 (conflict choices)):
 
-1. **Regenerate from repo.** Overwrite the Document (or other mirrored surface) from `<slug>.spec.md`. Leave Linear status and comments alone.
+1. **Regenerate.** Rebuild Full or Abstract from `<slug>.spec.md`, or from `<slug>.epic.md` when the folder is an epic. On Custom, ask again for the description text and replace with that answer. This applies only in an explicit sync whose Issue body answer was Full, Abstract, or Custom (R25 (issue body ask)). Leave Linear status and comments alone.
 2. **Skip this regenerate.** Leave Linear prose as-is this run; status-only and progress comments may continue.
-3. **Stop Linear writes.** Ask before further Document or description touches until the person unblocks.
+3. **Stop Linear writes.** Ask before further description touches until the person unblocks.
 
 ### MUST NOT (Conflict)
 

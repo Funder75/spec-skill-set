@@ -112,3 +112,8 @@ Do not:
   - Spec/plan prose adjusted (full ID citations; role-map wording instead of bare decision ids in contracts cells) so this folder is a clean A1.1 target.
 - Follow-ups:
   - Spec Concern **Bare `data.md`**: D4 (basename list) still fails bare `data.md` even though skill doctrine allows it until a hand rename. Confirm whether to carve out that exception (destination: design / later phase).
+
+## Archive
+
+- **Confirmed.** Phase 1 Done; no deferred phases.
+- **Carry-forward.** Bare `data.md` basename exception (Close-out Follow-ups) stays open for a later design pass.
