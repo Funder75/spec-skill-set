@@ -4,6 +4,8 @@ Execute one phase (or one sub-task, or one combinable group) of `<slug>.plan.md`
 
 ## Preconditions
 
+**Epic folder.** When `spec_docs/<slug>/<slug>.epic.md` is present, stop here, before step 1 and before Phase selection (R4 (refuse gates)). Reply with [SKILL.md](../SKILL.md) › Stage detection › Refusal, naming each suggested spec and the task names, or none. Do not start phase work, set a status, or change the folder. A child slug is its own folder and is not stopped here. This stop covers implement and continue only. Archive is unchanged.
+
 1. Open `spec_docs/<slug>/`. If it is under `archive/`, stop unless they asked for a doc correction.
 2. `Progress` is `plan` or `implementing`, and `<slug>.plan.md` exists with no `{{…}}` and no `[SUGGESTION:`. If not, stop and name the missing gate.
 3. Read `<slug>.spec.md`, the plan's **progress overview**, and the **active phase** section. Read only the tech-doc sections that phase lists under **Read first**, not whole docs.
@@ -188,9 +190,9 @@ It MUST stop when:
 - An Ask-before item only a person can answer
 - The just-finished unit ran on its own checkout or branch (cloud agent, worktree, or branch) and a dependent unit is next: stop and ask the person to integrate that branch (code + plan edits) into the shared checkout before dispatching the dependent unit (see Env checklist › Integrate before next). A unit with no dependents, or a unit that was implemented directly in the shared checkout, is not gated by this.
 
-Resume uses the same `/spec implement` / continue entry: finish the open `Reviewing` / `Blocked` unit first, then pick the next ready unit. On resuming a `Reviewing` unit whose **Close** is `human`, first list the pending human **Gates** rows (and any human-owned scenario IDs) in chat. A bare `implement` or `continue` with no reply naming those rows is not acceptance — treat it as "show what is pending" and stop there. Only an explicit reply that names the pending rows (or says "accept all pending human gates") counts as the person accepting them. Record that acceptance, naming the rows accepted, under **Close-out**, then mark `Done`.
+Resume uses the same `/spec implement` / continue entry: finish the open `Reviewing` / `Blocked` unit first, then pick the next ready unit. On resuming a `Reviewing` unit whose **Close** is `human`, list the pending human **Gates** rows once, as one set. A bare `implement` or `continue`, with no word that the phase was reviewed, is not acceptance — show that set and stop. Any other reply that accepts the phase (`reviewed`, `confirmed`, `approved`, `accept`, or those words with the phase named) accepts every pending human gate in the set. Do not ask the person to name each row, each scenario, or to repeat a set phrase. Record that acceptance under **Close-out**, naming the rows in the set, then mark `Done`. If the reply names only some rows, accept those and leave the others pending.
 
-The controller MUST NOT invent rulings that replace Ask-before for security or irreversible ops. The controller MUST NOT mark a human **Gates** row passed.
+The controller MUST NOT invent rulings that replace Ask-before for security or irreversible ops. The controller MUST NOT mark a human **Gates** row passed unless the person has accepted that phase's pending human gates as one set, or has named that row.
 
 ## Archive
 

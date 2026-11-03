@@ -1,8 +1,7 @@
 ---
 work_item: {{id, or "n/a"}}
 tracker_spec_url: n/a
-document_id: n/a
-document_url: n/a
+epic: n/a
 ---
 
 <!-- Author guidance is in HTML comments. Strip every HTML comment when writing the spec doc. {{…}} is fill-in. Follow writing-style.md in the skill folder. -->

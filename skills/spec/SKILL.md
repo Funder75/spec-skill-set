@@ -33,13 +33,15 @@ Templates emit this as a bold body line (`**Progress:** design`). Instructions t
 
 Set it only when a gate is crossed. Writes are monotonic: set `Progress` only when the current value is earlier than the target in the `design < tech < plan < implementing < archived` order; editing an earlier doc at a later gate (allowed below) does not move `Progress` backward. Phase status lives only in that folder's `<slug>.plan.md` (G3 (plan extension)).
 
+An epic has no Progress line (D10 (no epic progress)). Do not add one. When `<slug>.epic.md` is present, do not use a missing Progress line to choose a gate. Stage detection matches that file first.
+
 ## Depth
 
 Each `<slug>.spec.md` also carries how deep the folder goes (body line next to Progress, not frontmatter):
 
 `Depth: full | standard | lite`
 
-Missing Depth on an older folder → treat as `full`. Set Depth once at create (after Analysis); change it only when the user asks. Depth chooses process and which siblings are expected — not a second skill.
+Missing Depth on an older folder → treat as `full`. That default applies to an older `<slug>.spec.md`, not to `<slug>.epic.md`. An epic has no Depth line. Do not treat it as full, and do not add a Depth line. Set Depth once at create (after Analysis); change it only when the user asks. Depth chooses process and which siblings are expected — not a second skill.
 
 | Depth | Create | Tech docs | Plan | Progress path | Progress set by |
 | ----- | ------ | --------- | ---- | ------------- | ---------------- |
@@ -47,7 +49,9 @@ Missing Depth on an older folder → treat as `full`. Set Depth once at create (
 | **standard** | Normal Clarify; Approach only if a real fork | Promote folds / `not needed` only; siblings unusual | Separate promote; few phases | `design` → `tech` → `plan` | create-spec.md sets `design`; tech-specs.md › Standard fold sets `tech` (plan.md calls it when still `design`); plan.md sets `plan` |
 | **full** | Elaborate create-spec as today | Tech-specs siblings when needed | Full plan stage | Unchanged | create-spec.md sets `design`; tech-specs.md sets `tech`; plan.md sets `plan` |
 
-Always emit `<slug>.plan.md` (implement and Linear require it). Lite does not embed the plan in `<slug>.spec.md`.
+Always emit `<slug>.plan.md` for feature and bugfix (implement and Linear require it). Lite does not embed the plan in `<slug>.spec.md`. An epic has no Depth line and does not emit a plan.
+
+A child written by create spec for an epic stops at `Progress: design`, even at Depth lite. Its thin plan waits for a later turn (R10 (one child)).
 
 ## Kind
 
@@ -55,10 +59,13 @@ Each `<slug>.spec.md` also carries what kind of work the folder is (body line ne
 
 `Kind: feature | bugfix`
 
-Missing Kind on an older folder → treat as `feature`. Set Kind once at create; change it only when the user asks. Create MUST NOT rewrite older folders only to add Kind.
+An epic is not that file. `<slug>.epic.md` carries `Kind: epic` and omits Progress and Depth (D6 (omit depth), D10 (no epic progress)). It also omits a file-level Depends on. Each suggested spec is its own section, numbered `S1 (short name)`, with its own Depends on. Tasks stay under `## Tasks`.
+
+Missing Kind on an older folder → treat as `feature`. That rule applies to an older `<slug>.spec.md`. A folder that has `<slug>.epic.md` is an epic, not a missing-Kind feature. Set Kind once at create; change it only when the user asks. Create MUST NOT rewrite older folders only to add Kind.
 
 - **feature** (default) — today's shape: **User journeys** and **Work split** stay required.
 - **bugfix** — omit **User journeys** and **Work split**; emit **Current behaviour**, **Expected behaviour**, **Unchanged behaviour**, and **Root cause** (cite Investigate-opened modules only). Any Depth is allowed; help SHOULD recommend **lite** for many bugs, not require it.
+- **epic** — `<slug>.epic.md` only. Not an implementable spec. No Depth round and no Progress line. Create writes that file from [stages/create-spec.md](stages/create-spec.md) › Write branch by Kind.
 
 Kind resolution at create: see [stages/create-spec.md](stages/create-spec.md) › Kind resolution.
 
@@ -71,11 +78,14 @@ Kind resolution at create: see [stages/create-spec.md](stages/create-spec.md) �
 | Role | Emitted filename |
 | ---- | ---------------- |
 | Design overview | `<slug>.spec.md` |
+| Epic overview | `<slug>.epic.md` |
 | Business rules | `<slug>.logic.md` |
 | Types / API / storage | `<slug>.contracts.md` |
 | UI | `<slug>.ui.md` |
 | Implementation plan | `<slug>.plan.md` |
 | Legacy data (same doc as contracts) | `<slug>.data.md` — only when that folder already used `data.md` and a person renamed it |
+
+An epic folder uses the epic overview instead of `<slug>.spec.md`. Create does not emit a plan or tech siblings for it (D2 (epic filename)).
 
 New work creates, reads, and updates only these names (G4 (skill resolves), R3 (new names only)). Do not dual-read or dual-write bare basenames. Do not auto-rename existing bare folders (R4 (no auto migrate)). A reader that finds a bare basename where this map expects a slug-prefixed name (for example `implementation-plan.md` instead of `<slug>.plan.md`) MUST NOT treat it as the file it needs: stop and tell the user to rename it to the D1 name first, then continue. The one documented exception is bare `data.md` (row above): a folder may keep that name unrenamed, read as the contracts-equivalent doc, because it is a single optional sibling, not a second status store. A stage file MUST NOT add any other "or bare …" fallback. Template *seed* files under `templates/` keep unprefixed basenames (R6 (template seeds stay)); only emitted path text uses the map above (R7 (skill surface complete)).
 
@@ -87,7 +97,7 @@ Tables (binding): a cell holds a name, ID, status, value, or path, in about 10 w
 
 Tech docs (emitted): `<slug>.logic.md`, `<slug>.contracts.md`, `<slug>.ui.md`. An older folder may still have bare `data.md` until a person renames; do not rename it as a side effect. After a hand rename that sibling is `<slug>.data.md` (same doc as contracts).
 
-IDs: `G` goals, `R` rules, `A<phase>.<n>` acceptance scenarios, `D` decisions, `Q` open questions. Define and cite `G`, `R`, `D`, `Q` as `G1 (short name)`: a 2–4 word lowercase name in parentheses. Every citation uses the full form; a bare `G1` is a defect. Never reuse a number. Renaming updates every citation in the folder. `A2.1` keeps its form. Decisions and open questions live in `<slug>.spec.md`, as lists with no index table. A long **Open questions** list at design is normal. Set **Priority** to `high` when the answer would change later specs, the plan, or other goals; otherwise `—`. Elsewhere, `> **Open:** Q1 (short name)` points at an item there.
+IDs: `G` goals, `R` rules, `A<phase>.<n>` acceptance scenarios, `D` decisions, `Q` open questions, and `S` suggested specs in `<slug>.epic.md`. Define and cite `G`, `R`, `D`, `Q`, and `S` as `G1 (short name)`: a 2–4 word lowercase name in parentheses. Every citation uses the full form; a bare `G1` or `S3` is a defect. Never reuse a number. Renaming updates every citation in the folder. `A2.1` keeps its form. Decisions and open questions live in `<slug>.spec.md`, as lists with no index table. A long **Open questions** list at design is normal. Set **Priority** to `high` when the answer would change later specs, the plan, or other goals; otherwise `—`. Elsewhere, `> **Open:** Q1 (short name)` points at an item there. Suggested specs are sections in the epic, not rows in a dependency table.
 
 `<slug>.spec.md` has separate **Notes** (context, no action needed) and **Concerns** (needs a decision or a change; states what goes wrong if left). Omit either when empty.
 
@@ -98,20 +108,22 @@ IDs: `G` goals, `R` rules, `A<phase>.<n>` acceptance scenarios, `D` decisions, `
 If the message is only `spec`, `/spec`, or `/spec help` — no slug and no action — stop. Do not bootstrap, do not open a stage file, and do not start a spec.
 
 - `spec_docs/README.md` exists → point the user at that file. Do not restate it.
-- It does not exist → explain what this skill does: the lifecycle (`<slug>.spec.md` → tech specs → `<slug>.plan.md` → one phase → archive), that **Depth** (`full` / `standard` / `lite`) shortens gates for smaller work, that **Kind** (`feature` / `bugfix`) chooses design shape (say `create … as bugfix`; lite is recommended for many bugs, not required), that read-only **explore** decides whether a folder is needed, and the actions in the table below.
+- It does not exist → explain what this skill does: the lifecycle (`<slug>.spec.md` → tech specs → `<slug>.plan.md` → one phase → archive), that **Depth** (`full` / `standard` / `lite`) shortens gates for smaller work, that **Kind** (`feature` / `bugfix`) chooses design shape (say `create … as bugfix`; lite is recommended for many bugs, not required), that read-only **explore** decides whether a folder is needed, and the actions in the table below. Also name `create epic`, suggested specs numbered like `S1 (short name)`, `/spec create spec for` an epic file, and tasks that are not specs. A task is done by hand or in a chat. It does not get a folder.
 
 ## Infer, otherwise ask
 
-Explicit verbs skip the "what next?" question. Read the matching stage file and run it. A bare `/spec` or `/spec help` is the help case above, not an ambiguous request.
+Explicit verbs skip the "what next?" question. Read the matching stage file and run it. A bare `/spec` or `/spec help` is the help case above, not an ambiguous request. Exception: on a folder with `<slug>.epic.md`, implement, continue, promote to tech specs, and promote to implementation plan refuse under Stage detection before the stage file is read (R4 (refuse gates)).
 
 | User said | Action | Stage file |
 | --------- | ------ | ---------- |
 | explore / `/spec explore` / should this be a spec / do I need a folder | Read-only: restate ask, optional approaches, exactly one outcome (no spec / spec at Depth+slug / spike). Writes nothing under `spec_docs/` | [stages/explore.md](stages/explore.md) |
-| create spec from … / name it … / create … as lite\|standard\|full / create … as bugfix\|feature | Write or resume `<slug>.spec.md` (lite also writes thin plan). Explicit `as lite\|standard\|full` sets Depth without the Depth round ask. Explicit `as bugfix` or `as feature` (alone or with a Depth) sets Kind without the recommend ask | [stages/create-spec.md](stages/create-spec.md) |
+| `create epic` | Write the epic file. No Depth and no Progress. Do not write `<slug>.spec.md`. Match this row before the create row below | [stages/create-spec.md](stages/create-spec.md) |
+| `/spec create spec for` an epic file | One child `<child>.spec.md` at Progress design, even at lite. No plan and no tech sibling. Match this row before the create row below | [stages/create-spec.md](stages/create-spec.md) › Create spec for an epic |
+| create spec from … / name it … / create … as lite\|standard\|full / create … as bugfix\|feature | Write or resume `<slug>.spec.md` (lite also writes thin plan). Not `create epic` or create spec for an epic file (rows above). Explicit `as lite\|standard\|full` sets Depth without the Depth round ask. Explicit `as bugfix` or `as feature` (alone or with a Depth) sets Kind without the recommend ask | [stages/create-spec.md](stages/create-spec.md) |
 | fill conventions / set up conventions / update project conventions | Interview and write **Project conventions** in `spec_docs/README.md`, independent of bootstrap. Creates the README first if missing | [stages/fill-conventions.md](stages/fill-conventions.md) |
 | promote to tech specs | Technical docs only. Set `Progress: tech`. No-op when `Depth: lite` | [stages/tech-specs.md](stages/tech-specs.md) |
 | promote to implementation plan | Plan only. Gate skip depends on Depth (see [stages/plan.md](stages/plan.md)) | [stages/plan.md](stages/plan.md) |
-| next | Read `Progress` and `Depth`, name the next gate, and ask to continue. Do not open a stage file until they confirm | — |
+| next | If `<slug>.epic.md` exists, treat the folder as an epic before any Progress check and describe the suggested specs (Stage detection). Do not offer tech, plan, implement, or archive. Otherwise read `Progress` and `Depth`, name the next gate, and ask to continue. Do not open a stage file until they confirm | — |
 | implement / continue | One phase, or one combinable group | [stages/implement.md](stages/implement.md) |
 | archive | Move the folder after explicit confirmation | [stages/implement.md](stages/implement.md) |
 | audit / review spec | Read-only report in chat | [stages/audit.md](stages/audit.md) |
@@ -123,18 +135,21 @@ Ambiguous or conflicting requests: ask.
 
 If `spec_docs/<slug>/` already exists, resume it. Do not create a second folder. Confirm the slug when it is inferred from a work-item title.
 
-Editing an earlier doc is allowed at any later gate. If scope, non-goals, or glossary in `<slug>.spec.md` change after siblings exist, update those siblings in the same session. If TL;DR or goals change on a Linear-linked folder (`work_item` not `n/a`), call [stages/linear-sync/link-document.md](stages/linear-sync/link-document.md) › Document › Regenerate. Ask only before replacing or deleting a later artifact (regenerating tech specs or the plan from scratch). `/spec next` at `Progress: plan` still proposes implementation.
+Editing an earlier doc is allowed at any later gate. If scope, non-goals, or glossary in `<slug>.spec.md` change after siblings exist, update those siblings in the same session. If TL;DR or goals change on a Linear-linked folder (`work_item` not `n/a`, or on an epic `linear_project` not `n/a`), the Linear description is stale: tell the user to run `/spec linear sync` ([stages/linear-sync/link-document.md](stages/linear-sync/link-document.md) › Description › Refresh). On a linked epic, do the same when TL;DR, goals, suggested specs, or tasks change. Ask only before replacing or deleting a later artifact (regenerating tech specs or the plan from scratch). `/spec next` at `Progress: plan` still proposes implementation.
 
 ## Stage detection
 
-First match, from the `Progress` line (and `Depth` when present):
+First match. When `spec_docs/<slug>/<slug>.epic.md` exists, use the epic match below before any Progress check. Do not require `<slug>.spec.md` and do not read a Progress line. Otherwise match from the `Progress` line (and `Depth` when present):
 
 - `spec_docs/README.md` missing, and the user asked to create a spec → bootstrap in [stages/create-spec.md](stages/create-spec.md), then continue from the user's intent.
 - `spec_docs/README.md` missing, and the user asked to fill conventions → [stages/fill-conventions.md](stages/fill-conventions.md) direct entry (it copies the template). Do not ask the bootstrap opt-in again.
 - `spec_docs/README.md` missing, and the user asked to explore → [stages/explore.md](stages/explore.md). Explore is read-only and does not bootstrap.
 - `spec_docs/README.md` missing, and the user asked for any other action (audit, implement, next, promote, archive, linear sync) → report that there is no spec yet and stop. Do not bootstrap.
 - No `spec_docs/<slug>/` and the user asked to explore → [stages/explore.md](stages/explore.md), not create.
-- No `spec_docs/<slug>/` and the user supplied input (create intent, not explore) → create spec (`Progress: design`, or `plan` when Depth is lite and the thin plan is written in the same session).
+- No `spec_docs/<slug>/` and the user supplied input (create intent, not explore) → create spec (`Progress: design`, or `plan` when Depth is lite and the thin plan is written in the same session). `create epic` does not use this bullet. It follows Infer › `create epic` and writes `<slug>.epic.md` only, with no Progress line. `/spec create spec for` an epic file does not use this bullet either. It follows [stages/create-spec.md](stages/create-spec.md) › Create spec for an epic and stops at `Progress: design`.
+- The author names a task under `## Tasks`, with any verb, including `/spec create spec for` that task → reply with Task row: That item is a task. It does not become a spec. Do not open a stage and do not create a folder (R8 (task row)). A task name is never a slug.
+- `<slug>.epic.md` is in the folder, and the user said implement, continue, promote to tech specs, or promote to implementation plan → refuse before reading the stage file (R4 (refuse gates)). Reply with **Refusal**: This folder is an epic, so it is not implemented. Spec work belongs on a child. A task is done by hand or in a chat. Then list each suggested spec as `S1 (short name)` plus its slug, and list the task names under `## Tasks`. Write none for an empty list. Do not open [stages/implement.md](stages/implement.md), [stages/tech-specs.md](stages/tech-specs.md), or [stages/plan.md](stages/plan.md). Leave the epic folder unchanged. A child slug is its own folder, so those verbs on a child follow today's stages. Archive gains no epic rule (D5 (no archive gate)).
+- `<slug>.epic.md` is in the folder → this folder is an epic, including when `<slug>.spec.md` is also present. Do not require `<slug>.spec.md`. Do not read Progress. This match is the `/spec next` reply. Read `<slug>.epic.md` and describe the suggested specs. Name each as `S1 (short name)`, then its slug and what it covers. A task is a `###` heading under `## Tasks`. When Suggested specs or Tasks is the single word `none`, say none for that list. For each suggested spec whose Depends on names a task, name each such task, then that spec. Then name the remaining specs and tasks. Tell the author to create or open a child spec with `/spec create spec for`, or to do a task by hand or in a chat. Do not start a task. Do not offer tech, plan, implement, or archive.
 - `design` and `Depth: lite` → finish the lite create packet and set `Progress: plan`, whether or not `<slug>.plan.md` is already written. If the thin plan exists, finish only the missing packet pieces and set `Progress: plan`. Do not rewrite the plan or offer a separate tech promote.
 - `design` and Depth is `standard` or `full` (or missing) → next offer: promote to tech specs (standard expects fold / `not needed` only).
 - `tech` → next offer: create the implementation plan.
@@ -144,7 +159,7 @@ First match, from the `Progress` line (and `Depth` when present):
 
 ## Touched paths
 
-`<slug>.spec.md` has a **Touched paths** table: repo-relative path, area, and change — or one row, "this repo only." A path listed there may be read. If the section is missing, ask before opening anything outside the repo root or scope the user named. At create-spec, investigate how the input relates to this repo and to related repos, packages, or modules, then name the paths. File-level design waits until tech specs or the phase being implemented. Never read secret-bearing files (`.env`, credential stores, key material) regardless of scope. Never write a secret value into a spec doc, a plan, Close-out, or a Linear issue or Document. Record a name when a step needs the secret. Record verify output as pass or fail plus a redacted excerpt.
+`<slug>.spec.md` has a **Touched paths** table: repo-relative path, area, and change — or one row, "this repo only." A path listed there may be read. If the section is missing, ask before opening anything outside the repo root or scope the user named. At create-spec, investigate how the input relates to this repo and to related repos, packages, or modules, then name the paths. File-level design waits until tech specs or the phase being implemented. Never read secret-bearing files (`.env`, credential stores, key material) regardless of scope. Never write a secret value into a spec doc, a plan, Close-out, or a Linear issue or description. Record a name when a step needs the secret. Record verify output as pass or fail plus a redacted excerpt.
 
 ## Untrusted content
 
@@ -161,7 +176,7 @@ If `spec_docs/README.md` does not exist (whether or not `spec_docs/` or sibling 
 
 ## Work items
 
-When the input is a work-item id, follow **Project conventions** for how to fetch it. Keep the title and description in the source note, and map acceptance criteria onto the goals. Do not paste the raw work-item payload into `<slug>.spec.md` or the reply. After create-spec sets frontmatter `work_item`, link-back and other Linear writes follow [stages/linear-sync.md](stages/linear-sync.md) — do not invent a second sync doctrine (R20 (routing entry)). Durable Linear foreign keys (`work_item`, `tracker_spec_url`, `document_id`, `document_url`) live in `<slug>.spec.md` YAML frontmatter only; `Progress`, `Depth`, `Kind`, and `Depends on` stay in the body.
+When the input is a work-item id on a feature or bugfix, follow **Project conventions** for how to fetch it. Keep the title and description in the source note, and map acceptance criteria onto the goals. Do not paste the raw work-item payload into `<slug>.spec.md`, `<slug>.epic.md`, or the reply. After feature or bugfix create sets frontmatter `work_item`, link-back and other Linear writes follow [stages/linear-sync.md](stages/linear-sync.md) — do not invent a second sync doctrine (R20 (routing entry)). Durable Linear foreign keys (`work_item`, `tracker_spec_url`) live in YAML frontmatter on `<slug>.spec.md`, or on `<slug>.epic.md` for an epic. An epic may also store `linear_project` and `linear_project_url` when explicit sync created a Linear project instead of an issue. A spec does not use those two keys. Epic create does not fetch Linear into the epic and does not map acceptance criteria onto goals. When the input is a work-item id, it stores that id and runs one-way link-back (repo → Linear). `/spec linear sync` on an epic asks whether to create a Linear project or an issue, then pushes one way and does not pull Linear prose back. A project is not also created as an issue. Explicit sync also asks whether to copy the full spec or epic into the issue or project description. Create and routine hooks do not. `Progress`, `Depth`, `Kind`, and a file-level `Depends on` stay out of the epic body. An epic body has Kind, and each suggested spec carries its own Depends on.
 
 ## Bounds
 

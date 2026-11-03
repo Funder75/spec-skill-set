@@ -4,6 +4,7 @@ Create the technical docs for `spec_docs/<slug>/` using the D1 (role map) names 
 
 ## Preconditions
 
+- **Epic folder.** When `spec_docs/<slug>/<slug>.epic.md` is present, stop here, before the checks below (R4 (refuse gates)). Reply with [SKILL.md](../SKILL.md) › Stage detection › Refusal, naming each suggested spec and the task names, or none. Do not write a tech doc, set Progress, or change the folder. A child slug is its own folder and is not stopped here.
 - The user asked to promote to tech specs, or confirmed that step after `/spec next`.
 - Read `Depth` from `<slug>.spec.md` (missing → treat as `full`).
 - **Depth: lite** — Tech was folded (or marked `not needed`) at create. Do not promote. Tell the user tech siblings are out of scope for lite; next step is implement (or edit the existing thin plan). Stop unless they explicitly ask to raise Depth first.
@@ -71,7 +72,7 @@ Do not add a decisions or open-questions section to a tech doc. Record those in 
 
 Do not rewrite the spec. Update the doc index. Set `Progress: tech` only when the current value is `design` (monotonic — [SKILL.md](../SKILL.md) › Progress); a folder already at `plan`, `implementing`, or `archived` keeps its Progress value even when this stage fills a late tech doc. `Present?` is `yes` (and link the D1 name), `folded →` an anchor, `not needed`, or `pending`.
 
-When this update changes `Progress` to `tech`, run [linear-sync/status.md](linear-sync/status.md) › Progress → Tracker Spec when write-back is allowed (G3 (status mirror), R11 (status mirror), R12 (selective tracker writes)). Update **only** the Tracker Spec by its stored frontmatter `work_item` id. On a real Progress delta, append a progress-log comment; no-op → none (R13 (progress log)). MUST NOT run full explicit sync for a routine gate change. `work_item: n/a` (or missing) → skip (R22 (reference gate)). MCP / map missing → warn once; skip write-back (R1 (conventions gate), R21 (mcp session)). Linear MUST NOT drive Progress (G7 (repo canonical)). If this stage rewrites TL;DR or goals on a linked folder, also call [linear-sync/link-document.md](linear-sync/link-document.md) › Document › Regenerate.
+When this update changes `Progress` to `tech`, run [linear-sync/status.md](linear-sync/status.md) › Progress → Tracker Spec when write-back is allowed (G3 (status mirror), R11 (status mirror), R12 (selective tracker writes)). Update **only** the Tracker Spec by its stored frontmatter `work_item` id. On a real Progress delta, append a progress-log comment; no-op → none (R13 (progress log)). MUST NOT run full explicit sync for a routine gate change. `work_item: n/a` (or missing) → skip (R22 (reference gate)). MCP / map missing → warn once; skip write-back (R1 (conventions gate), R21 (mcp session)). Linear MUST NOT drive Progress (G7 (repo canonical)). If this stage rewrites TL;DR or goals on a linked folder, the Linear description is stale: tell the user to run `/spec linear sync` ([linear-sync/link-document.md](linear-sync/link-document.md) › Description › Refresh).
 
 ## Stop
 

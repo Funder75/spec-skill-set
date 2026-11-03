@@ -4,8 +4,9 @@ Planning documents for this repo. One folder per feature spec. The spec workflow
 
 | Path | Role |
 | ---- | ---- |
-| `<slug>/` | Active spec. Start at `<slug>.spec.md` |
-| `<slug>/<slug>.spec.md` | Scope, gates, and the coarse work split (or bugfix behaviour lists). Body lines: `Progress` (gate), `Depth` (full / standard / lite), and `Kind` (feature / bugfix; missing → feature). Linear FKs (`work_item`, URLs, Document ids) live in YAML frontmatter |
+| `<slug>/` | Active spec or epic. Start at `<slug>.spec.md`, or at `<slug>.epic.md` for an epic |
+| `<slug>/<slug>.spec.md` | Scope, gates, and the coarse work split (or bugfix behaviour lists). Body lines: `Progress` (gate), `Depth` (full / standard / lite), and `Kind` (feature / bugfix; missing → feature). Linear FKs (`work_item`, URLs) live in YAML frontmatter |
+| `<slug>/<slug>.epic.md` | Epic overview. Kind is epic. No Progress line and no Depth line. Suggested specs are numbered sections (`S1 (short name)`), each with its own Depends on. Tasks have no folder |
 | `<slug>/<slug>.logic.md` | Rules, workflows, state transitions (when needed) |
 | `<slug>/<slug>.contracts.md` | Types, API contracts, state ownership, storage (when needed) |
 | `<slug>/<slug>.ui.md` | Layout, interaction, states, copy (when needed) |
@@ -24,6 +25,8 @@ Planning documents for this repo. One folder per feature spec. The spec workflow
 | **full** | Design → tech siblings when needed → plan → implement (default for older folders with no Depth line). |
 
 `Kind` in `<slug>.spec.md` is `feature` (default) or `bugfix`. Say `create … as bugfix` (alone or with a Depth) to set Kind without a recommend ask. Lite is recommended for many bugs, not required. Bugfix design uses behaviour lists and Root cause instead of User journeys and Work split. Older folders without Kind are treated as feature.
+
+`create epic` writes `<slug>.epic.md` only. Each suggested spec is a numbered section such as `S1 (short name)`. `/spec create spec for` an epic file adds one child from that section. Tasks that are not specs are done by hand or in a chat. They do not get a folder. `/spec linear sync` asks whether the epic is a new Linear project or an issue, then pushes that choice. A project is not also created as an issue. Tracker text is not pulled back.
 
 Full path:
 
@@ -54,6 +57,7 @@ IDs carry a short name, for example `G1 (writing style)`:
 - **R** — rule, in `<slug>.logic.md` or in **Technical notes**.
 - **D** — decision, in `<slug>.spec.md`.
 - **Q** — open question, in `<slug>.spec.md`. **Blocks** names what cannot proceed.
+- **S** — suggested spec, in `<slug>.epic.md`. Cite as `S1 (short name)`.
 - **A2.1** — acceptance scenario 1 of phase 2. No name.
 - **C1 / W1 / O1** — critical, warning, and optimization findings in an audit report. No name.
 

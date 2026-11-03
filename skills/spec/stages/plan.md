@@ -4,6 +4,7 @@ Write `spec_docs/<slug>/<slug>.plan.md` from the reviewed spec and tech docs (G3
 
 ## Preconditions
 
+- **Epic folder.** When `spec_docs/<slug>/<slug>.epic.md` is present, stop here, before the checks below (R4 (refuse gates)). Reply with [SKILL.md](../SKILL.md) › Stage detection › Refusal, naming each suggested spec and the task names, or none. Do not write a plan, run Standard fold, set Progress, or change the folder. A child slug is its own folder and is not stopped here.
 - The user asked to promote to an implementation plan, or confirmed that step after `/spec next`.
 - Read `Depth` from `<slug>.spec.md` (missing → treat as `full`).
 - **Depth: lite** — Create already wrote the thin plan. If `<slug>.plan.md` exists, resume or edit it only; do not regenerate from scratch without asking. If it is missing (interrupted create), write the thin 1-phase plan now, ensure tech rows are folded / `not needed`, and set `Progress: plan`.

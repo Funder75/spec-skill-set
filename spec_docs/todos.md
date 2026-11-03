@@ -4,17 +4,6 @@ Ideas for before moving into specs.
 
 Once promoted to a spec - we should remove it entirely from here.
 
-## Epic specs
-
-Some work is too large for a single implementable spec — an epic that would bloat design, tech, and plan if forced into one folder.
-
-Support creating an **epic** that is not implemented directly. Instead it decomposes into smaller child specs that each go through the normal design → tech → plan → implement loop on their own.
-
-Rough shape to explore:
-- An epic doc that captures intent, boundaries, and the proposed split (not phases to implement)
-- Child specs linked back to the epic (and maybe sequenced or dependency-aware)
-- Clear rule that implementation happens only on children, never on the epic itself
-
 ## `converge` before archive, plus an "As built" note
 
 **Borrowed from:** Spec Kit `converge`, OpenSpec `sync`/`archive`, GSD `VERIFICATION.md`, and Superpowers' final whole-branch review.
@@ -108,3 +97,13 @@ When create-spec detects a UI-primary feature, offer once, in its own message, a
 **Borrowed from:** BMAD retrospective and Superpowers finishing-a-branch.
 
 After converge (above), ask one question: "Anything to add to **Project conventions**?" Examples are a missing verify command, a new hotspot, or a principle. If the answer is yes, route to `fill-conventions.md`. This makes each finished spec improve the next one.
+
+
+## When creating a spec from an Epic, make sure it links back
+
+Also make sure that the tracker info knows it is a sub issue of the epiv
+
+## Tracker description choice
+
+Give the user a choice of either writing the full description from an epic / spec, an abstract or something else
+
