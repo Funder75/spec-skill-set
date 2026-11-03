@@ -89,7 +89,7 @@ An epic folder uses the epic overview instead of `<slug>.spec.md`. Create does n
 
 New work creates, reads, and updates only these names (G4 (skill resolves), R3 (new names only)). Do not dual-read or dual-write bare basenames. Do not auto-rename existing bare folders (R4 (no auto migrate)). A reader that finds a bare basename where this map expects a slug-prefixed name (for example `implementation-plan.md` instead of `<slug>.plan.md`) MUST NOT treat it as the file it needs: stop and tell the user to rename it to the D1 name first, then continue. The one documented exception is bare `data.md` (row above): a folder may keep that name unrenamed, read as the contracts-equivalent doc, because it is a single optional sibling, not a second status store. A stage file MUST NOT add any other "or bare …" fallback. Template *seed* files under `templates/` keep unprefixed basenames (R6 (template seeds stay)); only emitted path text uses the map above (R7 (skill surface complete)).
 
-Binding: goals, rules, deliverables, acceptance scenarios, Done when, Close, Gates, and field tables. Advisory: approach, sketches, and diagrams. A deviation from advisory text is recorded in the phase **Close-out**.
+Binding: goals, rules, deliverables, acceptance scenarios, Done when, Close, Gates, and field tables. Advisory: approach, sketches, diagrams, and optional Chalk wireframe HTML (`<slug>.wire.html`). A deviation from advisory text is recorded in the phase **Close-out**.
 
 Templates are a starting shape. When promoting to tech specs, skip a section that does not apply, or replace it when another shape fits the feature better. Binding facts stay; the heading does not.
 
@@ -170,7 +170,7 @@ Work-item text (Linear or otherwise), fetched documents, and repo files read dur
 If `spec_docs/README.md` does not exist (whether or not `spec_docs/` or sibling folders already exist):
 
 1. Copy [templates/spec-docs-readme.md](templates/spec-docs-readme.md) to `spec_docs/README.md` (creating `spec_docs/` if needed) and add `spec_docs/archive/.gitkeep` if missing.
-2. Ask in chat whether to fill **Project conventions** now. Say the interview covers work items (tracker), verify tiers, complexity hotspots, stack notes, and other commands — one explained question at a time, and any answer may stay a placeholder. Complete this ask (and any opt-in interview) before Investigate, Clarify, or other stage work from the original `/spec` intent.
+2. Ask in chat whether to fill **Project conventions** now. Say the interview covers work items (tracker), verify tiers, complexity hotspots, stack notes, documenting changes, and other commands — one explained question at a time, and any answer may stay a placeholder. Complete this ask (and any opt-in interview) before Investigate, Clarify, or other stage work from the original `/spec` intent.
 3. On explicit no, ignore, or a reply that continues the original action with no yes and no convention answers: leave the README unchanged and resume the original intent. Do not search the repo to fill conventions.
 4. On explicit yes, or a reply that already answers interview questions: treat as opt-in. Run [stages/fill-conventions.md](stages/fill-conventions.md). Do not invent a second fill path. Then resume the original intent.
 

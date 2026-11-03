@@ -56,6 +56,7 @@ A tech doc is specific enough to implement from. Length follows the feature.
 - Types and components follow the patterns already in those files. Add a short code sketch where the shape would otherwise be ambiguous.
 - Field tables and rules are binding. Paths and sketches are advisory; a phase that departs records it in **Close-out**.
 - `<slug>.ui.md` covers every journey step in `<slug>.spec.md` that touches a screen.
+- When emitting `<slug>.ui.md`, if `spec_docs/<slug>/<slug>.wire.html` exists, set **Design reference** to `` `./<slug>.wire.html` (Chalk, advisory) ``. Prefer that over an ASCII **Wireframe** block. Do not create or re-offer a wireframe at promote — create-spec owns that offer.
 - When reading the code shows a behaviour `<slug>.spec.md` did not decide, add a **Q** item to `<slug>.spec.md` and point at it with `> **Open:** Q1 (short name)`. Do not fill the gap in the tech doc.
 
 Do not add a feature `README.md`. `<slug>.spec.md` is the overview.

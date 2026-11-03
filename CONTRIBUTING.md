@@ -46,6 +46,7 @@ When the Spec plugin (or user-level `spec` skill) is already installed, Cursor w
    ln -s "$SRC/stages" "$DEST/stages"
    ln -s "$SRC/templates" "$DEST/templates"
    ln -s "$SRC/scripts" "$DEST/scripts"
+   ln -s "$SRC/assets" "$DEST/assets"
    ```
 
 4. Reload the window or open a new Agent chat, then invoke `/spec-local`.

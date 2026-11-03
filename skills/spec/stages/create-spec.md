@@ -11,7 +11,7 @@ Write or resume `spec_docs/<slug>/<slug>.spec.md` (R1 (filename pattern), R3 (ne
 If `spec_docs/README.md` does not exist:
 
 1. Copy [templates/spec-docs-readme.md](../templates/spec-docs-readme.md) to `spec_docs/README.md` (creating `spec_docs/` if needed) and add `spec_docs/archive/.gitkeep` if missing.
-2. Ask in chat whether to fill **Project conventions** now. Say the interview covers work items (tracker), verify tiers, complexity hotspots, stack notes, and other commands — one explained question at a time, and any answer may stay a placeholder. Complete this ask (and any opt-in interview) before Investigate, Clarify, or other stage work from the original `/spec` intent.
+2. Ask in chat whether to fill **Project conventions** now. Say the interview covers work items (tracker), verify tiers, complexity hotspots, stack notes, documenting changes, and other commands — one explained question at a time, and any answer may stay a placeholder. Complete this ask (and any opt-in interview) before Investigate, Clarify, or other stage work from the original `/spec` intent.
 3. On explicit no, ignore, or a reply that continues the original action with no yes and no convention answers: leave the README unchanged and resume the original intent. Do not search the repo to fill conventions.
 4. On explicit yes, or a reply that already answers interview questions: treat as opt-in. Run [fill-conventions.md](fill-conventions.md). Do not invent a second fill path. Then resume the original intent.
 
@@ -251,9 +251,31 @@ When the feature is UI-primary, the written `<slug>.spec.md` **MUST** cover:
 
 Scale how much layout detail you write to the size of the change. Still name empty or error states when they apply.
 
-**MUST NOT:** Put component props or wireframes in `<slug>.spec.md`. Those belong in `<slug>.ui.md` at promote when Depth is full. For lite / standard, fold UI notes under **Technical notes › UI** or mark `not needed`.
+**MUST NOT:** Put component props or wireframes in `<slug>.spec.md`. Component props and binding UI detail belong in `<slug>.ui.md` at promote when Depth is full. For lite / standard, fold UI notes under **Technical notes › UI** or mark `not needed`. An optional Chalk HTML companion is separate — see Chalk wireframe below; never paste its markup into `<slug>.spec.md`.
 
 Non-UI **features** keep journeys as `n/a` with a reason, as above. **Bugfix** omits journeys entirely (see Write branch by Kind).
+
+### Chalk wireframe (UI-primary)
+
+Advisory visual companion only. Binding layout regions, interactions, empty/error states, and copy stay in `<slug>.spec.md` (and later `<slug>.ui.md`). Never cite the wireframe in Done when, Gates, or acceptance.
+
+**Offer once** — after Self-review, in its own message (before or as part of Stop's review ask), when all of these hold:
+
+- Kind is **feature** (not bugfix; not create epic).
+- The feature is UI-primary.
+- Depth is not a copy-only lite change with no layout fork (skip when the only UI change is strings and screen depth has no layout regions to show).
+- This folder has not already been offered a wireframe in this create (no / skip / ignore counts as offered — do not ask again).
+
+Offer text shape: UI-primary — want a Chalk wireframe (`<slug>.wire.html`) with default / empty / error side by side? Advisory only; binding stays in the markdown.
+
+**On yes:**
+
+1. Read [`assets/chalk/VOCAB.md`](../assets/chalk/VOCAB.md) (skill-relative; same skill-root as `stages/`).
+2. Write `spec_docs/<slug>/<slug>.wire.html`: complete HTML; `<link rel="stylesheet" href="https://unpkg.com/chalk-css@0.2.0/chalk.css">` (pin must match [`assets/chalk/VERSION`](../assets/chalk/VERSION)); only `wf-*` classes from VOCAB; inline style only for `width` / `min-height`; black and white; show default, empty, and error side by side (or labeled sections) from settled screen-depth text. Do not invent answers to Open questions. Do not write custom CSS. Do not copy `chalk.css` into the folder.
+
+**On no / skip / ignore:** write nothing. Do not offer again for that folder.
+
+Do not auto-create a wireframe at promote. Create-spec-for-epic children use the same offer when the child is UI-primary.
 
 Replace every `{{…}}` placeholder. Strip every HTML comment. Number goals `G1 (short name)`…. Use `[SUGGESTION: …]` for a concrete draft the user can accept, and remove the marker when they accept it. Record a settled choice under **Decisions**. Record a decision that needs a person under **Open questions**, and point at it from the text with `> **Open:** Q1 (short name)`. A long question list is normal at this gate (especially full). Set **Priority** to `high` when the answer would change the tech specs, the plan, or other goals; leave it `—` otherwise.
 
@@ -336,13 +358,14 @@ Do not create branches, worktrees, or commits unless the user explicitly asks in
 
 **create epic:** Stop after the epic file is written. The next step is `/spec create spec for` a suggested spec, or doing a task by hand or in a chat. Do not start a task. Do not offer tech, plan, implement, or archive. Do not write a plan or tech siblings. The Depth stops below do not apply.
 
-**Create spec for an epic:** Stop after one child is written at `Progress: design` and its one suggested spec is written. Present the child for review. Do not write a plan or tech siblings, even at lite. Do not promote, implement, or pick another spec. The Depth stops below do not apply in this turn. A lite child's thin plan comes from a later `/spec next`.
+**Create spec for an epic:** Stop after one child is written at `Progress: design` and its one suggested spec is written. Present the child for review. Run Chalk wireframe › Offer once when the child is UI-primary. Do not write a plan or tech siblings, even at lite. Do not promote, implement, or pick another spec. The Depth stops below do not apply in this turn. A lite child's thin plan comes from a later `/spec next`.
 
 **Depth: lite (R8 (one lite approval), D1 (plan stays)):**
 
 - Thin `<slug>.plan.md` was already written in this session. Do not embed it in `<slug>.spec.md`.
+- Run Chalk wireframe › Offer once when the feature is UI-primary (skip copy-only lite with no layout fork).
 - **Simple lite** — single Low (or clearly Low) phase with **Close** `automated`: next offer is implement. Do not ask humans to re-read the plan as a second design gate. Mention that both files exist; do not require a separate plan-review approval.
 - **Harder lite** — multi-phase, Tier above Low, or **Close** `human`: present the plan once for review, then next offer is implement.
 - Never offer promote-to-tech for lite. Iterate on the existing files until they implement or ask to change Depth.
 
-**Depth: standard / full** — Present the spec and ask the user to review it. Iterate on `<slug>.spec.md` alone until they promote. Do not add sibling docs during this loop. Design review before promote remains required.
+**Depth: standard / full** — Present the spec and ask the user to review it. Run Chalk wireframe › Offer once when the feature is UI-primary. Iterate on `<slug>.spec.md` alone until they promote (the wireframe HTML is not a sibling doc). Do not add tech sibling docs during this loop. Design review before promote remains required.

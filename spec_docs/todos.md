@@ -68,15 +68,11 @@ Add short "Thought → Reality" tables to `implement.md` and `create-spec.md` fo
 
 Superpowers' own guidance says to use this form only for **discipline** failures, not for omissions. Add a table only where an eval (B1) shows a real violation, so the tables do not add bloat.
 
-## Visual companion for UI-primary specs
-
-**Borrowed from:** the Superpowers visual companion and GSD `UI-SPEC.md`.
-
-When create-spec detects a UI-primary feature, offer once, in its own message, a throwaway HTML mockup or a Cursor Canvas. Show layout regions and empty and error states side by side. The mockup is advisory. The binding text stays in `<slug>.spec.md` and `<slug>.ui.md`.
-
 ## Retrospective at archive
 
 **Borrowed from:** BMAD retrospective and Superpowers finishing-a-branch.
 
 After converge (above), ask one question: "Anything to add to **Project conventions**?" Examples are a missing verify command, a new hotspot, or a principle. If the answer is yes, route to `fill-conventions.md`. This makes each finished spec improve the next one.
+
+## Analyse project before Q10 and suggest findings
 
