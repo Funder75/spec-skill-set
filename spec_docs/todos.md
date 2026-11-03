@@ -74,5 +74,3 @@ Superpowers' own guidance says to use this form only for **discipline** failures
 
 After converge (above), ask one question: "Anything to add to **Project conventions**?" Examples are a missing verify command, a new hotspot, or a principle. If the answer is yes, route to `fill-conventions.md`. This makes each finished spec improve the next one.
 
-## Analyse project before Q10 and suggest findings
-
