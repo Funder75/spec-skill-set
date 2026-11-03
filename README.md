@@ -46,7 +46,7 @@ Create-spec runs dialogue and chat approval before writing the design file. You 
 
 `spec_docs/` holds one folder per unit of work. A feature or bugfix folder is one implementable spec. An epic folder groups child specs and tasks; implementation stays on the children. Active work lives under `spec_docs/<slug>/`. Finished work moves to `spec_docs/archive/<slug>/`.
 
-A feature or bugfix folder starts at `<slug>.spec.md` (scope and gates). An epic folder starts at `<slug>.epic.md`. Sibling files cover tech notes and the plan when a spec needs them. Gates, Depth paths, Kind, markers, and **Project conventions** live in [`spec_docs/README.md`](spec_docs/README.md).
+A feature or bugfix folder starts at `<slug>.spec.md` (scope and gates). An epic folder starts at `<slug>.epic.md`. Sibling files cover tech notes and the plan when a spec needs them. For UI-primary features, create may also offer an optional Chalk wireframe (`<slug>.wire.html` plus `chalk.css`) — advisory only; binding UI text stays in the markdown. Gates, Depth paths, Kind, markers, and **Project conventions** live in [`spec_docs/README.md`](spec_docs/README.md).
 
 ### Kind
 
@@ -94,7 +94,7 @@ A child written with `/spec create spec for` an epic file stops at Progress desi
 
 Feature and bugfix folders walk the same loop the skill enforces (lite collapses design + thin plan into one create session). An epic stays on its suggested specs. Each child walks the loop on its own:
 
-1. **Design** — Create and iterate `<slug>.spec.md` until the shape is accepted (journeys / Work split for feature; behaviour lists + Root cause for bugfix).
+1. **Design** — Create and iterate `<slug>.spec.md` until the shape is accepted (journeys / Work split for feature; behaviour lists + Root cause for bugfix). On UI-primary features, create offers once a Chalk HTML wireframe for layout / empty / error — skip if you do not want it.
 2. **Tech** — Add or fold technical notes when the work needs them (`Progress: tech`). Skipped as a separate step on lite.
 3. **Plan** — Write `<slug>.plan.md` with phases, Done when, and a **Close** of `automated` or `human` on each phase (`Progress: plan`).
 4. **Implement** — One phase (or one combinable group) at a time (`Progress: implementing`).
@@ -119,6 +119,7 @@ Exit `0` means no mechanical findings. Non-zero prints one finding per line (pla
 - **Group a large effort as an epic.** Say `create epic` when the work should become several specs, or when some of it should stay a task. Add each child with `/spec create spec for` the epic file, then implement that child on its own. See [Epic](#epic).
 - **Pick Depth on purpose.** Use `lite` for small, low-risk work (including many bugfixes). Use `standard` for a normal fold-then-plan path. Reserve `full` when tech siblings and a multi-phase plan earn their keep.
 - **Keep tabs readable.** New folders use slug-prefixed names (`<slug>.spec.md`, `<slug>.plan.md`, or `<slug>.epic.md` for an epic). Older archived folders may still use bare basenames until someone renames them by hand.
+- **Wireframes are optional.** A Chalk `<slug>.wire.html` is a sketch for humans and implementers. It is never Done when or Gates material; decline the create offer when layout is already clear.
 - **Validate before you ask.** Run `skills/spec/scripts/validate` on a slug folder when you want a fast mechanical pass without starting an audit.
 - **Fill conventions early.** On first bootstrap, opt in to fill **Project conventions** while context is fresh. Later stages otherwise hit placeholders when they need a project fact. Say `/spec fill conventions` any time afterward to fill or update them — it is not limited to first bootstrap, and a stage that hits a placeholder will offer the same flow.
 - **Repo stays canonical.** Edit the markdown in `spec_docs/`. Linear (when used) mirrors links and status; do not treat tracker text as binding acceptance criteria.

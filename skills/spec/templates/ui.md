@@ -10,7 +10,7 @@ Layout and interaction for **{{feature-slug}}**. [{{feature-slug}}.spec.md](./{{
 
 Read **Stack notes for spec docs** in `spec_docs/README.md` before filling this file. Do not guess component props.
 
-**Design reference:** {{Figma link, screenshot path, or "none"}}
+**Design reference:** {{`./feature-slug.wire.html` (Chalk, advisory), Figma link, screenshot path, or "none"}}
 
 ## TL;DR
 
@@ -80,10 +80,10 @@ Read **Stack notes for spec docs** in `spec_docs/README.md` before filling this 
 
 ### Wireframe
 
-<!-- include when: the layout is easier to show than to describe. Advisory. -->
+<!-- include when: the layout is easier to show than to describe. Advisory. Prefer `./{{feature-slug}}.wire.html` when that file exists — point at Design reference instead of pasting markup. Use an ASCII block only when there is no .wire.html. -->
 
 ```
-{{rough layout}}
+{{rough layout, or omit this fenced block and write: See Design reference.}}
 ```
 
 ### Components to reuse

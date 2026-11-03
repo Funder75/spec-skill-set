@@ -11,6 +11,8 @@ Planning documents for this repo. One folder per feature spec. The spec workflow
 | `<slug>/<slug>.contracts.md` | Types, API contracts, state ownership, storage (when needed) |
 | `<slug>/<slug>.ui.md` | Layout, interaction, states, copy (when needed) |
 | `<slug>/<slug>.plan.md` | Phases and the only phase status. Always emitted; for lite, written in the same create session as a thin 1-phase plan |
+| `<slug>/<slug>.wire.html` | Optional Chalk wireframe (advisory). Offered once at create for UI-primary features |
+| `<slug>/chalk.css` | Stylesheet copy for that wireframe. Do not hand-edit |
 | `<slug>/<slug>.data.md` | Legacy data doc (same as contracts) after a hand rename of bare `data.md` |
 | `archive/<slug>/` | Finished specs |
 
@@ -49,7 +51,7 @@ Do not edit the skill to record progress.
 | `> **Open:** Q1 (name)` | Points at an open question in that spec's `<slug>.spec.md` |
 | `(advisory)` | A hint. The implementer may deviate, and records the deviation in the phase **Close-out** |
 
-Binding, and what a review checks against: goals, rules, deliverables, acceptance scenarios, Done when, Close, Gates, and field tables. Approach, sketches, and diagrams are advisory.
+Binding, and what a review checks against: goals, rules, deliverables, acceptance scenarios, Done when, Close, Gates, and field tables. Approach, sketches, diagrams, and optional Chalk wireframe HTML are advisory.
 
 IDs carry a short name, for example `G1 (writing style)`:
 
