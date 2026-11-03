@@ -61,7 +61,7 @@ Do not commit `.cursor/skills/spec-local/` unless the team wants that layout sha
 ./scripts/update-user-spec-skill.sh
 ```
 
-Use `--dry-run` to preview, `--yes` to skip delete prompts. Reload the window afterward. This does not change a Spec plugin install under `~/.cursor/plugins/`.
+Use `--dry-run` to preview, `--yes` to skip delete prompts. Reload the window afterward. This copies into `~/.cursor/skills/spec` and, when present, into Cursor Agent Store `…/files/skills/spec` trees (manually attached skills often load from those). This does not change a Spec plugin install under `~/.cursor/plugins/`.
 
 ### Install from GitHub (smoke-test)
 
