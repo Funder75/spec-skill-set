@@ -319,7 +319,7 @@ Feature and bugfix link-back follows.
 
 Feature and bugfix: after `<slug>.spec.md` is written with frontmatter `work_item` set (not `n/a`), run [linear-sync/link-document.md](linear-sync/link-document.md) › Link-back when write-back is allowed (G1 (create from linear), R3 (first link back)).
 
-- **Allowed.** Conventions for write-back are filled and Linear MCP is usable → follow Link-back: `save_comment` with `spec_docs/<slug>/` path text; optional `addLabels` for the design-stage label; `links` only with a real URI; then write `tracker_spec_url` into `<slug>.spec.md` frontmatter after Linear returns it.
+- **Allowed.** Conventions for write-back are filled and Linear MCP is usable → follow Link-back: `save_comment` with the italic line `*Repo canonical: spec_docs/<slug>/*`; optional `addLabels` for the design-stage label; `links` only with a real URI; then write `tracker_spec_url` into `<slug>.spec.md` frontmatter after Linear returns it.
 - **Not allowed.** MCP or required conventions missing → warn once; skip write-back; still keep the `<slug>.spec.md` write (R1 (conventions gate), R21 (mcp session)). Do not invent a team, project, bare-path `links`, or half-link. Do not fail the create solely because Linear could not sync.
 - **MUST NOT.** Rewrite the Linear issue description or set it to the full spec (R2 (no body rewrite)). Do not paste secrets into Linear (R19 (no secrets)).
 

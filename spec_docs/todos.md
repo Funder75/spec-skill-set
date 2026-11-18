@@ -73,4 +73,3 @@ Superpowers' own guidance says to use this form only for **discipline** failures
 **Borrowed from:** BMAD retrospective and Superpowers finishing-a-branch.
 
 After converge (above), ask one question: "Anything to add to **Project conventions**?" Examples are a missing verify command, a new hotspot, or a principle. If the answer is yes, route to `fill-conventions.md`. This makes each finished spec improve the next one.
-

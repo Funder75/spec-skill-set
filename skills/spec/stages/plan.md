@@ -97,7 +97,7 @@ When `Progress` changes to `plan` (this promote) or any later gate change lands 
 
 ## Tracker Phases after plan write or edit
 
-After the plan file is written or a dispatch-unit change lands (phase added, removed, renumbered, renamed, or combinable grouping changed), run [linear-sync/tracker-phases.md](linear-sync/tracker-phases.md) when write-back is allowed (G2 (tracker phases), R4 (freeze before plan)).
+After the plan file is written or a dispatch-unit change lands (phase added, removed, renumbered, renamed, combinable grouping changed, or **Depends on** changed), run [linear-sync/tracker-phases.md](linear-sync/tracker-phases.md) when write-back is allowed (G2 (tracker phases), R4 (freeze before plan)).
 
 **Plan file.** This stage emits `<slug>.plan.md`. “Plan exists” means that file only (R4 (no auto migrate)). Do not auto-rename a bare `implementation-plan.md` and do not dual-read it as the plan; stop and tell the user to rename it first. Without `<slug>.plan.md`, Tracker Phase work is a no-op (R5 (thin noop)) — this hook only runs after a plan write, so that case does not apply here.
 
@@ -110,7 +110,8 @@ Frontmatter `work_item` is a real id (not `n/a`), Work items conventions for cre
 1. Build dispatch units from the progress overview (one phase, or one combinable group).
 2. For each unit whose phases still say `Tracker phase: n/a` → create one Tracker Phase (`parentId` = Tracker Spec id) and write the returned id onto every phase in that unit.
 3. For each unit that already has a stored id → update that id in place when body source fields changed. Preserve the id through renames and renumbering; never title-search (R8 (direct and selective update)).
-4. When a unit with a stored id is removed → cancel + reason comment, then remove the repo field (R9 (cancel removed)). Leave unreferenced Linear work alone (R7 (unreferenced leave)).
+4. When a unit with a stored id is removed → cancel + reason comment, remember that id, then remove the repo field (R9 (cancel removed)). Leave unreferenced Linear work alone (R7 (unreferenced leave)).
+5. After those creates, updates, and cancels, run [linear-sync/tracker-phases.md](linear-sync/tracker-phases.md) › Blockers once for every unit with a real id. Run it even when the only change was **Depends on** and no description was rewritten.
 
 ### When write-back is not allowed
 

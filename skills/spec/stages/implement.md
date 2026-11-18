@@ -99,7 +99,7 @@ Keep this table and the Phase brief field list the source of truth for Tracker P
 
 Prefer create/refresh when the plan is written ([plan.md](plan.md) › Tracker Phases). If the active unit still has `Tracker phase: n/a` at or just before first implement on that unit, run [linear-sync/tracker-phases.md](linear-sync/tracker-phases.md) › Create when write-back is allowed (R4 (freeze before plan) fallback).
 
-- **Allowed.** `<slug>.plan.md` exists, frontmatter `work_item` is a real id, conventions + Linear MCP ok → create missing Tracker Phase(s) for this unit only; write returned id(s); body from Phase brief / Env checklist fields.
+- **Allowed.** `<slug>.plan.md` exists, frontmatter `work_item` is a real id, conventions + Linear MCP ok → create missing Tracker Phase(s) for this unit only; write returned id(s); body from Phase brief / Env checklist fields. Then run [linear-sync/tracker-phases.md](linear-sync/tracker-phases.md) › Blockers for every unit that already has a real id, not only the unit just created.
 - **Bare basename.** Only `implementation-plan.md` (no slug prefix) is present → stop and tell the user to rename it to `<slug>.plan.md` first (`SKILL.md` › Spec docs); do not read it as the plan.
 - **`work_item: n/a` (or missing).** Skip; no Linear discovery on this routine hook (R22 (reference gate)).
 - **No plan file.** Impossible here (preconditions require a plan); elsewhere Tracker Phases stay a no-op (R5 (thin noop)).
