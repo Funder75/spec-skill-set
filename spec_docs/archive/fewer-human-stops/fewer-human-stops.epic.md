@@ -64,6 +64,7 @@ Source: todos › check each scenario, todos › Close labels in Linear
 
 **Slug:** defer-human-gates
 **Depends on:** —
+**Status:** done
 
 - **What:** Collect predictable person inputs before phase 1, and let phases waiting on a person stop holding up independent phases.
 - **Why:** One human-closed phase or one blocked phase currently halts the whole run.
@@ -111,6 +112,7 @@ Likely touched paths: `skills/spec/stages/implement.md`, `skills/spec/stages/pla
 
 **Slug:** scenario-check-off
 **Depends on:** S1 (deferred sign-off)
+**Status:** done
 
 - **What:** Give each acceptance scenario its own tick, and add Close labels to Linear Tracker Phases.
 - **Why:** Done when points at scenario ranges, so a reviewer jumps back and forth to tick them, and Linear does not show who closes a phase.
@@ -136,6 +138,7 @@ The child must decide:
 
 **Slug:** agent-visual-checks
 **Depends on:** S1 (deferred sign-off)
+**Status:** done
 
 - **What:** Add a Gates owner for checks an agent observes and evidences, such as a browser screenshot of a layout.
 - **Why:** Many checks marked human today are visual checks an agent can perform, so fewer phases need to wait on a person.

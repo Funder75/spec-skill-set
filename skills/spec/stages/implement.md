@@ -4,7 +4,7 @@ Execute one phase (or one sub-task, or one combinable group) of `<slug>.plan.md`
 
 ## Preconditions
 
-**Epic folder.** When `spec_docs/<slug>/<slug>.epic.md` is present, stop here, before step 1 and before Phase selection (R4 (refuse gates)). Reply with [SKILL.md](../SKILL.md) › Stage detection › Refusal, naming each suggested spec and the task names, or none. Do not start phase work, set a status, or change the folder. A child slug is its own folder and is not stopped here. This stop covers implement and continue only. Archive is unchanged.
+**Epic folder.** When `spec_docs/<slug>/<slug>.epic.md` is present, stop here, before step 1 and before Phase selection (R4 (refuse gates)). Reply with [SKILL.md](../SKILL.md) › Stage detection › Refusal, naming each suggested spec (with Status from the epic) and the task names, or none. Do not start phase work, set a phase status, or change the folder. A child slug is its own folder and is not stopped here. This stop covers implement and continue only. Archive of a child may update the parent epic's S Status.
 
 1. Open `spec_docs/<slug>/`. If it is under `archive/`, stop unless they asked for a doc correction.
 2. `Progress` is `plan` or `implementing`, and `<slug>.plan.md` exists with no `{{…}}` and no `[SUGGESTION:`. If not, stop and name the missing gate.
@@ -221,6 +221,7 @@ When the user confirms the spec is done and every phase is `Done` or `Deferred`:
 4. **Archive gate (Linear).** Before marking the Tracker Spec Done, run [linear-sync/status.md](linear-sync/status.md) › Archive gate (R18 (archive gate)). Tracker Spec Done only when every referenced Tracker Phase is Done or Deferred; otherwise ask. Do not silently complete the Tracker Spec.
 5. Move the whole folder `spec_docs/<slug>/` to `spec_docs/archive/<slug>/` (do not rename siblings as a side effect — R4 (no auto migrate)).
 6. Set `Progress: archived` in `<slug>.spec.md`, now at its archived path. Set it last, only once the move succeeded, so an interruption before this point leaves the folder active (router re-offers archive) instead of falsely reporting `archived`.
-7. When the Linear gate allowed (or the user confirmed past it), update only the Tracker Spec via selective Progress → Tracker Spec — not a full explicit sync.
+7. **Epic parent Status (R3 (done on archive)).** When frontmatter `epic` is a real slug (not `n/a` or missing), set or replace `**Status:** done` on the suggested-spec section whose **Slug** equals this child slug. Prefer `spec_docs/<epic>/<epic>.epic.md`, else `spec_docs/archive/<epic>/<epic>.epic.md`. When the epic file or matching section is missing, warn in chat and continue; do not fail the archive move. Do not edit other S sections or Tasks. Do not invent Status values other than `done` here.
+8. When the Linear gate allowed (or the user confirmed past it), update only the Tracker Spec via selective Progress → Tracker Spec — not a full explicit sync.
 
-Do not archive without explicit confirmation. If and only if every phase is `Done` or `Deferred`, offer archive and wait. Do not re-archive. Do not read other archive folders.
+Do not archive without explicit confirmation. If and only if every phase is `Done` or `Deferred`, offer archive and wait. Do not re-archive. Do not read other archive folders except when step 7 must update a parent epic already under `archive/`.
