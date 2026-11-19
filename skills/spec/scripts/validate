@@ -48,11 +48,12 @@ OVERVIEW=$(mktemp)
 PHASE_CLOSE=$(mktemp)
 CHECKS=$(mktemp)
 GATES=$(mktemp)
+GATES_OWNERS=$(mktemp)
 EPIC_ROWS=$(mktemp)
 DEP_NAMES=$(mktemp)
 PREFLIGHT=$(mktemp)
 cleanup() {
-  rm -f "$OUT" "$NAMES" "$OVERVIEW" "$PHASE_CLOSE" "$CHECKS" "$GATES" "$EPIC_ROWS" "$DEP_NAMES" "$PREFLIGHT"
+  rm -f "$OUT" "$NAMES" "$OVERVIEW" "$PHASE_CLOSE" "$CHECKS" "$GATES" "$GATES_OWNERS" "$EPIC_ROWS" "$DEP_NAMES" "$PREFLIGHT"
 }
 trap cleanup EXIT
 
@@ -69,7 +70,7 @@ done
 
 # List markdown files into a stable list (avoid find|while FINDINGS issues).
 MD_LIST=$(mktemp)
-trap 'rm -f "$OUT" "$NAMES" "$OVERVIEW" "$PHASE_CLOSE" "$CHECKS" "$GATES" "$EPIC_ROWS" "$DEP_NAMES" "$PREFLIGHT" "$MD_LIST"' EXIT
+trap 'rm -f "$OUT" "$NAMES" "$OVERVIEW" "$PHASE_CLOSE" "$CHECKS" "$GATES" "$GATES_OWNERS" "$EPIC_ROWS" "$DEP_NAMES" "$PREFLIGHT" "$MD_LIST"' EXIT
 find "$FOLDER" -type f \( -name '*.md' -o -name '*.MD' \) > "$MD_LIST" 2>/dev/null || true
 
 # Strip inline `code` spans so docs can mention {{…}} / [SUGGESTION: as examples.
@@ -871,7 +872,7 @@ if [ -f "$PLAN" ]; then
       }
       next
     }
-    current != "" && /Check:[[:space:]]*(automated|human)/ {
+    current != "" && /Check:[[:space:]]*(automated|agent|human)/ {
       val = $0
       sub(/.*Check:[[:space:]]*/, "", val)
       gsub(/[[:space:]]/, "", val)
@@ -897,10 +898,57 @@ if [ -f "$PLAN" ]; then
   while IFS= read -r crow || [ -n "$crow" ]; do
     [ -n "$crow" ] || continue
     sid=$(printf '%s' "$crow" | cut -f1)
+    check=$(printf '%s' "$crow" | cut -f2)
+    case "$check" in
+      automated|agent|human) ;;
+      *)
+        emit "${PLAN}: scenario ${sid} Check must be automated, agent, or human (got ${check})"
+        ;;
+    esac
     if ! grep -qxF "$sid" "$GATES" 2>/dev/null; then
       emit "${PLAN}: scenario ${sid} Check has no matching Gates row"
     fi
   done < "$CHECKS"
+
+  # Gates Owner column: automated | agent | human only
+  awk '
+    BEGIN { in_gates = 0 }
+    /^### Gates/ { in_gates = 1; next }
+    /^### / { if (in_gates) in_gates = 0 }
+    /^## / { if (in_gates) in_gates = 0 }
+    in_gates && /^\|/ {
+      line = $0
+      sub(/^\|[[:space:]]*/, "", line)
+      n = split(line, cells, /[[:space:]]*\|[[:space:]]*/)
+      if (n < 2) next
+      owner = cells[2]
+      gsub(/^[[:space:]]+|[[:space:]]+$/, "", owner)
+      if (owner == "" || owner == "Owner" || owner ~ /^-+$/) next
+      print owner
+    }
+  ' "$PLAN" | sort -u > "$GATES_OWNERS" || true
+  while IFS= read -r gowner || [ -n "$gowner" ]; do
+    [ -n "$gowner" ] || continue
+    case "$gowner" in
+      automated|agent|human) ;;
+      *)
+        emit "${PLAN}: Gates owner must be automated, agent, or human (got ${gowner})"
+        ;;
+    esac
+  done < "$GATES_OWNERS"
+
+  # Close stays automated | human only (agent is a Check/Gates owner, not Close)
+  while IFS= read -r row || [ -n "$row" ]; do
+    [ -n "$row" ] || continue
+    phase=$(printf '%s' "$row" | cut -f1)
+    oclose=$(printf '%s' "$row" | cut -f3)
+    case "$oclose" in
+      automated|human) ;;
+      *)
+        emit "${PLAN}: phase ${phase} Close must be automated or human (got ${oclose})"
+        ;;
+    esac
+  done < "$OVERVIEW"
 
   # D4 (validate opt-in): scenario title ticks + slim Done when when any title checkbox appears
   scenario_tick_opt_in=0

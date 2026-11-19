@@ -16,12 +16,12 @@ Before handing the folder to an implement session:
 | **Decisions closed or Open** | Every architecture, persistence, or UX fork is a **D** or a **Q** item with **Blocks** set |
 | **Traceability** | Each goal is in a **Covers** line; phases list their rules, scenarios, and Done when |
 | **Named IDs** | Every `G`, `R`, `D`, `Q` citation uses the full form, such as `G1 (short name)` |
-| **Journey trace** | **Feature / missing Kind:** each acceptance scenario has a title-line checkbox, names its journey step or `Journey: —`, and a **Check** of `automated` or `human`. **Kind: bugfix:** each scenario Traces 1:1 to a behaviour-list item; at least one scenario is marked Regression; the regression Close-out shape (red-before-green) is noted for implement |
+| **Journey trace** | **Feature / missing Kind:** each acceptance scenario has a title-line checkbox, names its journey step or `Journey: —`, and a **Check** of `automated`, `agent`, or `human`. **Kind: bugfix:** each scenario Traces 1:1 to a behaviour-list item; at least one scenario is marked Regression; the regression Close-out shape (red-before-green) is noted for implement |
 | **Read first** | Each phase links the tech-doc sections it needs, not whole docs |
 | **Failure modes** | Empty, error, and permission (or an explicit "n/a") where the work touches users or stored data |
 | **Phase sizing** | As few phases as safely possible; verify for the phase tier passes at the end; split only for a real reason — see [Phase sizing](#phase-sizing) |
 | **Tier** | Each phase has a tier and a reason naming its deciding factor. The tier is rated for that phase alone, and the overview label matches the phase block — see [Phase tier](#phase-tier) |
-| **Close** | Overview **Close** is `automated` or `human` and matches the phase line. Every scenario **Check** appears in **Gates**. `automated` only when every owner is `automated` — see [Phase close](#phase-close) |
+| **Close** | Overview **Close** is `automated` or `human` and matches the phase line. Every scenario **Check** appears in **Gates**. `automated` only when every owner is `automated` or `agent` — see [Phase close](#phase-close) |
 | **Non-goals are real** | Out-of-scope names concrete deferrals |
 | **Concrete paths** | Deliverables name real modules discovered while exploring |
 | **New files justified** | Every proposed new doc or module has a one-line reason. Default is extend |
@@ -109,17 +109,18 @@ The tier selects the default row in **Verify tiers**. A phase that needs a stron
 
 The progress overview **Close** column and the phase **Close** line use the same word.
 
-- **automated.** The implementer runs the **Verify tiers** command and the scenario checks owned `automated`. The parent runs one review subagent. On pass, the parent marks `Done` and may start the next ready unit.
-- **human.** The same agent verify and review run first. On pass, status stays `Reviewing` until a person continues. The runner does not start the next unit.
+- **automated.** The implementer runs the **Verify tiers** command and the scenario checks owned `automated` or `agent`. The parent runs one review subagent. On pass, the parent marks `Done` and may start the next ready unit.
+- **human.** The same agent verify and review run first. On pass, status moves to `Awaiting sign-off` until a person accepts. The runner may start other ready units meanwhile.
 
 ### How to apply
 
-- Set each acceptance scenario **Check** to `automated` or `human`.
+- Set each acceptance scenario **Check** to `automated`, `agent`, or `human`.
 - **automated** when a command, a test, or the review can show the result from the repo.
-- **human** when a person must judge the result: visual or copy, a host or device the agent cannot run, auth or secrets sign-off, persisted data that must keep working, or a migration.
+- **agent** when the implementer can observe the result in-session and record evidence (for example a browser layout or on-screen copy the tools can show). Prefer `agent` over `human` for visual or copy checks the agent can observe.
+- **human** when a person must judge or accept: a host or device the agent cannot run, auth or secrets sign-off, persisted data that must keep working, or a migration. Auth, secrets, stored-data, and migration checks MUST stay `human` — do not recommend `agent` for them.
 - Put pass state on the scenario title checkbox. **Gates** lists those checks. Owner matches **Check**. One row may cover a range that shares an owner. Do not add a Gates tick column.
 - **Done when** lists the tier verify, any stronger command, and phase-specific regressions only — not `A2.1–A2.4 pass` or lone scenario-id pass lines.
-- **Close** is `human` if any owner is `human`. Otherwise `automated`.
+- **Close** is `human` if any owner is `human`. Otherwise `automated`. Owner `agent` counts as automated for Close. Close MUST remain only `automated` or `human` (no third Close value).
 - A combinable group is `human` if any member is `human`. A sub-task takes its phase's **Close**.
 - **Ask-before** is a person stop during the phase. Write `—` when there is none. It does not replace **Close**. A security choice is **Ask-before** and **Close** `human` when a person must accept the result.
 - Do not add a **Gates** row for the implement review subagent. That review always runs, for both values.
@@ -130,7 +131,7 @@ The progress overview **Close** column and the phase **Close** line use the same
 When a later phase must wait for person accept of an earlier **Close** `human` phase, mark that dependency in the progress overview **Depends on** cell with the suffix on the phase id: `1 (needs sign-off)`. Do not add a new column.
 
 - **Default needs-sign-off** when the earlier phase is a migration, stored-data change, auth, or secrets work — later phases that truly need that accept should wait.
-- **Default unmarked** when the earlier phase is visual or copy — `Awaiting sign-off` on that phase can still satisfy **Depends on**, and sign-off can wait.
+- **Default unmarked** when the earlier phase is visual or copy still owned `human` — `Awaiting sign-off` on that phase can still satisfy **Depends on**, and sign-off can wait. Prefer owner `agent` for those checks when the agent can observe, so Close stays `automated` and no sign-off wait is needed.
 - Place the human-checked phase as late as **Depends on** allows (see [Phase sizing](#phase-sizing)).
 
 ---
@@ -193,10 +194,12 @@ When a later phase must wait for person accept of an earlier **Close** `human` p
 
 | Bad | Good |
 | --- | ---- |
-| A UI sheet marked `automated` because typecheck passes | `human` — the 390px look is a person check in **Gates** |
+| A UI sheet marked `automated` because typecheck passes | `agent` when the agent can screenshot the layout; `human` only when a person must still judge |
+| A layout check left `human` though the agent can observe it | Prefer `agent` with Close-out evidence; Close stays `automated` |
+| Auth or migration Check set to `agent` | `human` — auth, secrets, stored data, and migrations stay with a person |
 | **Close** `human` on a rename because the tier is High | `automated` — typecheck catches misses; no person check |
 | "Manual test" in **Done when**, and **Close** `automated` | **Gates** owner `human`, and **Close** `human` |
-| Every phase `human` with no person check named | `automated` where commands cover the scenarios; `human` only for a named person check |
+| Every phase `human` with no person check named | `automated` or `agent` where those owners cover the scenarios; `human` only for a named person check |
 | Scenario range listed only in Done when so a reviewer must hop to tick it | Title checkbox on the scenario; Gates stays owner-only |
 
 ### Risks

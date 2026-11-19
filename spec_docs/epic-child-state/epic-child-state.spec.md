@@ -6,7 +6,7 @@ epic: n/a
 
 # Epic child state
 
-**Progress:** plan
+**Progress:** implementing
 **Depth:** lite
 **Kind:** bugfix
 **Depends on:** —

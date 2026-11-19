@@ -6,7 +6,7 @@ epic: fewer-human-stops
 
 # Agent visual checks
 
-**Progress:** design
+**Progress:** implementing
 **Depth:** lite
 **Kind:** feature
 **Depends on:** defer-human-gates
@@ -26,7 +26,7 @@ epic: fewer-human-stops
 | agent-visual-checks.logic.md | Rules, workflows, state transitions | folded → [Technical notes › Rules](#rules) |
 | agent-visual-checks.contracts.md | Types, API contracts, state ownership, storage | folded → [Technical notes › Contracts](#contracts) |
 | agent-visual-checks.ui.md | Layout, interaction, states, copy | not needed |
-| agent-visual-checks.plan.md | Phases and phase status | pending |
+| agent-visual-checks.plan.md | Phases and phase status | yes |
 
 ## Source
 

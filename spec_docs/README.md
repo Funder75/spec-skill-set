@@ -29,7 +29,7 @@ For a short first-read overview (folder role, write loop, tips), see the [projec
 
 `Kind` in `<slug>.spec.md` is `feature` (default) or `bugfix`. Say `create … as bugfix` (alone or with a Depth) to set Kind without a recommend ask. Lite is recommended for many bugs, not required. Bugfix design uses behaviour lists and Root cause instead of User journeys and Work split. Older folders without Kind are treated as feature.
 
-`create epic` writes `<slug>.epic.md` only. Each suggested spec is a numbered section such as `S1 (short name)`. `/spec create spec for` an epic file adds one child from that section: the child's frontmatter `epic` and **Source** point back at the epic. Tasks that are not specs are done by hand or in a chat. They do not get a folder. `/spec linear sync` asks whether the epic is a new Linear project or an issue, then pushes that choice. A project is not also created as an issue. Syncing a child whose `epic` is set nests its Tracker Spec as a sub-issue of the epic issue, or under the epic's Linear project. Tracker text is not pulled back.
+`create epic` writes `<slug>.epic.md` only. Each suggested spec is a numbered section such as `S1 (short name)`. `/spec create spec for` an epic file adds one child from that section: the child's frontmatter `epic` and **Source** point back at the epic. Tasks that are not specs are done by hand or in a chat. They do not get a folder. `/spec next` on an epic (and a refuse of implement or promote on that epic) names each suggested child's Progress, or that the child is not created yet; archived children are called out as done. `/spec linear sync` asks whether the epic is a new Linear project or an issue, then pushes that choice. A project is not also created as an issue. Syncing a child whose `epic` is set nests its Tracker Spec as a sub-issue of the epic issue, or under the epic's Linear project. Tracker text is not pulled back.
 
 Not sure a folder is needed? `/spec explore` is read-only: no-spec / Depth+slug / spike; nothing under `spec_docs/`. When create's Depth heuristics prefer lite, the Depth round also offers **no folder**.
 
@@ -74,7 +74,7 @@ Phase status: `Not started`, `Started`, `Reviewing`, `Awaiting sign-off`, `Done`
 
 **Tier** rates how hard a phase is to implement (Low / Medium / High) so the implementer can choose effort. It also selects the default verify row under **Project conventions**.
 
-**Close** on each plan phase is `automated` or `human`. The same word is in the progress overview. `automated` means verify and the agent review can mark the phase Done. `human` means after that review the phase moves to `Awaiting sign-off` until a person accepts (batched when the ready queue is empty). **Gates** names who runs each check.
+**Close** on each plan phase is `automated` or `human`. The same word is in the progress overview. `automated` means verify and the agent review can mark the phase Done. `human` means after that review the phase moves to `Awaiting sign-off` until a person accepts (batched when the ready queue is empty). **Gates** names who runs each check. Owner may be `automated`, `agent` (in-session observation with Close-out evidence; counts as automated for Close), or `human` (required for auth, secrets, stored data, and migrations).
 
 ## Project conventions
 

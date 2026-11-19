@@ -8,7 +8,7 @@ Phases for [epic-child-state.spec.md](./epic-child-state.spec.md).
 
 | Phase | Status | Name | Tier | Close | Depends on | Combinable with |
 | ----- | ---- | ------ | ---- | ----- | ---------- | --------------- |
-| **1** | Not started | Show child Progress | Low | automated | — | — |
+| **1** | Done | Show child Progress | Low | automated | — | — |
 
 ## Phase 1 — Show child Progress
 
@@ -87,10 +87,10 @@ Phases for [epic-child-state.spec.md](./epic-child-state.spec.md).
 
 ### Done when
 
-- [ ] Tier verify passes (Project conventions in `spec_docs/README.md`)
-- [ ] A1.1, A1.2, A1.3, A1.4, A1.5 pass
-- [ ] Epic seed sections still have no status field (A1.5)
-- [ ] Close-out for A1.1 and A1.3 records red-before-green
+- [x] Tier verify passes (Project conventions in `spec_docs/README.md`)
+- [x] A1.1, A1.2, A1.3, A1.4, A1.5 pass
+- [x] Epic seed sections still have no status field (A1.5)
+- [x] Close-out for A1.1 and A1.3 records red-before-green
 
 ### Gates
 
@@ -104,6 +104,12 @@ Phases for [epic-child-state.spec.md](./epic-child-state.spec.md).
 ### Close-out
 
 - Verified:
-- Deviations:
-- Follow-ups:
-- Blocked:
+  - `/bin/sh skills/spec/scripts/validate spec_docs/epic-child-state/` → pass (exit 0, silent)
+  - **A1.1 red-before-green:** Before edit, Stage detection epic `/spec next` bullet listed S id + slug + coverage only and said “Do not read Progress” with no child lookup → fail. After edit, next bullet requires child’s Progress (or not created / Progress missing) via same rules as refuse → pass.
+  - **A1.2:** Refuse bullet lists Progress fields and full lookup (active then archive; not created; Progress missing; archived = done; no epic write) → pass.
+  - **A1.3 red-before-green:** Before edit, no archived/done callout for child Progress in SKILL or READMEs → fail. After edit, refuse and next require naming `archived` and saying done; README seeds say archived children are called out as done → pass.
+  - **A1.4:** “not created yet” / do not invent Progress present in SKILL refuse rules and README wording → pass.
+  - **A1.5:** `skills/spec/templates/epic.md` and `skills/spec/stages/create-spec.md` still say “No status, tier, or verify line” on suggested-spec sections → pass.
+- Deviations: —
+- Follow-ups: —
+- Blocked: —
