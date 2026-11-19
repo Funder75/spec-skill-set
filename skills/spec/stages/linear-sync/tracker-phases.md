@@ -69,16 +69,20 @@ When a plan edit removes a dispatch unit that still has a stored Tracker Phase i
 
 ### Blockers (Depends on)
 
-Run once at the end of a hook that ran Create, Update, Cancel, or a pending repair that wrote an id. The same guards as every other Tracker Phase write apply: unlinked, no plan, or MCP / conventions missing → skip this pass too. Cover every dispatch unit whose `Tracker phase` is a real id, including units this hook did not otherwise edit. Run it even when no description changed.
+Run once at the end of a hook that ran Create, Update, Cancel, a pending repair that wrote an id, or a phase-status transition. Unlinked, no plan, or unusable Linear MCP → skip this pass. A status map or Close-label map is not required for relation-only writes: blocker inputs are the plan plus stored Tracker Phase ids. Cover every dispatch unit whose `Tracker phase` is a real id, including units this hook did not otherwise edit. Run it even when no description changed. A status hook may therefore update blocker relations on dependent units in addition to selectively mirroring the changed unit's state; it still MUST NOT rewrite their descriptions, labels, or states.
 
-The progress overview **Depends on** column is the only source. A lone `—` means that phase adds no blocker. A cell may list several phase numbers, separated by commas; ignore markdown bold and match the **Phase** column. Direct cells only: do not add a transitive blocker the cell does not name. These are not blockers: the spec file's **Depends on**, an epic suggested-spec **Depends on**, and the plan **Prerequisites** list. Do not create a Linear issue to stand for them.
+The progress overview **Depends on** column is the only source. A lone `—` means that phase adds no blocker. A cell may list several tokens, separated by commas. Each token is either a bare phase number or `<phase number> (needs sign-off)`; strip the exact ` (needs sign-off)` suffix before matching the **Phase** column, and warn once and skip any other token shape. Ignore markdown bold. The suffix changes runner readiness, not which structural Linear blocker the dependency names. Direct cells only: do not add a transitive blocker the cell does not name. These are not blockers: the spec file's **Depends on**, an epic suggested-spec **Depends on**, and the plan **Prerequisites** list. Do not create a Linear issue to stand for them.
 
-For one unit, desired blockers are the distinct real `Tracker phase` ids of the *other* units that contain a phase named in **Depends on** on any phase in this unit.
+For one unit, desired blockers are the distinct real `Tracker phase` ids of the *other* units that contain a currently blocking phase named in **Depends on** on any phase in this unit:
+
+- `Not started`, `Started`, `Reviewing`, or `Blocked` → keep the blocker.
+- `Awaiting sign-off` → keep it only when that dependency token has the ` (needs sign-off)` suffix; remove it for an unmarked token because repo execution may continue.
+- `Done` or `Deferred` → remove the blocker.
 
 - Drop this unit's own id. Combinable phases share one issue; do not block a unit on itself.
 - A named phase whose unit is still `n/a` or `pending` cannot be linked yet. Skip that target and mention it once. The next pass after that unit has a real id sets the link.
 - A token that is not a phase number in this plan: warn once and skip that token. A blank cell adds no blocker; warn once.
-- Keep the relation after the upstream phase is `Done` or `Deferred`. Remove it only when **Depends on** no longer names that phase, or when this hook cancelled that unit.
+- Reconcile after every phase-status transition. Removing an unmarked awaiting blocker and re-adding it when that phase is reopened are both required; Linear `blockedBy` mirrors current runnability, not only the structural graph.
 
 Write the relation on the dependent issue only, as Linear `blockedBy`. Do not also set `blocks` on the upstream. Do not use `relatedTo` for this. Parentage stays `parentId`; do not block on the Tracker Spec.
 
@@ -108,7 +112,7 @@ The body is a pointer, not a standalone prompt: identity (slug, branch, phase id
 | Tier | yes | Phase **Tier** (label + one-line reason) |
 | Done when summary | yes | Phase **Done when** (summary, not full checkbox mirror) |
 | Close | yes | Progress overview **Close**. Unit is `human` if any member is |
-| Gates summary | yes | Who runs each check (`automated` or `human`), short |
+| Gates summary | yes | Who runs each check (`automated`, `agent`, or `human`), short |
 | Ask-before | yes (may be `—`) | Phase **Ask-before** |
 | Stop after this unit | yes | Fixed instruction |
 | Env checklist cues | yes for cloud-ready | Short bullets from implement Env checklist; not a second launcher |
@@ -144,6 +148,7 @@ Shape (illustrative):
 
 ## Gates
 - automated: …
+- agent: …
 - human: …
 
 ## Ask-before

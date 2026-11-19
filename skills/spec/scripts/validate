@@ -47,13 +47,14 @@ NAMES=$(mktemp)
 OVERVIEW=$(mktemp)
 PHASE_CLOSE=$(mktemp)
 CHECKS=$(mktemp)
-GATES=$(mktemp)
+CHECK_VALUES=$(mktemp)
+GATE_MAP=$(mktemp)
 GATES_OWNERS=$(mktemp)
 EPIC_ROWS=$(mktemp)
 DEP_NAMES=$(mktemp)
 PREFLIGHT=$(mktemp)
 cleanup() {
-  rm -f "$OUT" "$NAMES" "$OVERVIEW" "$PHASE_CLOSE" "$CHECKS" "$GATES" "$GATES_OWNERS" "$EPIC_ROWS" "$DEP_NAMES" "$PREFLIGHT"
+  rm -f "$OUT" "$NAMES" "$OVERVIEW" "$PHASE_CLOSE" "$CHECKS" "$CHECK_VALUES" "$GATE_MAP" "$GATES_OWNERS" "$EPIC_ROWS" "$DEP_NAMES" "$PREFLIGHT"
 }
 trap cleanup EXIT
 
@@ -70,7 +71,7 @@ done
 
 # List markdown files into a stable list (avoid find|while FINDINGS issues).
 MD_LIST=$(mktemp)
-trap 'rm -f "$OUT" "$NAMES" "$OVERVIEW" "$PHASE_CLOSE" "$CHECKS" "$GATES" "$GATES_OWNERS" "$EPIC_ROWS" "$DEP_NAMES" "$PREFLIGHT" "$MD_LIST"' EXIT
+trap 'rm -f "$OUT" "$NAMES" "$OVERVIEW" "$PHASE_CLOSE" "$CHECKS" "$CHECK_VALUES" "$GATE_MAP" "$GATES_OWNERS" "$EPIC_ROWS" "$DEP_NAMES" "$PREFLIGHT" "$MD_LIST"' EXIT
 find "$FOLDER" -type f \( -name '*.md' -o -name '*.MD' \) > "$MD_LIST" 2>/dev/null || true
 
 # Strip inline `code` spans so docs can mention {{…}} / [SUGGESTION: as examples.
@@ -864,55 +865,62 @@ if [ -f "$PLAN" ]; then
     fi
   done < "$OVERVIEW"
 
-  awk '
+  # Scenarios and every Check value. Keep the phase so Close can be derived
+  # from that phase's Gates owners. Missing and duplicate Check lines are
+  # validated after parsing instead of being silently skipped.
+  awk -v values="$CHECK_VALUES" '
+    /^## Phase[[:space:]]+[0-9]+/ {
+      phase = $0
+      sub(/^## Phase[[:space:]]+/, "", phase)
+      sub(/[[:space:]].*/, "", phase)
+      current = ""
+      next
+    }
     /^\*\*A[0-9]+\.[0-9]+/ || /^- \*\*A[0-9]+\.[0-9]+/ || /^- \[[ xX]\] \*\*A[0-9]+\.[0-9]+/ {
-      id = $0
-      if (match(id, /A[0-9]+\.[0-9]+/)) {
-        current = substr(id, RSTART, RLENGTH)
+      line = $0
+      if (match(line, /A[0-9]+\.[0-9]+/)) {
+        current = substr(line, RSTART, RLENGTH)
+        print phase "\t" current
       }
       next
     }
-    current != "" && /Check:[[:space:]]*(automated|agent|human)/ {
-      val = $0
-      sub(/.*Check:[[:space:]]*/, "", val)
-      gsub(/[[:space:]]/, "", val)
-      print current "\t" val
+    /^### / || /^## / {
       current = ""
+      next
+    }
+    current != "" && /^[[:space:]]*-[[:space:]]*Check:/ {
+      val = $0
+      sub(/^[[:space:]]*-[[:space:]]*Check:[[:space:]]*/, "", val)
+      gsub(/^[[:space:]]+|[[:space:]]+$/, "", val)
+      print phase "\t" current "\t" val >> values
     }
   ' "$PLAN" > "$CHECKS" || true
 
-  awk '
-    BEGIN { in_gates = 0 }
-    /^### Gates/ { in_gates = 1; next }
-    /^### / { if (in_gates) in_gates = 0 }
-    /^## / { if (in_gates) in_gates = 0 }
-    in_gates && /^\|/ {
-      line = $0
-      while (match(line, /A[0-9]+\.[0-9]+/)) {
-        print substr(line, RSTART, RLENGTH)
-        line = substr(line, RSTART + RLENGTH)
-      }
+  # Gates map: phase, expanded scenario id, owner. Expand a same-phase range
+  # such as A1.1–A1.3 so every scenario can be matched to its owner.
+  awk -v owners="$GATES_OWNERS" '
+    function emit_id(id, owner) {
+      print phase "\t" id "\t" owner
     }
-  ' "$PLAN" | sort -u > "$GATES" || true
-
-  while IFS= read -r crow || [ -n "$crow" ]; do
-    [ -n "$crow" ] || continue
-    sid=$(printf '%s' "$crow" | cut -f1)
-    check=$(printf '%s' "$crow" | cut -f2)
-    case "$check" in
-      automated|agent|human) ;;
-      *)
-        emit "${PLAN}: scenario ${sid} Check must be automated, agent, or human (got ${check})"
-        ;;
-    esac
-    if ! grep -qxF "$sid" "$GATES" 2>/dev/null; then
-      emit "${PLAN}: scenario ${sid} Check has no matching Gates row"
-    fi
-  done < "$CHECKS"
-
-  # Gates Owner column: automated | agent | human only
-  awk '
+    function id_phase(id, value) {
+      value = id
+      sub(/^A/, "", value)
+      sub(/\..*$/, "", value)
+      return value + 0
+    }
+    function id_number(id, value) {
+      value = id
+      sub(/^A[0-9]+\./, "", value)
+      return value + 0
+    }
     BEGIN { in_gates = 0 }
+    /^## Phase[[:space:]]+[0-9]+/ {
+      phase = $0
+      sub(/^## Phase[[:space:]]+/, "", phase)
+      sub(/[[:space:]].*/, "", phase)
+      in_gates = 0
+      next
+    }
     /^### Gates/ { in_gates = 1; next }
     /^### / { if (in_gates) in_gates = 0 }
     /^## / { if (in_gates) in_gates = 0 }
@@ -921,14 +929,81 @@ if [ -f "$PLAN" ]; then
       sub(/^\|[[:space:]]*/, "", line)
       n = split(line, cells, /[[:space:]]*\|[[:space:]]*/)
       if (n < 2) next
+      checks = cells[1]
       owner = cells[2]
       gsub(/^[[:space:]]+|[[:space:]]+$/, "", owner)
       if (owner == "" || owner == "Owner" || owner ~ /^-+$/) next
-      print owner
+      print phase "\t" owner >> owners
+
+      # Normalize the documented UTF-8 en dash before expanding ranges.
+      gsub(/–/, "-", checks)
+      while (match(checks, /A[0-9]+\.[0-9]+-A[0-9]+\.[0-9]+/)) {
+        range = substr(checks, RSTART, RLENGTH)
+        split(range, bounds, "-")
+        first_phase = id_phase(bounds[1])
+        last_phase = id_phase(bounds[2])
+        first_number = id_number(bounds[1])
+        last_number = id_number(bounds[2])
+        if (first_phase == last_phase && first_number <= last_number) {
+          for (i = first_number; i <= last_number; i++) {
+            emit_id("A" first_phase "." i, owner)
+          }
+        } else {
+          emit_id(bounds[1], owner)
+          emit_id(bounds[2], owner)
+        }
+        checks = substr(checks, 1, RSTART - 1) " " substr(checks, RSTART + RLENGTH)
+      }
+      while (match(checks, /A[0-9]+\.[0-9]+/)) {
+        emit_id(substr(checks, RSTART, RLENGTH), owner)
+        checks = substr(checks, RSTART + RLENGTH)
+      }
     }
-  ' "$PLAN" | sort -u > "$GATES_OWNERS" || true
-  while IFS= read -r gowner || [ -n "$gowner" ]; do
-    [ -n "$gowner" ] || continue
+  ' "$PLAN" | sort -u > "$GATE_MAP" || true
+
+  while IFS= read -r srow || [ -n "$srow" ]; do
+    [ -n "$srow" ] || continue
+    sphase=$(printf '%s' "$srow" | cut -f1)
+    sid=$(printf '%s' "$srow" | cut -f2)
+    check_count=$(awk -F'\t' -v p="$sphase" -v s="$sid" '$1 == p && $2 == s { count++ } END { print count + 0 }' "$CHECK_VALUES")
+    if [ "$check_count" -eq 0 ]; then
+      emit "${PLAN}: scenario ${sid} missing Check"
+    elif [ "$check_count" -gt 1 ]; then
+      emit "${PLAN}: scenario ${sid} has duplicate Check fields"
+    fi
+
+    if [ "$check_count" -gt 0 ]; then
+      while IFS= read -r check || [ -n "$check" ]; do
+        case "$check" in
+          automated|agent|human) ;;
+          "")
+            emit "${PLAN}: scenario ${sid} Check must be automated, agent, or human (got empty)"
+            ;;
+          *)
+            emit "${PLAN}: scenario ${sid} Check must be automated, agent, or human (got ${check})"
+            ;;
+        esac
+      done <<EOF
+$(awk -F'\t' -v p="$sphase" -v s="$sid" '$1 == p && $2 == s { print $3 }' "$CHECK_VALUES")
+EOF
+    fi
+
+    if ! awk -F'\t' -v p="$sphase" -v s="$sid" '$1 == p && $2 == s { found = 1 } END { exit found ? 0 : 1 }' "$GATE_MAP"; then
+      emit "${PLAN}: scenario ${sid} Check has no matching Gates row"
+    elif [ "$check_count" -eq 1 ]; then
+      check=$(awk -F'\t' -v p="$sphase" -v s="$sid" '$1 == p && $2 == s { print $3; exit }' "$CHECK_VALUES")
+      if printf '%s' "$check" | grep -Eq '^(automated|agent|human)$' &&
+         awk -F'\t' -v p="$sphase" -v s="$sid" -v c="$check" '$1 == p && $2 == s && $3 != c { mismatch = 1 } END { exit mismatch ? 0 : 1 }' "$GATE_MAP"; then
+        owners=$(awk -F'\t' -v p="$sphase" -v s="$sid" '$1 == p && $2 == s { print $3 }' "$GATE_MAP" | sort -u | paste -sd ',' -)
+        emit "${PLAN}: scenario ${sid} Check owner ${check} disagrees with Gates owner ${owners}"
+      fi
+    fi
+  done < "$CHECKS"
+
+  # Gates Owner column: automated | agent | human only
+  while IFS= read -r grow || [ -n "$grow" ]; do
+    [ -n "$grow" ] || continue
+    gowner=$(printf '%s' "$grow" | cut -f2)
     case "$gowner" in
       automated|agent|human) ;;
       *)
@@ -937,10 +1012,12 @@ if [ -f "$PLAN" ]; then
     esac
   done < "$GATES_OWNERS"
 
-  # Close stays automated | human only (agent is a Check/Gates owner, not Close)
+  # Close stays automated | human only (agent is a Check/Gates owner, not Close).
+  # Derive it from Gates owners and bind Awaiting sign-off to human Close.
   while IFS= read -r row || [ -n "$row" ]; do
     [ -n "$row" ] || continue
     phase=$(printf '%s' "$row" | cut -f1)
+    status=$(printf '%s' "$row" | cut -f2)
     oclose=$(printf '%s' "$row" | cut -f3)
     case "$oclose" in
       automated|human) ;;
@@ -948,6 +1025,24 @@ if [ -f "$PLAN" ]; then
         emit "${PLAN}: phase ${phase} Close must be automated or human (got ${oclose})"
         ;;
     esac
+    if [ "$status" = "Awaiting sign-off" ] && [ "$oclose" != "human" ]; then
+      emit "${PLAN}: phase ${phase} Awaiting sign-off requires Close human"
+    fi
+
+    phase_gate_count=$(awk -F'\t' -v p="$phase" '$1 == p { count++ } END { print count + 0 }' "$GATES_OWNERS")
+    phase_invalid_owner_count=$(awk -F'\t' -v p="$phase" '$1 == p && $2 !~ /^(automated|agent|human)$/ { count++ } END { print count + 0 }' "$GATES_OWNERS")
+    if [ "$phase_gate_count" -gt 0 ] && [ "$phase_invalid_owner_count" -eq 0 ]; then
+      if awk -F'\t' -v p="$phase" '$1 == p && $2 == "human" { found = 1 } END { exit found ? 0 : 1 }' "$GATES_OWNERS"; then
+        expected_close=human
+      else
+        expected_close=automated
+      fi
+      if [ "$oclose" = "automated" ] || [ "$oclose" = "human" ]; then
+        if [ "$oclose" != "$expected_close" ]; then
+          emit "${PLAN}: phase ${phase} Close ${oclose} disagrees with Gates owners (expected ${expected_close})"
+        fi
+      fi
+    fi
   done < "$OVERVIEW"
 
   # D4 (validate opt-in): scenario title ticks + slim Done when when any title checkbox appears
@@ -981,13 +1076,9 @@ if [ -f "$PLAN" ]; then
         # Strip leading list / checkbox markers for the cue
         sub(/^[[:space:]]*-[[:space:]]*/, "", line)
         sub(/^\[[ xX]\][[:space:]]*/, "", line)
-        # Scenario-range pass: A2.1–A2.4 pass (en-dash or hyphen)
-        if (line ~ /^A[0-9]+\.[0-9]+[–-]A[0-9]+\.[0-9]+[[:space:]]+pass[[:space:]]*$/) {
-          print $0
-          next
-        }
-        # Lone scenario-id pass: A2.3 pass
-        if (line ~ /^A[0-9]+\.[0-9]+[[:space:]]+pass[[:space:]]*$/) {
+        # One or more comma-separated scenario ids/ranges followed by pass:
+        # A2.3 pass; A2.1–A2.4 pass; A2.1, A2.3–A2.4 pass.
+        if (line ~ /^A[0-9]+\.[0-9]+([–-]A[0-9]+\.[0-9]+)?([[:space:]]*,[[:space:]]*A[0-9]+\.[0-9]+([–-]A[0-9]+\.[0-9]+)?)*[[:space:]]+pass[[:space:]]*$/) {
           print $0
         }
       }
@@ -1025,12 +1116,13 @@ if [ -f "$PLAN" ]; then
     if [ -z "$depends" ] || [ "$depends" = "$EMDASH" ] || [ "$depends" = "—" ]; then
       continue
     fi
-    old_ifs=$IFS
-    IFS=','
-    # shellcheck disable=SC2086
-    set -- $depends
-    IFS=$old_ifs
-    for raw in "$@"; do
+    printf '%s' "$depends" | awk '
+      {
+        n = split($0, parts, ",")
+        for (i = 1; i <= n; i++) print parts[i]
+      }
+    ' > "$DEP_NAMES"
+    while IFS= read -r raw || [ -n "$raw" ]; do
       tok=$(printf '%s' "$raw" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')
       [ -n "$tok" ] || continue
       if [ "$tok" = "$EMDASH" ] || [ "$tok" = "—" ]; then
@@ -1057,7 +1149,7 @@ if [ -f "$PLAN" ]; then
           emit "${PLAN}: phase ${phase} needs-sign-off on automated Close target ${target}"
         fi
       fi
-    done
+    done < "$DEP_NAMES"
   done < "$OVERVIEW"
 
   # Pre-flight section: rows as item\tanswer (empty answer allowed)

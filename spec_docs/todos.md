@@ -86,5 +86,5 @@ After converge (above), ask one question: "Anything to add to **Project conventi
 
 ## Handle mono repos better
 
-Especially for "Q12 — Other commands", can be very service specific.
+Especially for "Q13 — Other commands", can be very service specific.
 

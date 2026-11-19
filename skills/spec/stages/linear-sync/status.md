@@ -2,12 +2,12 @@
 
 Part of the shared Linear write-back doctrine — see [../linear-sync.md](../linear-sync.md) for Preconditions, Store, and the hook index. Plan, implement, and archive hooks call this file (G3 (status mirror), R11 (status mirror), R12 (selective tracker writes), R13 (progress log), R18 (archive gate)). Repo Progress and plan phase status own the truth; Linear never writes them (G7 (repo canonical)).
 
-**In short:** Gate → Tracker Spec only; phase status → that Tracker Phase only; new progress comment on a real delta; archive asks before Tracker Spec Done if any referenced Tracker Phase is still open. Routine hooks MUST NOT run Explicit sync.
+**In short:** Gate → Tracker Spec only; phase status → that Tracker Phase state plus status-aware blocker reconciliation on dependents; new progress comment on a real delta; archive asks before Tracker Spec Done if any referenced Tracker Phase is still open. Routine hooks MUST NOT run Explicit sync.
 
 ### Guards (every call)
 
 1. **Unlinked / `n/a`.** Routine status write needs a stored id (R22 (reference gate)): Tracker Spec updates need frontmatter `work_item: <id>`; Tracker Phase updates need `Tracker phase: <id>`. Skip that field when the value is `n/a` (or missing); do not create tracker work as a side effect.
-2. **MCP / conventions.** Required state map (Progress → Tracker Spec, or phase status → Tracker Phase) missing, or Linear MCP unusable → warn once; skip write-back; do not invent maps (R1 (conventions gate), R21 (mcp session)).
+2. **MCP / conventions.** Linear MCP unusable → warn once and skip write-back. A required state map (Progress → Tracker Spec, or phase status → Tracker Phase) missing → warn once and skip the state/label write that needs it; do not invent maps (R1 (conventions gate), R21 (mcp session)). A phase-status transition may still run the relation-only Blockers pass because it uses only the plan and stored Tracker Phase ids.
 3. **Selective only.** Update only the affected object by stored id. MUST NOT run full Explicit sync from a gate, phase-status, or archive hook (R8 (direct and selective update), R12 (selective tracker writes)).
 
 ### Progress → Tracker Spec
@@ -24,10 +24,11 @@ When `Progress` in `<slug>.spec.md` changes (promote, implement start, archive) 
 When a plan phase (or combinable dispatch unit) status changes and write-back is allowed:
 
 1. Read that unit’s stored `Tracker phase:` id. If `n/a`, skip (R22 (reference gate)).
-2. Map the new plan status (`Not started` … `Blocked`, including `Awaiting sign-off`) to Tracker Phase state via conventions **Tracker Phase status → state map**. Cancel of a removed unit uses the `Removed` key in that same map ([tracker-phases.md](tracker-phases.md) › Cancel removed unit). Skip only under existing `n/a` / map-missing guards — do not invent a skip for the new key.
-3. `save_issue` update that Tracker Phase id only. Combined phases that share one id → one update. Write the least-advanced member’s status (`Not started`, then `Started`, then `Reviewing`, then `Awaiting sign-off`, then `Done`). If any member is `Blocked`, write `Blocked`. Ignore `Deferred` unless every member is `Deferred` (R11 (status mirror)).
-4. If the Tracker Phase status actually changed, post a progress-log comment on the Tracker Spec (below).
-5. Do not update other Tracker Phases. Do not require a confirm prompt on every phase Done (R12 (selective tracker writes)).
+2. Map the new plan status (`Not started` … `Blocked`, including `Awaiting sign-off`) to Tracker Phase state via conventions **Tracker Phase status → state map**. Cancel of a removed unit uses the `Removed` key in that same map ([tracker-phases.md](tracker-phases.md) › Cancel removed unit). If the map or this key is missing, warn once and skip only the state write in step 3; still run the relation-only Blockers pass in step 4 when MCP and stored ids are available.
+3. When the state map resolved, `save_issue` update that Tracker Phase id only. Combined phases that share one id → one update. Write the least-advanced member’s status (`Not started`, then `Started`, then `Reviewing`, then `Awaiting sign-off`, then `Done`). If any member is `Blocked`, write `Blocked`. Ignore `Deferred` unless every member is `Deferred` (R11 (status mirror)).
+4. After any real plan phase-status transition, run [tracker-phases.md](tracker-phases.md) › Blockers once for every referenced unit. This may update only `blockedBy` / `removeBlockedBy` on dependent Tracker Phases so Linear follows unmarked versus needs-sign-off readiness. It MUST NOT rewrite those units' descriptions, labels, or states.
+5. If the changed unit's Tracker Phase status actually changed, post a progress-log comment on the Tracker Spec (below). Blocker-only relation changes do not add a progress comment.
+6. Other than the Blockers pass, do not update other Tracker Phases. Do not require a confirm prompt on every phase Done (R12 (selective tracker writes)).
 
 ### Progress-log comment
 

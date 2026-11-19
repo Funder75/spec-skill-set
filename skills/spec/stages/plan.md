@@ -34,7 +34,7 @@ Each phase uses the same block:
 | **Done when** | The tier's default verify first, plus any stronger command this phase needs, then phase-specific regressions. No scenario-range or lone scenario-id pass lines — those ticks live on the scenario titles. Who runs each line is **Gates** |
 | **Gates** | One row per check: Check, Owner (`automated`, `agent`, or `human`), Evidence. Every scenario **Check** appears here. No tick column |
 | **Ask-before** | `—`, or the phase-specific person stop. Do not repeat the global stops in [implement.md](implement.md) |
-| **Close-out** | Leave blank. The implementer fills it |
+| **Close-out** | Leave result lines blank. Seed `Ran while awaiting: —`; implement updates it as durable cascade-reopen state |
 | **Sub-tasks** | Optional. Each sized for one implement session, with a Status cell |
 
 ### Pre-flight collect

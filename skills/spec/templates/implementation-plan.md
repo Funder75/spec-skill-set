@@ -129,12 +129,13 @@ flowchart LR
 
 ### Close-out
 
-<!-- The implementer fills this at Reviewing, Done, or Blocked. Leave the lines blank until then. Fill Blocked only when status is Blocked: reason, date, and the last failing command. Bugfix + Regression: yes on a scenario → Verified MUST include red-before-green for that scenario: red (named command or repro failed without the fix); green (same check passed with the fix). Green-only for that scenario is a defect. Does not force TDD for every phase. -->
+<!-- The implementer fills this at Reviewing, Done, or Blocked. Leave the ordinary result lines blank until then. Ran while awaiting is durable scheduler state: start it at —; while this phase is Awaiting sign-off, the runner appends each dispatch-unit phase id that starts, without duplicates. Fill Blocked only when status is Blocked: reason, date, and the last failing command. Bugfix + Regression: yes on a scenario → Verified MUST include red-before-green for that scenario: red (named command or repro failed without the fix); green (same check passed with the fix). Green-only for that scenario is a defect. Does not force TDD for every phase. -->
 
 - Verified:
 - Deviations:
 - Follow-ups:
 - Blocked:
+- Ran while awaiting: —
 
 ## Follow-ups
 
