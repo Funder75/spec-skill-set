@@ -6,7 +6,7 @@ epic: fewer-human-stops
 
 # Agent visual checks
 
-**Progress:** implementing
+**Progress:** archived
 **Depth:** lite
 **Kind:** feature
 **Depends on:** defer-human-gates
