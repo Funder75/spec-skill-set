@@ -4,11 +4,19 @@
 
 Phases for [{{feature-slug}}.spec.md](./{{feature-slug}}.spec.md).
 
-**Status values:** `Not started` · `Started` · `Reviewing` · `Done` · `Deferred` · `Blocked`
+**Status values:** `Not started` · `Started` · `Reviewing` · `Awaiting sign-off` · `Done` · `Deferred` · `Blocked`
+
+## Pre-flight
+
+<!-- required when the plan has any Close human, or any predictable Ask-before (new dependency, new command, secret name, branch/cloud consent). Omit the section only when every Close is automated and no foreseeable person input exists. Answers MUST be filled before phase 1 may start. Kind is a short label (dependency, secret name, command, consent, …). Asked from is a phase id or global. Secret values MUST NOT appear — record the secret name only. -->
+
+| Item | Kind | Answer | Asked from |
+| ---- | ---- | ------ | ---------- |
+| {{item}} | {{kind}} | {{answer}} | {{phase id or global}} |
 
 ## Progress overview
 
-<!-- required. Depends on and Combinable with are the order gate. — means none. Goal text stays in the phase, not here. -->
+<!-- required. Depends on and Combinable with are the order gate. — means none. Goal text stays in the phase, not here. A Depends on cell may list phase ids. To require person accept before a later phase may start, append the needs-sign-off suffix on that id: 1 (needs sign-off). Absent suffix → Awaiting sign-off on the target still satisfies the dependency. -->
 
 <!-- Tier: Low / Medium / High from Phase tier in the spec skill's design-quality.md. Rate the hardest factor in this phase, not the feature and not the file count. The label here matches the phase block. -->
 
@@ -18,7 +26,7 @@ Phases for [{{feature-slug}}.spec.md](./{{feature-slug}}.spec.md).
 | ----- | ---- | ------ | ---- | ----- | ---------- | --------------- |
 | **1** | Not started | {{name}} | {{Low / Medium / High}} | {{automated / human}} | — | — |
 | **2** | Not started | {{name}} | {{…}} | {{automated / human}} | 1 | 3 |
-| **3** | Not started | {{name}} | {{…}} | {{automated / human}} | 1 | 2 |
+| **3** | Not started | {{name}} | {{…}} | {{automated / human}} | 1 (needs sign-off) | 2 |
 
 <!-- include when: more than about five phases. One line, for example "6 phases — migration needs a backfill-verify step before enforcing NOT NULL." -->
 

@@ -53,6 +53,8 @@ A typical spec lands in **2–5 phases**. More than that needs a one-line reason
 
 Name true siblings in **Combinable with** so a later implement session can combine them. **Depends on** is the order gate. Add a Mermaid graph only when there are more than four phases; the progress table stays the source of truth.
 
+Place human-checked work as late as **Depends on** allows. A migration, auth, or secrets phase that a later automated phase does not need can sit after that automated work, so person sign-off does not stall independent units.
+
 Deferrals belong in **Non-goals**. There is no stretch list.
 
 ---
@@ -121,6 +123,14 @@ The progress overview **Close** column and the phase **Close** line use the same
 - **Ask-before** is a person stop during the phase. Write `—` when there is none. It does not replace **Close**. A security choice is **Ask-before** and **Close** `human` when a person must accept the result.
 - Do not add a **Gates** row for the implement review subagent. That review always runs, for both values.
 - Do not leave **Close** unset. A missing value is not `automated`.
+
+### Needs-sign-off on Depends on
+
+When a later phase must wait for person accept of an earlier **Close** `human` phase, mark that dependency in the progress overview **Depends on** cell with the suffix on the phase id: `1 (needs sign-off)`. Do not add a new column.
+
+- **Default needs-sign-off** when the earlier phase is a migration, stored-data change, auth, or secrets work — later phases that truly need that accept should wait.
+- **Default unmarked** when the earlier phase is visual or copy — `Awaiting sign-off` on that phase can still satisfy **Depends on**, and sign-off can wait.
+- Place the human-checked phase as late as **Depends on** allows (see [Phase sizing](#phase-sizing)).
 
 ---
 

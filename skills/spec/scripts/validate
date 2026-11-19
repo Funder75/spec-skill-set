@@ -50,8 +50,9 @@ CHECKS=$(mktemp)
 GATES=$(mktemp)
 EPIC_ROWS=$(mktemp)
 DEP_NAMES=$(mktemp)
+PREFLIGHT=$(mktemp)
 cleanup() {
-  rm -f "$OUT" "$NAMES" "$OVERVIEW" "$PHASE_CLOSE" "$CHECKS" "$GATES" "$EPIC_ROWS" "$DEP_NAMES"
+  rm -f "$OUT" "$NAMES" "$OVERVIEW" "$PHASE_CLOSE" "$CHECKS" "$GATES" "$EPIC_ROWS" "$DEP_NAMES" "$PREFLIGHT"
 }
 trap cleanup EXIT
 
@@ -68,7 +69,7 @@ done
 
 # List markdown files into a stable list (avoid find|while FINDINGS issues).
 MD_LIST=$(mktemp)
-trap 'rm -f "$OUT" "$NAMES" "$OVERVIEW" "$PHASE_CLOSE" "$CHECKS" "$GATES" "$EPIC_ROWS" "$DEP_NAMES" "$MD_LIST"' EXIT
+trap 'rm -f "$OUT" "$NAMES" "$OVERVIEW" "$PHASE_CLOSE" "$CHECKS" "$GATES" "$EPIC_ROWS" "$DEP_NAMES" "$PREFLIGHT" "$MD_LIST"' EXIT
 find "$FOLDER" -type f \( -name '*.md' -o -name '*.MD' \) > "$MD_LIST" 2>/dev/null || true
 
 # Strip inline `code` spans so docs can mention {{…}} / [SUGGESTION: as examples.
@@ -800,8 +801,9 @@ else
   fi
 fi
 
-# --- Plan Close mismatch + Gates↔Check ---
+# --- Plan Close mismatch + Gates↔Check + defer-human-gates plan shape ---
 if [ -f "$PLAN" ]; then
+  # Overview rows: phase\tstatus\tclose\tdepends (depends may be empty)
   awk '
     BEGIN { in_overview = 0 }
     /^## Progress overview/ { in_overview = 1; next }
@@ -817,9 +819,16 @@ if [ -f "$PLAN" ]; then
       if (phase ~ /^-+$/) next
       if (phase == "Phase") next
       if (phase !~ /^[0-9]+$/) next
+      status = cells[2]
+      gsub(/^[[:space:]]+|[[:space:]]+$/, "", status)
       close_val = cells[5]
       gsub(/[[:space:]]/, "", close_val)
-      print phase "\t" close_val
+      depends = ""
+      if (n >= 6) {
+        depends = cells[6]
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", depends)
+      }
+      print phase "\t" status "\t" close_val "\t" depends
     }
   ' "$PLAN" > "$OVERVIEW" || true
 
@@ -843,7 +852,7 @@ if [ -f "$PLAN" ]; then
   while IFS= read -r row || [ -n "$row" ]; do
     [ -n "$row" ] || continue
     phase=$(printf '%s' "$row" | cut -f1)
-    oclose=$(printf '%s' "$row" | cut -f2)
+    oclose=$(printf '%s' "$row" | cut -f3)
     pclose=$(awk -F'\t' -v p="$phase" '$1==p { print $2; exit }' "$PHASE_CLOSE")
     if [ -z "$pclose" ]; then
       emit "${PLAN}: phase ${phase} has overview Close but no phase Close line"
@@ -892,6 +901,131 @@ if [ -f "$PLAN" ]; then
       emit "${PLAN}: scenario ${sid} Check has no matching Gates row"
     fi
   done < "$CHECKS"
+
+  # D6 (validator checks): status, Depends on marker, Pre-flight
+  has_human_close=0
+  any_past_not_started=0
+  while IFS= read -r row || [ -n "$row" ]; do
+    [ -n "$row" ] || continue
+    phase=$(printf '%s' "$row" | cut -f1)
+    status=$(printf '%s' "$row" | cut -f2)
+    oclose=$(printf '%s' "$row" | cut -f3)
+    depends=$(printf '%s' "$row" | cut -f4)
+
+    case "$status" in
+      "Not started"|"Started"|"Reviewing"|"Awaiting sign-off"|"Done"|"Deferred"|"Blocked") ;;
+      *)
+        emit "${PLAN}: phase ${phase} unknown status (${status})"
+        ;;
+    esac
+    if [ "$status" != "Not started" ]; then
+      any_past_not_started=1
+    fi
+    if [ "$oclose" = "human" ]; then
+      has_human_close=1
+    fi
+
+    # Tokenize Depends on: bare id or "<id> (needs sign-off)"; em dash / empty = none
+    if [ -z "$depends" ] || [ "$depends" = "$EMDASH" ] || [ "$depends" = "—" ]; then
+      continue
+    fi
+    old_ifs=$IFS
+    IFS=','
+    # shellcheck disable=SC2086
+    set -- $depends
+    IFS=$old_ifs
+    for raw in "$@"; do
+      tok=$(printf '%s' "$raw" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')
+      [ -n "$tok" ] || continue
+      if [ "$tok" = "$EMDASH" ] || [ "$tok" = "—" ]; then
+        continue
+      fi
+      target=""
+      marked=0
+      if printf '%s' "$tok" | grep -Eq '^[0-9]+$'; then
+        target=$tok
+      elif printf '%s' "$tok" | grep -Eq '^[0-9]+ \(needs sign-off\)$'; then
+        target=$(printf '%s' "$tok" | sed -E 's/^([0-9]+) \(needs sign-off\)$/\1/')
+        marked=1
+      else
+        emit "${PLAN}: phase ${phase} malformed Depends on token (${tok})"
+        continue
+      fi
+      if ! awk -F'\t' -v t="$target" '$1==t { found=1; exit } END { exit !found }' "$OVERVIEW"; then
+        emit "${PLAN}: phase ${phase} Depends on unknown phase ${target}"
+        continue
+      fi
+      if [ "$marked" -eq 1 ]; then
+        tclose=$(awk -F'\t' -v t="$target" '$1==t { print $3; exit }' "$OVERVIEW")
+        if [ "$tclose" = "automated" ]; then
+          emit "${PLAN}: phase ${phase} needs-sign-off on automated Close target ${target}"
+        fi
+      fi
+    done
+  done < "$OVERVIEW"
+
+  # Pre-flight section: rows as item\tanswer (empty answer allowed)
+  awk '
+    BEGIN { in_pf = 0 }
+    /^## Pre-flight[[:space:]]*$/ { in_pf = 1; next }
+    /^## / { if (in_pf) exit }
+    in_pf && /^\|/ {
+      line = $0
+      sub(/^\|[[:space:]]*/, "", line)
+      n = split(line, cells, /[[:space:]]*\|[[:space:]]*/)
+      if (n < 3) next
+      item = cells[1]
+      gsub(/^[[:space:]]+|[[:space:]]+$/, "", item)
+      if (item == "" || item == "Item" || item ~ /^-+$/) next
+      answer = cells[3]
+      gsub(/^[[:space:]]+|[[:space:]]+$/, "", answer)
+      print item "\t" answer
+    }
+  ' "$PLAN" > "$PREFLIGHT" || true
+
+  has_preflight_heading=0
+  if grep -qE '^## Pre-flight[[:space:]]*$' "$PLAN"; then
+    has_preflight_heading=1
+  fi
+  preflight_rows=0
+  if [ -s "$PREFLIGHT" ]; then
+    preflight_rows=$(wc -l < "$PREFLIGHT" | tr -d '[:space:]')
+  fi
+
+  if [ "$has_human_close" -eq 1 ] && [ "$has_preflight_heading" -eq 0 ]; then
+    emit "${PLAN}: missing Pre-flight section (Close human present)"
+  fi
+
+  # Collectable Ask-before: any phase Ask-before that is not em dash / empty
+  collectable_ask=0
+  ask_val=$(awk '
+    /^\*\*Ask-before:\*\*/ {
+      val = $0
+      sub(/^\*\*Ask-before:\*\*[[:space:]]*/, "", val)
+      gsub(/^[[:space:]]+|[[:space:]]+$/, "", val)
+      if (val != "" && val != "—" && val != "–") print val
+    }
+  ' "$PLAN")
+  if [ -n "$ask_val" ]; then
+    collectable_ask=1
+  fi
+
+  if [ "$collectable_ask" -eq 1 ]; then
+    if [ "$has_preflight_heading" -eq 0 ] || [ "${preflight_rows:-0}" -eq 0 ]; then
+      emit "${PLAN}: empty Pre-flight shape (collectable Ask-before present)"
+    fi
+  fi
+
+  if [ "$any_past_not_started" -eq 1 ] && [ -s "$PREFLIGHT" ]; then
+    while IFS= read -r pfrow || [ -n "$pfrow" ]; do
+      [ -n "$pfrow" ] || continue
+      ans=$(printf '%s' "$pfrow" | cut -f2)
+      if [ -z "$ans" ]; then
+        emit "${PLAN}: unanswered Pre-flight item while a phase is past Not started"
+        break
+      fi
+    done < "$PREFLIGHT"
+  fi
 fi
 
 check_child_folder_links

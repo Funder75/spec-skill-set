@@ -37,6 +37,17 @@ Each phase uses the same block:
 | **Close-out** | Leave blank. The implementer fills it |
 | **Sub-tasks** | Optional. Each sized for one implement session, with a Status cell |
 
+### Pre-flight collect
+
+Before treating the plan as ready to implement (and before phase 1 may start):
+
+1. Scan every phase **Ask-before** and any foreseeable global stop the plan can predict (new dependency, new command, secret name, branch or cloud consent).
+2. Write each item as a row in the top-level **Pre-flight** section (before the progress overview): **Item**, **Kind**, **Answer**, **Asked from** (phase id or `global`). Omit the section only when every **Close** is `automated` and no foreseeable person input exists.
+3. Stop for the person's answers. Record them in **Answer**. Secret values MUST NOT be written — record the secret name only.
+4. Do not treat the plan as ready to implement, and do not start phase 1, while any Pre-flight **Answer** is blank.
+
+Unpredicted Ask-before stops in [implement.md](implement.md) still apply at run time. Point authors at [Phase close](../design-quality.md#phase-close) for when a **Depends on** cell needs the `1 (needs sign-off)` suffix, and at [Phase sizing](../design-quality.md#phase-sizing) for placing human-checked work late.
+
 Rules:
 
 - As few phases as safely possible. Split only when a phase would span unrelated surfaces, cannot pass verify midway, or is honestly easier to review in two passes. More than about five phases needs a one-line reason under the progress overview. Detail: [design-quality.md](../design-quality.md).
@@ -47,7 +58,8 @@ Rules:
 - Set each phase's **Close** with [Phase close](../design-quality.md#phase-close). The overview cell and the phase line use the same word: `automated` or `human`. `automated` only when every **Gates** owner and every scenario **Check** is `automated`. Any `human` owner forces **Close** `human`. A combinable group is `human` if any member is `human`. Do not leave **Close** for the implementer to infer.
 - **Gates** names who runs each check. Owner `automated` is a command, a test, or a result the review can show from the repo. Owner `human` is a person. Do not add a row for the implement review subagent. **Ask-before** is `—` when this phase has no extra person stop. When scenarios do not share an owner, put the human IDs on their own **Done when** line so the agent does not check them off. When the matching **Verify tiers** row is the explicit value `none` (no command for that tier), the phase's **Gates** owner for that check is `automated` only if the row names concrete review-observable evidence from the repo; otherwise set **Close** `human`. Do not treat `none` or an unresolved `{{command}}` placeholder as satisfied.
 - Phases start at **Not started**.
-- **Depends on** and **Combinable with** in the progress overview are the order gate. `—` means none. **Close** in that same table is who can finish the phase. A Mermaid graph is optional, and only when there are more than four phases; the table stays the source of truth.
+- **Depends on** and **Combinable with** in the progress overview are the order gate. `—` means none. **Close** in that same table is who can finish the phase. A **Depends on** target that must wait for person accept uses the suffix `1 (needs sign-off)` on that phase id — see [Phase close](../design-quality.md#phase-close). A Mermaid graph is optional, and only when there are more than four phases; the table stays the source of truth.
+- Collect predictable person inputs into **Pre-flight** and record answers before phase 1 may start — see [Pre-flight collect](#pre-flight-collect).
 - **Read first** links each tech-doc section or **Technical notes** anchor the phase needs, not whole docs. Do not restate them.
 - Each acceptance scenario has a Kind-aware journey or list Trace and a **Check** of `automated` or `human`. **Check** and the **Gates** owner for that scenario use the same word.
   - **Kind: feature** (or missing Kind): each scenario names the `<slug>.spec.md` journey step it checks (`Journey: …`), or `Journey: —` for a rule with no journey step. A journey step no scenario checks is a gap.
@@ -80,7 +92,7 @@ Do not create branches, worktrees, or commits unless the user explicitly asks in
 
 ## Ready to implement
 
-Walk the checklist in [design-quality.md](../design-quality.md). Fix gaps, or add a **Q** item in `<slug>.spec.md` and point at it with `> **Open:** Q1 (short name)`. A question may remain only if its **Blocks** line does not include phase 1.
+Walk the checklist in [design-quality.md](../design-quality.md). Fix gaps, or add a **Q** item in `<slug>.spec.md` and point at it with `> **Open:** Q1 (short name)`. A question may remain only if its **Blocks** line does not include phase 1. Every Pre-flight **Answer** MUST be filled before phase 1 may start (see [Pre-flight collect](#pre-flight-collect)).
 
 ## Mechanical validate
 

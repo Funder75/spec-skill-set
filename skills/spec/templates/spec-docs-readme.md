@@ -36,7 +36,7 @@ Full path:
 3. **Implementation plan** — `<slug>.plan.md`: phases, Done when, phase status, and **Close** (`automated` or `human`) (`Progress: plan`).
 4. **Implement** one phase at a time (`Progress: implementing`). When the work is done, move the folder to `archive/` (`Progress: archived`).
 
-`Progress` in `<slug>.spec.md` is the gate: `design`, `tech`, `plan`, `implementing`, or `archived`. Phase status (`Not started` through `Done`, plus `Deferred` and `Blocked`) lives only in `<slug>.plan.md`.
+`Progress` in `<slug>.spec.md` is the gate: `design`, `tech`, `plan`, `implementing`, or `archived`. Phase status (`Not started` through `Done`, plus `Awaiting sign-off`, `Deferred`, and `Blocked`) lives only in `<slug>.plan.md`.
 
 Invoke the **spec** skill with `/spec`. Examples: create a spec from a note or a work item (optionally `as lite`, `as bugfix`, or both), `/spec next`, promote to tech specs, promote to an implementation plan, implement the next phase, audit or review a spec, archive, sync with Linear.
 
@@ -64,11 +64,11 @@ IDs carry a short name, for example `G1 (writing style)`:
 
 To find every citation of an ID, search for the ID and the opening parenthesis, for example `G1 (`. A plain `G1` search also hits `G10`.
 
-Phase status: `Not started`, `Started`, `Reviewing`, `Done`, `Deferred`, `Blocked`.
+Phase status: `Not started`, `Started`, `Reviewing`, `Awaiting sign-off`, `Done`, `Deferred`, `Blocked`.
 
 **Tier** rates how hard a phase is to implement (Low / Medium / High) so the implementer can choose effort. It also selects the default verify row under **Project conventions**.
 
-**Close** on each plan phase is `automated` or `human`. The same word is in the progress overview. `automated` means verify and the agent review can mark the phase Done. `human` means a person continues after that review. **Gates** names who runs each check.
+**Close** on each plan phase is `automated` or `human`. The same word is in the progress overview. `automated` means verify and the agent review can mark the phase Done. `human` means after that review the phase moves to `Awaiting sign-off` until a person accepts (batched when the ready queue is empty). **Gates** names who runs each check.
 
 ## Project conventions
 
@@ -92,7 +92,7 @@ Hand-fill either shape the same way.
 - **Team:** {{name or id}}
 - **Fetch:** {{use Linear MCP `get_issue` by id or URL}}
 - **Tracker Spec Progress → state/label map:** {{design → …; tech → …; plan → …; implementing → …; archived → …}}
-- **Tracker Phase status → state map:** {{Not started → …; Started → …; Reviewing → …; Done → …; Deferred → …; Blocked → …; Removed → …}}
+- **Tracker Phase status → state map:** {{Not started → …; Started → …; Reviewing → …; Awaiting sign-off → …; Done → …; Deferred → …; Blocked → …; Removed → …}}
 - **Optional design-stage label:** {{label name/id, or omit}}
 - **Optional default `[repo=…]`:** {{owner/name the cloud agent should use, or omit}}
 

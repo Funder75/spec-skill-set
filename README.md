@@ -123,7 +123,7 @@ Exit `0` means no mechanical findings. Non-zero prints one finding per line (pla
 - **Validate before you ask.** Run `skills/spec/scripts/validate` on a slug folder when you want a fast mechanical pass without starting an audit.
 - **Fill conventions early.** On first bootstrap, opt in to fill **Project conventions** while context is fresh. Later stages otherwise hit placeholders when they need a project fact. Say `/spec fill conventions` any time afterward to fill or update them — it is not limited to first bootstrap, and a stage that hits a placeholder will offer the same flow.
 - **Repo stays canonical.** Edit the markdown in `spec_docs/`. Linear (when used) mirrors links and status; do not treat tracker text as binding acceptance criteria.
-- **One open unit.** Implement one phase or combinable group at a time. Multi-phase plans dispatch fresh context per unit; do not parallelize implementers.
+- **One open unit.** Implement one phase or combinable group at a time. Multi-phase plans dispatch fresh context per unit; do not parallelize implementers. A phase waiting on a person is `Awaiting sign-off` and does not hold the active slot — independent work may continue; when nothing else is ready, sign-off is batched.
 - **No surprise SCM.** The skill does not create branches, worktrees, or commits unless you ask in that conversation.
 - **Ask before inventing process.** Tips and README prose are advisory for humans. New agent behaviour belongs in a skill change, not a tip bullet.
 

@@ -2,16 +2,16 @@
 
 Phases for [defer-human-gates.spec.md](./defer-human-gates.spec.md).
 
-**Status values:** `Not started` · `Started` · `Reviewing` · `Done` · `Deferred` · `Blocked`
+**Status values:** `Not started` · `Started` · `Reviewing` · `Awaiting sign-off` · `Done` · `Deferred` · `Blocked`
 
 ## Progress overview
 
 | Phase | Status | Name | Tier | Close | Depends on | Combinable with |
 | ----- | ---- | ------ | ---- | ----- | ---------- | --------------- |
-| **1** | Not started | Plan shape and guidance | Medium | automated | — | — |
-| **2** | Not started | Implement status machine | High | automated | 1 | — |
-| **3** | Not started | Validator checks | Medium | automated | 1 | 4 |
-| **4** | Not started | Linear and docs | Low | automated | 1 | 3 |
+| **1** | Done | Plan shape and guidance | Medium | automated | — | — |
+| **2** | Done | Implement status machine | High | automated | 1 | — |
+| **3** | Done | Validator checks | Medium | automated | 1 | 4 |
+| **4** | Done | Linear and docs | Low | automated | 1 | 3 |
 
 ## Phase 1 — Plan shape and guidance
 
@@ -72,9 +72,9 @@ Phases for [defer-human-gates.spec.md](./defer-human-gates.spec.md).
 
 ### Done when
 
-- [ ] `/bin/sh skills/spec/scripts/validate spec_docs/defer-human-gates/` passes
-- [ ] A1.1–A1.3 pass (review can show the template section, plan.md collect step, and design-quality defaults from the repo)
-- [ ] Existing plan Close / Gates / Tier guidance in design-quality still reads consistently with the new marker prose
+- [x] `/bin/sh skills/spec/scripts/validate spec_docs/defer-human-gates/` passes
+- [x] A1.1–A1.3 pass (review can show the template section, plan.md collect step, and design-quality defaults from the repo)
+- [x] Existing plan Close / Gates / Tier guidance in design-quality still reads consistently with the new marker prose
 
 ### Gates
 
@@ -87,9 +87,9 @@ Phases for [defer-human-gates.spec.md](./defer-human-gates.spec.md).
 
 ### Close-out
 
-- Verified:
-- Deviations:
-- Follow-ups:
+- Verified: pass — `/bin/sh skills/spec/scripts/validate spec_docs/defer-human-gates/` exit 0 (no findings). A1.1: template Status includes `Awaiting sign-off` (L7) and `## Pre-flight` before Progress overview (L9–16). A1.2: `plan.md` › Pre-flight collect (L40–47) + Ready to implement requires answers before phase 1 (L95). A1.3: design-quality defaults needs-sign-off for migration/stored-data/auth/secrets and unmarked for visual/copy (L131–132); human-checked work late (L56, L133). Close / Gates / Tier sections unchanged aside from the new Needs-sign-off subsection.
+- Deviations: none
+- Follow-ups: none for this phase (status-machine rewrite of Close `human` → `Awaiting sign-off` remains phase 2)
 - Blocked:
 
 ## Phase 2 — Implement status machine
@@ -184,9 +184,9 @@ Phases for [defer-human-gates.spec.md](./defer-human-gates.spec.md).
 
 ### Done when
 
-- [ ] `/bin/sh skills/spec/scripts/validate spec_docs/defer-human-gates/` passes
-- [ ] A2.1–A2.7 pass (review can show the matching implement.md rules from the repo)
-- [ ] Close `automated` path still becomes `Done` on review pass without entering `Awaiting sign-off`
+- [x] `/bin/sh skills/spec/scripts/validate spec_docs/defer-human-gates/` passes
+- [x] A2.1–A2.7 pass (review can show the matching implement.md rules from the repo)
+- [x] Close `automated` path still becomes `Done` on review pass without entering `Awaiting sign-off`
 
 ### Gates
 
@@ -199,9 +199,9 @@ Phases for [defer-human-gates.spec.md](./defer-human-gates.spec.md).
 
 ### Close-out
 
-- Verified:
-- Deviations:
-- Follow-ups:
+- Verified: pass — `/bin/sh skills/spec/scripts/validate spec_docs/defer-human-gates/` exit 0 (no findings). Close `automated` still → `Done` without `Awaiting sign-off` (`implement.md` Review gate › On pass, L177). A2.1: human Close → `Awaiting sign-off` frees slot (L160, L177, L140). A2.2: unmarked awaiting satisfies Depends on; needs-sign-off does not (L19). A2.3: Blocked stalls only dependents (L22). A2.4: batch when ready queue empty (L191, L196–L198). A2.5: cascade reopen on reject (L200–L202). A2.6: skip recorded Pre-flight Ask-before (L144, L193). A2.7: archive refuses while any `Awaiting sign-off` (L210, L218). Failure-mode checks (High): (1) human halt left in `Reviewing` — replaced by move to `Awaiting sign-off` after review pass; (2) awaiting counted in active set — explicit MUST NOT in Serial SDD L47 and Phase status L140; (3) needs-sign-off vs unmarked confusion — token parse + satisfaction rules in Phase selection L19; (4) Blocked freezes whole plan — independents MAY start L22; (5) reject orphans later Done work — cascade reopen L202; (6) re-ask pre-flight — skip rule L144; (7) archive with open awaiting — refuse L210; (8) automated Close accidentally awaiting — MUST NOT enter L177.
+- Deviations: none
+- Follow-ups: none for this phase (validate checks remain phase 3; Linear/docs remain phase 4)
 - Blocked:
 
 ## Phase 3 — Validator checks
@@ -259,9 +259,9 @@ Phases for [defer-human-gates.spec.md](./defer-human-gates.spec.md).
 
 ### Done when
 
-- [ ] `/bin/sh skills/spec/scripts/validate spec_docs/defer-human-gates/` passes
-- [ ] A3.1–A3.3 pass (exercise failing fixtures or equivalent review-observable emit paths, then confirm clean on this folder)
-- [ ] Existing Close mismatch and Gates↔Check checks still pass on this folder
+- [x] `/bin/sh skills/spec/scripts/validate spec_docs/defer-human-gates/` passes
+- [x] A3.1–A3.3 pass (exercise failing fixtures or equivalent review-observable emit paths, then confirm clean on this folder)
+- [x] Existing Close mismatch and Gates↔Check checks still pass on this folder
 
 ### Gates
 
@@ -274,9 +274,9 @@ Phases for [defer-human-gates.spec.md](./defer-human-gates.spec.md).
 
 ### Close-out
 
-- Verified:
-- Deviations:
-- Follow-ups:
+- Verified: pass — `/bin/sh skills/spec/scripts/validate spec_docs/defer-human-gates/` exit 0. A3.1: temp fixture `Waiting` → unknown status; `1 needs-sign-off` → malformed marker. A3.2: Close human without Pre-flight → missing Pre-flight section. A3.3: needs-sign-off on automated Close + blank Pre-flight Answer with Started → both findings; plan not rewritten. Close mismatch / Gates↔Check still clean on this folder.
+- Deviations: none
+- Follow-ups: none
 - Blocked:
 
 ## Phase 4 — Linear and docs
@@ -337,9 +337,9 @@ Phases for [defer-human-gates.spec.md](./defer-human-gates.spec.md).
 
 ### Done when
 
-- [ ] `/bin/sh skills/spec/scripts/validate spec_docs/defer-human-gates/` passes
-- [ ] A4.1–A4.3 pass
-- [ ] Project docs / other markdown updated per Documenting changes
+- [x] `/bin/sh skills/spec/scripts/validate spec_docs/defer-human-gates/` passes
+- [x] A4.1–A4.3 pass
+- [x] Project docs / other markdown updated per Documenting changes
 
 ### Gates
 
@@ -352,7 +352,7 @@ Phases for [defer-human-gates.spec.md](./defer-human-gates.spec.md).
 
 ### Close-out
 
-- Verified:
-- Deviations:
-- Follow-ups:
+- Verified: pass — validate exit 0 (same command). A4.1: `linear-sync/status.md` Phase status map includes `Awaiting sign-off`; least-advanced order places it after Reviewing before Done; skips only under existing n/a / map-missing guards. A4.2: `spec_docs/README.md` and `skills/spec/templates/spec-docs-readme.md` status lists include `Awaiting sign-off`; template Tracker Phase map placeholder includes the key. A4.3: Archive gate treats awaiting as open and must not complete Tracker Spec until Done or Deferred. Root `README.md` One open unit tip aligned with awaiting + batch.
+- Deviations: none (spec_docs README has no Tracker Phase map bullet yet — placeholder lives in the template seed only)
+- Follow-ups: none
 - Blocked:

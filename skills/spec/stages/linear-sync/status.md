@@ -24,8 +24,8 @@ When `Progress` in `<slug>.spec.md` changes (promote, implement start, archive) 
 When a plan phase (or combinable dispatch unit) status changes and write-back is allowed:
 
 1. Read that unit’s stored `Tracker phase:` id. If `n/a`, skip (R22 (reference gate)).
-2. Map the new plan status (`Not started` … `Blocked`) to Tracker Phase state via conventions **Tracker Phase status → state map**. Cancel of a removed unit uses the `Removed` key in that same map ([tracker-phases.md](tracker-phases.md) › Cancel removed unit).
-3. `save_issue` update that Tracker Phase id only. Combined phases that share one id → one update. Write the least-advanced member’s status (`Not started`, then `Started`, then `Reviewing`, then `Done`). If any member is `Blocked`, write `Blocked`. Ignore `Deferred` unless every member is `Deferred` (R11 (status mirror)).
+2. Map the new plan status (`Not started` … `Blocked`, including `Awaiting sign-off`) to Tracker Phase state via conventions **Tracker Phase status → state map**. Cancel of a removed unit uses the `Removed` key in that same map ([tracker-phases.md](tracker-phases.md) › Cancel removed unit). Skip only under existing `n/a` / map-missing guards — do not invent a skip for the new key.
+3. `save_issue` update that Tracker Phase id only. Combined phases that share one id → one update. Write the least-advanced member’s status (`Not started`, then `Started`, then `Reviewing`, then `Awaiting sign-off`, then `Done`). If any member is `Blocked`, write `Blocked`. Ignore `Deferred` unless every member is `Deferred` (R11 (status mirror)).
 4. If the Tracker Phase status actually changed, post a progress-log comment on the Tracker Spec (below).
 5. Do not update other Tracker Phases. Do not require a confirm prompt on every phase Done (R12 (selective tracker writes)).
 
@@ -50,9 +50,9 @@ On a **real** Progress or referenced Tracker Phase status delta (R13 (progress l
 
 When archive is confirmed and the skill would mark the Tracker Spec Done (R18 (archive gate)):
 
-1. For every plan phase with a stored `Tracker phase: <id>` (not `n/a`), check that Tracker Phase is Done or Deferred per the conventions map (Deferred follows the map).
+1. For every plan phase with a stored `Tracker phase: <id>` (not `n/a`), check that Tracker Phase is Done or Deferred per the conventions map (Deferred follows the map). Treat plan status `Awaiting sign-off` (and its mapped Tracker Phase state) as open — archive must not complete the Tracker Spec until that phase is Done or Deferred (R10 (archive wait)).
 2. If every referenced Tracker Phase is Done or Deferred → map archive Progress to Tracker Spec Done (and labels) and post a progress-log comment when Progress actually changed.
-3. If any referenced Tracker Phase is still open → ask before marking the Tracker Spec Done. Do not silently complete it.
+3. If any referenced Tracker Phase is still open (including one mapped from `Awaiting sign-off`) → ask before marking the Tracker Spec Done. Do not silently complete it.
 4. Status-only archive updates that leave the issue body alone are not blocked by conflict rules (R14 (conflict stop)).
 
 ### MUST NOT (Status)
