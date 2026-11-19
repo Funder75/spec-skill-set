@@ -8,7 +8,7 @@ Phases for [agent-visual-checks.spec.md](./agent-visual-checks.spec.md).
 
 | Phase | Status | Name | Tier | Close | Depends on | Combinable with |
 | ----- | ---- | ------ | ---- | ----- | ---------- | --------------- |
-| **1** | Reviewing | Owner agent and evidence | Medium | automated | — | — |
+| **1** | Done | Owner agent and evidence | Medium | automated | — | — |
 
 ## Phase 1 — Owner agent and evidence
 
