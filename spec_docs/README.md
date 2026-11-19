@@ -86,11 +86,11 @@ This repo has no work-item system. Specs come from chat or free text. If a futur
 
 | Tier | Verify |
 | ---- | ------ |
-| Low | {{command}} |
-| Medium | {{command}} |
-| High | {{command}} |
+| Low | `/bin/sh skills/spec/scripts/validate spec_docs/<slug>/` |
+| Medium | `/bin/sh skills/spec/scripts/validate spec_docs/<slug>/` |
+| High | `/bin/sh skills/spec/scripts/validate spec_docs/<slug>/` |
 
-{{Where to run the commands, and any setup they assume.}}
+Run from the repo root. Replace `<slug>` with the folder name under `spec_docs/`. No extra setup.
 
 ### Complexity hotspots
 
@@ -106,12 +106,10 @@ The skill reads this when filling `<slug>.contracts.md` and `<slug>.ui.md`.
 
 ### Documenting changes
 
-- **Policy:** {{required on public/API surface changes | always when behaviour changes | none}}
-- **Project docs:** README.md and related paths
-- **Code docs:** {{JSDoc / TSDoc / rustdoc / … — which surfaces, or none}}
-- **Other markdown:** {{docs/…, CONTRIBUTING, changelog, or none}}
-
-{{Any project-specific rule, for example "public exports only" or "no changelog".}}
+- **Policy:** always when behaviour changes
+- **Project docs:** `README.md` and related paths
+- **Code docs:** none
+- **Other markdown:** `spec_docs/README.md`, `skills/spec/templates/spec-docs-readme.md` when status lists or implement behaviour change
 
 ### Other commands
 

@@ -13,8 +13,6 @@ Once promoted to a spec - we should remove it entirely from here.
 - Better mono repo support
 - Generic tracker support - not just linear (if possible). Also now we sometime refer to it as linear and other times as tracker. It should be "tracker"
 - Check if a linear synced plan is updated if the phases are started from cursor ide / cursor cloud agents
-- The "close" in the plan: Any way to plan so that agents can get as far as possible without human interaction, leaving human interaction last or defered? This will greatly improve implementation time.
-- Add Close labels (human / automated) to linear tasks from plan phases
 
 ## `converge` before archive, plus an "As built" note
 
