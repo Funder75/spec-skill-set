@@ -864,7 +864,7 @@ if [ -f "$PLAN" ]; then
   done < "$OVERVIEW"
 
   awk '
-    /^\*\*A[0-9]+\.[0-9]+/ || /^- \*\*A[0-9]+\.[0-9]+/ {
+    /^\*\*A[0-9]+\.[0-9]+/ || /^- \*\*A[0-9]+\.[0-9]+/ || /^- \[[ xX]\] \*\*A[0-9]+\.[0-9]+/ {
       id = $0
       if (match(id, /A[0-9]+\.[0-9]+/)) {
         current = substr(id, RSTART, RLENGTH)
@@ -901,6 +901,54 @@ if [ -f "$PLAN" ]; then
       emit "${PLAN}: scenario ${sid} Check has no matching Gates row"
     fi
   done < "$CHECKS"
+
+  # D4 (validate opt-in): scenario title ticks + slim Done when when any title checkbox appears
+  scenario_tick_opt_in=0
+  if grep -Eq '^- \[[ xX]\] \*\*A[0-9]+\.[0-9]+' "$PLAN" 2>/dev/null; then
+    scenario_tick_opt_in=1
+  fi
+  if [ "$scenario_tick_opt_in" -eq 1 ]; then
+    awk '
+      /^\*\*A[0-9]+\.[0-9]+/ || /^- \*\*A[0-9]+\.[0-9]+/ || /^- \[[ xX]\] \*\*A[0-9]+\.[0-9]+/ {
+        id = $0
+        if (match(id, /A[0-9]+\.[0-9]+/)) {
+          sid = substr(id, RSTART, RLENGTH)
+          if (id !~ /^- \[[ xX]\] /) {
+            print sid
+          }
+        }
+      }
+    ' "$PLAN" | while IFS= read -r sid || [ -n "$sid" ]; do
+      [ -n "$sid" ] || continue
+      emit "${PLAN}: scenario ${sid} missing title checkbox (plan opted into scenario ticks)"
+    done
+
+    awk '
+      BEGIN { in_done = 0 }
+      /^### Done when/ { in_done = 1; next }
+      /^### / { if (in_done) in_done = 0 }
+      /^## / { if (in_done) in_done = 0 }
+      in_done {
+        line = $0
+        # Strip leading list / checkbox markers for the cue
+        sub(/^[[:space:]]*-[[:space:]]*/, "", line)
+        sub(/^\[[ xX]\][[:space:]]*/, "", line)
+        # Scenario-range pass: A2.1–A2.4 pass (en-dash or hyphen)
+        if (line ~ /^A[0-9]+\.[0-9]+[–-]A[0-9]+\.[0-9]+[[:space:]]+pass[[:space:]]*$/) {
+          print $0
+          next
+        }
+        # Lone scenario-id pass: A2.3 pass
+        if (line ~ /^A[0-9]+\.[0-9]+[[:space:]]+pass[[:space:]]*$/) {
+          print $0
+        }
+      }
+    ' "$PLAN" | while IFS= read -r dline || [ -n "$dline" ]; do
+      [ -n "$dline" ] || continue
+      cue=$(printf '%s' "$dline" | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//; s/^(.{60}).*/\1…/')
+      emit "${PLAN}: Done when has scenario pass line (opted-in plan): ${cue}"
+    done
+  fi
 
   # D6 (validator checks): status, Depends on marker, Pre-flight
   has_human_close=0

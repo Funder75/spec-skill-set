@@ -82,6 +82,10 @@ Phase status: `Not started`, `Started`, `Reviewing`, `Awaiting sign-off`, `Done`
 
 This repo has no work-item system. Specs come from chat or free text. If a future id scheme appears, keep title, description, and acceptance criteria, and map each criterion to a goal **Source** line (for example `WI AC2`).
 
+When a tracker is added, fill these maps next to Progress / phase-status maps (Close stays in the Tracker Phase body; the label is the glanceable signal):
+
+- **Close → label map:** human → {{label name or id}}; automated → {{label name or id}}
+
 ### Verify tiers
 
 | Tier | Verify |

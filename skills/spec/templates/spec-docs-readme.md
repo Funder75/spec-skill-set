@@ -93,6 +93,7 @@ Hand-fill either shape the same way.
 - **Fetch:** {{use Linear MCP `get_issue` by id or URL}}
 - **Tracker Spec Progress → state/label map:** {{design → …; tech → …; plan → …; implementing → …; archived → …}}
 - **Tracker Phase status → state map:** {{Not started → …; Started → …; Reviewing → …; Awaiting sign-off → …; Done → …; Deferred → …; Blocked → …; Removed → …}}
+- **Close → label map:** {{human → …; automated → …}}
 - **Optional design-stage label:** {{label name/id, or omit}}
 - **Optional default `[repo=…]`:** {{owner/name the cloud agent should use, or omit}}
 

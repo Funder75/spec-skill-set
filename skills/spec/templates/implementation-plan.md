@@ -97,9 +97,9 @@ flowchart LR
 
 ### Acceptance scenarios
 
-<!-- required. Binding. Behaviour only. Read Kind from {{feature-slug}}.spec.md (missing → feature). Feature / missing Kind: Journey title + step, or "Journey: —" when it checks a rule with no journey step. Bugfix: Trace 1:1 to one Current / Expected / Unchanged behaviour item (name the list and item); at least one scenario in the plan has Regression: yes. Check is automated or human, and the same word appears in Gates. -->
+<!-- required. Binding. Behaviour only. Read Kind from {{feature-slug}}.spec.md (missing → feature). Feature / missing Kind: Journey title + step, or "Journey: —" when it checks a rule with no journey step. Bugfix: Trace 1:1 to one Current / Expected / Unchanged behaviour item (name the list and item); at least one scenario in the plan has Regression: yes. Check is automated or human, and the same word appears in Gates. Pass state is the title checkbox; Gates stays owner-only (no tick column). -->
 
-- **A{{n}}.1 — {{short title}}**
+- [ ] **A{{n}}.1 — {{short title}}**
   - Journey: {{journey title}}, step {{n}}
   <!-- bugfix instead of Journey: use Trace + Regression, e.g. Trace: Expected behaviour › "When … the system shall …" and Regression: yes -->
   - Check: {{automated / human}}
@@ -109,10 +109,9 @@ flowchart LR
 
 ### Done when
 
-<!-- required. Binding. The tier selects the default Verify tiers row. Add a stronger command on its own line when this phase needs one (config, dependency, or generated types that only a full build catches). That does not change the tier. Who runs each line is Gates, not this list. When some scenarios are human, put those IDs on their own line. -->
+<!-- required. Binding. The tier selects the default Verify tiers row. Add a stronger command on its own line when this phase needs one (config, dependency, or generated types that only a full build catches). That does not change the tier. Who runs each line is Gates, not this list. Do not list scenario-range or lone scenario-id pass lines — those ticks live on the scenario titles. -->
 
 - [ ] Tier verify passes (Project conventions in `spec_docs/README.md`)
-- [ ] A{{n}}.1–A{{n}}.x pass
 - [ ] {{regression: existing behaviour X unchanged}}
 
 ### Gates

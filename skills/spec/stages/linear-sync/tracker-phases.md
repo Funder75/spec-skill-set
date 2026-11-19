@@ -32,7 +32,8 @@ When write-back is allowed, a plan exists, frontmatter `work_item` is a real id,
 2. Build the Tracker Phase body (below).
 3. `save_issue` create: team (and project if conventions require), title from unit name / phase ids, `description` = body, Linear API `parentId` = Tracker Spec id (flat — R10 (flat phases)). Do not nest under an Implementation container by default.
 4. Immediately write the returned id onto **every** phase in that dispatch unit as `Tracker phase: <id>`, replacing `pending`. Do not set blockers on this call. The hook ends with one **Blockers** pass, after any updates and cancels in the same hook.
-5. Do not title-search or scan descriptions for an existing phase (R8 (direct and selective update)).
+5. Apply Close labels (below) for this unit after the id is stored.
+6. Do not title-search or scan descriptions for an existing phase (R8 (direct and selective update)).
 
 ### Repairing a `pending` marker
 
@@ -43,9 +44,19 @@ A unit found with `Tracker phase: pending` means a previous create was interrupt
 When a unit already has `Tracker phase: <id>` and a source field for the body changed (or plan create/refresh asks for a refresh):
 
 1. `save_issue` update that id only: changed fields (usually `description`, optionally `title`). Prefer `addLabels` / `removeLabels` over full label replace. Any description rewrite names the spec slug and the current git branch (`unknown` when git cannot name one). A branch different from the one in the description is a source-field change. Do not put blockers on this call.
-2. Do not create a duplicate because a phase was renamed or renumbered (R8 (direct and selective update)). Preserve the stored id across renames/renumbering.
-3. Leave Linear work not referenced by frontmatter `work_item` or any `Tracker phase:` untouched (R7 (unreferenced leave)). Never `list_issues` to guess ownership.
-4. A **Depends on** change does not by itself rewrite the description. It still runs **Blockers** at the end of the hook.
+2. Apply Close labels (below) for this unit (after other label/status work on this update).
+3. Do not create a duplicate because a phase was renamed or renumbered (R8 (direct and selective update)). Preserve the stored id across renames/renumbering.
+4. Leave Linear work not referenced by frontmatter `work_item` or any `Tracker phase:` untouched (R7 (unreferenced leave)). Never `list_issues` to guess ownership.
+5. A **Depends on** change does not by itself rewrite the description. It still runs **Blockers** at the end of the hook.
+
+### Apply Close labels
+
+On every Tracker Phase create or update when write-back is allowed:
+
+1. Read the unit's **Close** from the progress overview (`human` if any member of a combinable unit is `human`).
+2. Read **Close → label map** from Project conventions (`human` and `automated` keys).
+3. When either key is missing or still a placeholder (`{{…}}`, empty, or an unfilled cue), warn once in chat, skip the Close label write, and leave existing labels unchanged. Body **Close** still goes in the Tracker Phase description.
+4. When both keys are filled names or ids: `addLabels` the label for the unit's current Close; `removeLabels` the other Close label. Prefer add/remove over a full label replace. Do not hard-code Close label strings in the skill.
 
 ### Cancel removed unit
 

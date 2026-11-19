@@ -16,7 +16,7 @@ Before handing the folder to an implement session:
 | **Decisions closed or Open** | Every architecture, persistence, or UX fork is a **D** or a **Q** item with **Blocks** set |
 | **Traceability** | Each goal is in a **Covers** line; phases list their rules, scenarios, and Done when |
 | **Named IDs** | Every `G`, `R`, `D`, `Q` citation uses the full form, such as `G1 (short name)` |
-| **Journey trace** | **Feature / missing Kind:** each acceptance scenario names its journey step, or `Journey: —`, and a **Check** of `automated` or `human`. **Kind: bugfix:** each scenario Traces 1:1 to a behaviour-list item; at least one scenario is marked Regression; the regression Close-out shape (red-before-green) is noted for implement |
+| **Journey trace** | **Feature / missing Kind:** each acceptance scenario has a title-line checkbox, names its journey step or `Journey: —`, and a **Check** of `automated` or `human`. **Kind: bugfix:** each scenario Traces 1:1 to a behaviour-list item; at least one scenario is marked Regression; the regression Close-out shape (red-before-green) is noted for implement |
 | **Read first** | Each phase links the tech-doc sections it needs, not whole docs |
 | **Failure modes** | Empty, error, and permission (or an explicit "n/a") where the work touches users or stored data |
 | **Phase sizing** | As few phases as safely possible; verify for the phase tier passes at the end; split only for a real reason — see [Phase sizing](#phase-sizing) |
@@ -117,7 +117,8 @@ The progress overview **Close** column and the phase **Close** line use the same
 - Set each acceptance scenario **Check** to `automated` or `human`.
 - **automated** when a command, a test, or the review can show the result from the repo.
 - **human** when a person must judge the result: visual or copy, a host or device the agent cannot run, auth or secrets sign-off, persisted data that must keep working, or a migration.
-- **Gates** lists those checks. Owner matches **Check**. One row may cover a range that shares an owner.
+- Put pass state on the scenario title checkbox. **Gates** lists those checks. Owner matches **Check**. One row may cover a range that shares an owner. Do not add a Gates tick column.
+- **Done when** lists the tier verify, any stronger command, and phase-specific regressions only — not `A2.1–A2.4 pass` or lone scenario-id pass lines.
 - **Close** is `human` if any owner is `human`. Otherwise `automated`.
 - A combinable group is `human` if any member is `human`. A sub-task takes its phase's **Close**.
 - **Ask-before** is a person stop during the phase. Write `—` when there is none. It does not replace **Close**. A security choice is **Ask-before** and **Close** `human` when a person must accept the result.
@@ -143,6 +144,8 @@ When a later phase must wait for person accept of an earlier **Close** `human` p
 | Improved booking UX | User can create a desk booking from the chat composer; conflict shows inline error copy X |
 | Types updated | `Booking` includes `resourceId`; `createBooking` rejects a missing resource with validation error Y |
 | Works on mobile | Primary flow usable at 390px width; no horizontal scroll on the booking sheet |
+| `- [ ] A2.1–A2.4 pass` (or lone `A2.3 pass`) in Done when | Tier verify / stronger command / regression lines only; scenario ticks on the title lines |
+| Plain scenario titles with range pass lines in Done when | `- [ ] **A2.1 — …**` on each scenario; Done when stays slim |
 
 ### Non-goals
 
@@ -194,6 +197,7 @@ When a later phase must wait for person accept of an earlier **Close** `human` p
 | **Close** `human` on a rename because the tier is High | `automated` — typecheck catches misses; no person check |
 | "Manual test" in **Done when**, and **Close** `automated` | **Gates** owner `human`, and **Close** `human` |
 | Every phase `human` with no person check named | `automated` where commands cover the scenarios; `human` only for a named person check |
+| Scenario range listed only in Done when so a reviewer must hop to tick it | Title checkbox on the scenario; Gates stays owner-only |
 
 ### Risks
 
