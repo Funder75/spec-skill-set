@@ -6,7 +6,7 @@ epic: fewer-human-stops
 
 # Scenario check-off
 
-**Progress:** implementing
+**Progress:** archived
 **Depth:** standard
 **Kind:** feature
 **Depends on:** defer-human-gates
