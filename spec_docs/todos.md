@@ -4,6 +4,18 @@ Ideas for before moving into specs.
 
 Once promoted to a spec - we should remove it entirely from here.
 
+## Small to-do's (or features that needs elaboation)
+
+- "Kind" should be part of the meta data of the markdown
+- Better collabotae tools
+- UI wireframes should be a more integrated part of epics and spec's
+- Spec and epic doc should be readable by stakeholders, ui designers and Product owners - it should be iterated by non techies before promoting.
+- Better mono repo support
+- Generic tracker support - not just linear (if possible). Also now we sometime refer to it as linear and other times as tracker. It should be "tracker"
+- Check if a linear synced plan is updated if the phases are started from cursor ide / cursor cloud agents
+- The "close" in the plan: Any way to plan so that agents can get as far as possible without human interaction, leaving human interaction last or defered? This will greatly improve implementation time.
+- Add Close labels (human / automated) to linear tasks from plan phases
+
 ## `converge` before archive, plus an "As built" note
 
 **Borrowed from:** Spec Kit `converge`, OpenSpec `sync`/`archive`, GSD `VERIFICATION.md`, and Superpowers' final whole-branch review.
@@ -73,3 +85,8 @@ Superpowers' own guidance says to use this form only for **discipline** failures
 **Borrowed from:** BMAD retrospective and Superpowers finishing-a-branch.
 
 After converge (above), ask one question: "Anything to add to **Project conventions**?" Examples are a missing verify command, a new hotspot, or a principle. If the answer is yes, route to `fill-conventions.md`. This makes each finished spec improve the next one.
+
+## Handle mono repos better
+
+Especially for "Q12 — Other commands", can be very service specific.
+
