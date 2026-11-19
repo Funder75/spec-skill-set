@@ -6,7 +6,7 @@ epic: fewer-human-stops
 
 # Defer human gates
 
-**Progress:** implementing
+**Progress:** archived
 **Depth:** full
 **Kind:** feature
 **Depends on:** —

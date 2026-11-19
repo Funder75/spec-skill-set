@@ -13,6 +13,7 @@ Once promoted to a spec - we should remove it entirely from here.
 - Better mono repo support
 - Generic tracker support - not just linear (if possible). Also now we sometime refer to it as linear and other times as tracker. It should be "tracker"
 - Check if a linear synced plan is updated if the phases are started from cursor ide / cursor cloud agents
+- An epic suggested specs does not show the state of the specific spec (especially important if done)
 
 ## `converge` before archive, plus an "As built" note
 
