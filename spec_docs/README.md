@@ -29,7 +29,7 @@ For a short first-read overview (folder role, write loop, tips), see the [projec
 
 `Kind` in `<slug>.spec.md` is `feature` (default) or `bugfix`. Say `create … as bugfix` (alone or with a Depth) to set Kind without a recommend ask. Lite is recommended for many bugs, not required. Bugfix design uses behaviour lists and Root cause instead of User journeys and Work split. Older folders without Kind are treated as feature.
 
-`create epic` writes `<slug>.epic.md` only. Each suggested spec is a numbered section such as `S1 (short name)`. `/spec create spec for` an epic file adds one child from that section: the child's frontmatter `epic` and **Source** point back at the epic. Tasks that are not specs are done by hand or in a chat. They do not get a folder. `/spec linear sync` asks whether the epic is a new Linear project or an issue, then pushes that choice. A project is not also created as an issue. Syncing a child whose `epic` is set nests its Tracker Spec as a sub-issue of the epic issue, or under the epic's Linear project. Tracker text is not pulled back.
+`create epic` writes `<slug>.epic.md` only. Each suggested spec is a numbered section such as `S1 (short name)`. `/spec create spec for` an epic file adds one child from that section: the child's frontmatter `epic` and **Source** point back at the epic, and that section gets `**Status:** created`. Archiving the child sets that section's Status to `done`. Tasks that are not specs are done by hand or in a chat. They do not get a folder. `/spec next` on an epic (and a refuse of implement or promote on that epic) names each suggested section's Status from the epic (`created`, `done`, or absent). `/spec linear sync` asks whether the epic is a new Linear project or an issue, then pushes that choice. A project is not also created as an issue. Syncing a child whose `epic` is set nests its Tracker Spec as a sub-issue of the epic issue, or under the epic's Linear project. Tracker text is not pulled back.
 
 Not sure a folder is needed? `/spec explore` is read-only: no-spec / Depth+slug / spike; nothing under `spec_docs/`. When create's Depth heuristics prefer lite, the Depth round also offers **no folder**.
 
@@ -40,7 +40,7 @@ Full path:
 3. **Implementation plan** — `<slug>.plan.md`: phases, Done when, phase status, and **Close** (`automated` or `human`) (`Progress: plan`).
 4. **Implement** one phase at a time (`Progress: implementing`). When the work is done, move the folder to `archive/` (`Progress: archived`).
 
-`Progress` in `<slug>.spec.md` is the gate: `design`, `tech`, `plan`, `implementing`, or `archived`. Phase status (`Not started` through `Done`, plus `Deferred` and `Blocked`) lives only in `<slug>.plan.md`.
+`Progress` in `<slug>.spec.md` is the gate: `design`, `tech`, `plan`, `implementing`, or `archived`. Phase status (`Not started` through `Done`, plus `Awaiting sign-off`, `Deferred`, and `Blocked`) lives only in `<slug>.plan.md`.
 
 Invoke the **spec** skill with `/spec`. Examples: `/spec explore`, create a spec from a note or a work item (optionally `as lite`, `as bugfix`, or both), `/spec next`, promote to tech specs, promote to an implementation plan, implement the next phase, audit or review a spec, archive, sync with Linear.
 
@@ -70,11 +70,11 @@ IDs carry a short name, for example `G1 (writing style)`:
 
 To find every citation of an ID, search for the ID and the opening parenthesis, for example `G1 (`. A plain `G1` search also hits `G10`.
 
-Phase status: `Not started`, `Started`, `Reviewing`, `Done`, `Deferred`, `Blocked`.
+Phase status: `Not started`, `Started`, `Reviewing`, `Awaiting sign-off`, `Done`, `Deferred`, `Blocked`.
 
 **Tier** rates how hard a phase is to implement (Low / Medium / High) so the implementer can choose effort. It also selects the default verify row under **Project conventions**.
 
-**Close** on each plan phase is `automated` or `human`. The same word is in the progress overview. `automated` means verify and the agent review can mark the phase Done. `human` means a person continues after that review. **Gates** names who runs each check.
+**Close** on each plan phase is `automated` or `human`. The same word is in the progress overview. `automated` means verify and the agent review can mark the phase Done. `human` means after that review the phase moves to `Awaiting sign-off` until a person accepts (batched when the ready queue is empty). **Gates** names who runs each check. Owner may be `automated`, `agent` (in-session observation with Close-out evidence; counts as automated for Close), or `human` (required for auth, secrets, stored data, and migrations).
 
 ## Project conventions
 
@@ -82,15 +82,19 @@ Phase status: `Not started`, `Started`, `Reviewing`, `Done`, `Deferred`, `Blocke
 
 This repo has no work-item system. Specs come from chat or free text. If a future id scheme appears, keep title, description, and acceptance criteria, and map each criterion to a goal **Source** line (for example `WI AC2`).
 
+When a tracker is added, fill these maps next to Progress / phase-status maps (Close stays in the Tracker Phase body; the label is the glanceable signal):
+
+- **Close → label map:** human → {{label name or id}}; automated → {{label name or id}}
+
 ### Verify tiers
 
 | Tier | Verify |
 | ---- | ------ |
-| Low | {{command}} |
-| Medium | {{command}} |
-| High | {{command}} |
+| Low | `/bin/sh skills/spec/scripts/validate spec_docs/<slug>/` |
+| Medium | `/bin/sh skills/spec/scripts/validate spec_docs/<slug>/` |
+| High | `/bin/sh skills/spec/scripts/validate spec_docs/<slug>/` |
 
-{{Where to run the commands, and any setup they assume.}}
+Run from the repo root. Replace `<slug>` with the folder name under `spec_docs/`. No extra setup.
 
 ### Complexity hotspots
 
@@ -106,12 +110,10 @@ The skill reads this when filling `<slug>.contracts.md` and `<slug>.ui.md`.
 
 ### Documenting changes
 
-- **Policy:** {{required on public/API surface changes | always when behaviour changes | none}}
-- **Project docs:** README.md and related paths
-- **Code docs:** {{JSDoc / TSDoc / rustdoc / … — which surfaces, or none}}
-- **Other markdown:** {{docs/…, CONTRIBUTING, changelog, or none}}
-
-{{Any project-specific rule, for example "public exports only" or "no changelog".}}
+- **Policy:** always when behaviour changes
+- **Project docs:** `README.md` and related paths
+- **Code docs:** none
+- **Other markdown:** `spec_docs/README.md`, `skills/spec/templates/spec-docs-readme.md` when status lists or implement behaviour change
 
 ### Other commands
 

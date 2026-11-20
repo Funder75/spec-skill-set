@@ -47,7 +47,7 @@ Source: {{…}}
 
 ## Suggested specs
 
-<!-- required. One section only. When there are no specs, the body is the single word none and there is no ### heading. Do not drop this section, and do not write a capitalised None. When specs exist, replace none with one ### section per spec, using the shape in the comment below. Do not emit a dependency table. Number from S1 upward and never reuse a number. The parenthetical name is 2–4 lowercase words. Slug is kebab-case, unique, and different from the epic slug. Depends on is the single character — when the spec can start alone, or a comma-and-space list of other suggested specs in full form (S1 (short name)) and task names from ## Tasks. It does not name a phase, a slug, or this spec's own id. No status, tier, or verify line. The four bullets plus Outcomes are the seed a later create spec for copies into the child. Add prose when that create would otherwise need another scope interview. -->
+<!-- required. One section only. When there are no specs, the body is the single word none and there is no ### heading. Do not drop this section, and do not write a capitalised None. When specs exist, replace none with one ### section per spec, using the shape in the comment below. Do not emit a dependency table. Number from S1 upward and never reuse a number. The parenthetical name is 2–4 lowercase words. Slug is kebab-case, unique, and different from the epic slug. Depends on is the single character — when the spec can start alone, or a comma-and-space list of other suggested specs in full form (S1 (short name)) and task names from ## Tasks. It does not name a phase, a slug, or this spec's own id. New seeds omit Status. After create spec for, the section has **Status:** created; after the child is archived, **Status:** done. No tier or verify line. The four bullets plus Outcomes are the seed a later create spec for copies into the child. Add prose when that create would otherwise need another scope interview. -->
 
 none
 
@@ -57,6 +57,7 @@ none
 
 **Slug:** {{child-slug}}
 **Depends on:** —
+**Status:** {{omit on seed · created after create spec for · done after child archive}}
 
 - **What:** {{…}}
 - **Why:** {{…}}

@@ -4,7 +4,7 @@ Execute one phase (or one sub-task, or one combinable group) of `<slug>.plan.md`
 
 ## Preconditions
 
-**Epic folder.** When `spec_docs/<slug>/<slug>.epic.md` is present, stop here, before step 1 and before Phase selection (R4 (refuse gates)). Reply with [SKILL.md](../SKILL.md) › Stage detection › Refusal, naming each suggested spec and the task names, or none. Do not start phase work, set a status, or change the folder. A child slug is its own folder and is not stopped here. This stop covers implement and continue only. Archive is unchanged.
+**Epic folder.** When `spec_docs/<slug>/<slug>.epic.md` is present, stop here, before step 1 and before Phase selection (R4 (refuse gates)). Reply with [SKILL.md](../SKILL.md) › Stage detection › Refusal, naming each suggested spec (with Status from the epic) and the task names, or none. Do not start phase work, set a phase status, or change the folder. A child slug is its own folder and is not stopped here. This stop covers implement and continue only. Archive of a child may update the parent epic's S Status.
 
 1. Open `spec_docs/<slug>/`. If it is under `archive/`, stop unless they asked for a doc correction.
 2. `Progress` is `plan` or `implementing`, and `<slug>.plan.md` exists with no `{{…}}` and no `[SUGGESTION:`. If not, stop and name the missing gate.
@@ -14,14 +14,14 @@ On the first phase that leaves **Not started**, set `Progress: implementing` in 
 
 ## Phase selection
 
-1. If a phase is `Started`, `Reviewing`, or `Blocked` → continue that phase. If it is `Started` from a prior session (not one just set in this turn), first inspect the scoped working-tree changes for that phase's deliverables, read-only (for example `git status` / `git diff` on the paths the phase names), and record what you find (matches plan, partial, or unexpected) before continuing — do not assume the tree matches the plan's Close-out, which may be empty.
-2. Else the first phase that is not `Done` or `Deferred`.
-3. It may start only when every phase in its **Depends on** cell is `Done` or `Deferred`. `—` means no dependency.
+1. If a phase is `Started` or `Reviewing` → continue that phase. If it is `Started` from a prior session (not one just set in this turn), first inspect the scoped working-tree changes for that phase's deliverables, read-only (for example `git status` / `git diff` on the paths the phase names), and record what you find (matches plan, partial, or unexpected) before continuing — do not assume the tree matches the plan's Close-out, which may be empty. `Blocked` and `Awaiting sign-off` are parked states, not automatic continue-targets, and do not occupy the active slot (R4 (active slot)).
+2. Else the first ready phase whose status is `Not started` and whose **Depends on** is satisfied (below). A blocked unit resumes only when the person explicitly names that phase or asks to resume the blocked unit; set it to `Started` before continuing it.
+3. **Depends on.** `—` means no dependency. Parse each token as a bare phase id or `<id> (needs sign-off)` (D4 (marker syntax)); any other shape is a defect — stop and name it. A token is satisfied when its target is `Done` or `Deferred`, or when the target is `Awaiting sign-off` and the token is unmarked (R5 (depends default)). A token is **not** satisfied when the target is `Blocked`, still open (`Not started` / `Started` / `Reviewing`), or `Awaiting sign-off` with the needs-sign-off mark — the dependent MUST NOT start until that clears (R5 (depends default), R7 (blocked dependents)). Name the blocking entry when stopping.
 4. Before starting the unit, scan `<slug>.spec.md` **Open questions** for a **Blocks** line naming this phase (by number) or naming a gate this unit would cross. If one exists and is unresolved, stop and name the question instead of starting.
 5. If **Combinable with** names the next siblings and the user wants one session, implement them together when the combined work still has one verifiable outcome.
-6. If an upstream phase is still open, stop and report the blocker.
+6. A `Blocked` phase is parked outside the active slot and stalls only phases that list it in **Depends on**. Independents whose Depends on is satisfied MAY start (subject to the one-active-unit rule) (R7 (blocked dependents)). Unmarked `Awaiting sign-off` does not block unmarked dependents. If no ready phase remains and any phase is still `Awaiting sign-off`, go to Stop and resume › Batched sign-off — do not invent work. If only blocked work remains, name it and stop; do not resume it without an explicit request.
 
-When starting an allowed phase, set it to `Started`.
+When starting an allowed phase, first inspect every phase currently `Awaiting sign-off`. In each such phase's **Close-out**, append the starting dispatch unit's phase id(s) to `Ran while awaiting`, comma-separated and without duplicates; if an older plan lacks that line, add it. This plan-body record is required even when the new unit is independent and even when Linear write-back is unavailable. Then set the selected unit to `Started`.
 
 Before writing code, tell the user the phase, its tier, the reason, its **Close**, and the exact verify / Done-when command(s) that will run, so they can switch model or effort, see whether a person must continue, and see what will execute before it runs. A combinable group uses the highest tier among its members. Its **Close** is `human` if any member is `human`; otherwise `automated`. A sub-task uses its phase's tier and **Close**. When `Depth: lite` and the phase has no explicit tier reason that raises it, prefer **Low**.
 
@@ -33,7 +33,7 @@ Match the session to the tier:
 - **Medium.** Read the linked tech section, and check the failure-mode scenarios before closing.
 - **High.** Before writing code, state the approach and how it handles the deciding factor. Read the callers of any contract that changes. Ask before any fork. Record in **Close-out** how each failure mode was checked.
 
-Match the session to **Close**. Run the **Gates** rows owned `automated`. Leave rows owned `human` unchecked. Do not treat a human check as passed because the review subagent was satisfied.
+Match the session to **Close**. Run the **Gates** rows owned `automated` or `agent`. Leave rows owned `human` unchecked. Do not treat a human check as passed because the review subagent was satisfied. For each `agent` row: observe in-session, record Close-out evidence (short note plus path or artifact ref), then mark passed. If required observation tools are unavailable, MUST NOT pass the row — stop and ask, or retag it `human` and record that under Close-out.
 
 If the rating turns out wrong, update the label in the progress overview and the phase block, and record the change under **Close-out** deviations. If the work needs a person and **Close** says `automated`, set **Close** to `human` in the overview and on the phase, and record it under **Close-out**. Do not change `human` to `automated` unless the user asks.
 
@@ -44,7 +44,7 @@ If the rating turns out wrong, update the label in the progress overview and the
 1. Count remaining dispatch units (each open phase, or one combinable group as one unit). Prefer one active spec at a time unless the user is explicitly working on another.
 2. **More than one unit left** → serial subagent-driven development (SDD): the parent MUST dispatch a fresh implementer for the next legal unit and MUST NOT keep implementing the next unit in the same bloated parent session. Soft escapes stay rare (already-started unit; short clarification; research-only) and MUST NOT become a second default.
 3. **One phase, or already one combinable unit** → the parent implements in the current session (or one cloud paste). Serial multi-agent ceremony MUST NOT be required.
-4. Parallel implementers MUST NOT run. Only one unit may be `Started`, `Reviewing`, or `Blocked`. A unit starts only when every phase in its **Depends on** cell is `Done` or `Deferred`.
+4. Parallel implementers MUST NOT run. Only one unit may be `Started` or `Reviewing` (R4 (active slot)). `Blocked` and `Awaiting sign-off` MUST NOT count against that set. A unit starts only when Phase selection › **Depends on** is satisfied (unmarked `Awaiting sign-off` may satisfy; needs-sign-off and `Blocked` targets do not).
 5. Default checkout is the shared working tree. Cloud, implementation branch, and worktree are separate Ask-before items (see below). Branch consent does not imply worktree, and the reverse does not hold.
 
 ### Phase brief
@@ -99,7 +99,7 @@ Keep this table and the Phase brief field list the source of truth for Tracker P
 
 Prefer create/refresh when the plan is written ([plan.md](plan.md) › Tracker Phases). If the active unit still has `Tracker phase: n/a` at or just before first implement on that unit, run [linear-sync/tracker-phases.md](linear-sync/tracker-phases.md) › Create when write-back is allowed (R4 (freeze before plan) fallback).
 
-- **Allowed.** `<slug>.plan.md` exists, frontmatter `work_item` is a real id, conventions + Linear MCP ok → create missing Tracker Phase(s) for this unit only; write returned id(s); body from Phase brief / Env checklist fields.
+- **Allowed.** `<slug>.plan.md` exists, frontmatter `work_item` is a real id, conventions + Linear MCP ok → create missing Tracker Phase(s) for this unit only; write returned id(s); body from Phase brief / Env checklist fields. Then run [linear-sync/tracker-phases.md](linear-sync/tracker-phases.md) › Blockers for every unit that already has a real id, not only the unit just created.
 - **Bare basename.** Only `implementation-plan.md` (no slug prefix) is present → stop and tell the user to rename it to `<slug>.plan.md` first (`SKILL.md` › Spec docs); do not read it as the plan.
 - **`work_item: n/a` (or missing).** Skip; no Linear discovery on this routine hook (R22 (reference gate)).
 - **No plan file.** Impossible here (preconditions require a plan); elsewhere Tracker Phases stay a no-op (R5 (thin noop)).
@@ -113,13 +113,13 @@ Do not auto-assign Cursor.
 - Before writing code: name the existing file to extend. A new file, module, or abstraction needs a one-line reason (reused by two or more callers, the existing file would become unwieldy, or a real lifecycle boundary). No new packages without asking.
 - Smallest correct change. Do not start later phases.
 - Do not add a second implementation of something that already exists nearby.
-- Run the **Gates** rows owned `automated`: the default commands in **Verify tiers** for this phase's tier, plus any stronger command named in **Done when**. If **Verify tiers** is still the placeholder, ask. If the tier row is the explicit value `none` (no command by design), that is not a placeholder: the phase's **Close** must be `human`, or its **Gates** row must name review-observable evidence instead of a command — a `none` row with **Close** `automated` and no named evidence is a defect; stop and ask. Ask before running any command that is not already listed in **Verify tiers** or **Other commands** in `spec_docs/README.md`, or that pipes to a shell, fetches over the network, or touches paths outside the repo — name the command first and get a go-ahead. Record commands and the automated scenarios under **Close-out** as pass or fail plus a redacted excerpt. Leave **Gates** rows owned `human` unchecked. Record any deviation from advisory text under **Close-out** too.
-- **Verify failure budget.** On a failing verify command, fix and re-run up to 2 more times (3 attempts total) in the same session. If it still fails, stop: set status `Blocked`, and fill the Close-out **Blocked** line with the reason, the date, and the last failing command, plus a short output summary (the error, not the full log) and which files were touched so far. Record that result as pass or fail plus a redacted excerpt. Do not mark `Reviewing` over a failing required command, and do not leave `Started` with no record of the failure.
+- Run the **Gates** rows owned `automated` or `agent`: the default commands in **Verify tiers** for this phase's tier, plus any stronger command named in **Done when**, plus in-session observation for `agent` rows. If **Verify tiers** is still the placeholder, ask. If the tier row is the explicit value `none` (no command by design), that is not a placeholder: the phase's **Close** must be `human`, or its **Gates** row must name review-observable evidence instead of a command — a `none` row with **Close** `automated` and no named evidence is a defect; stop and ask. Ask before running any command that is not already listed in **Verify tiers** or **Other commands** in `spec_docs/README.md`, or that pipes to a shell, fetches over the network, or touches paths outside the repo — name the command first and get a go-ahead. Record commands and the automated / agent scenarios under **Close-out** as pass or fail plus a redacted excerpt. For each passed `agent` row, Close-out MUST name the check and point at evidence (path or artifact ref plus a short note); MUST NOT inline screenshot binaries or large blobs in the plan. Leave **Gates** rows owned `human` unchecked. When an automated or agent Gates row for a scenario passes, set that scenario's title checkbox to checked. Leave human scenario title ticks unchecked until the person accepts that check (batched or named). Do not treat a human scenario as passed because the review subagent was satisfied. Record any deviation from advisory text under **Close-out** too.
+- **Verify failure budget.** On a failing verify command, fix and re-run up to 2 more times (3 attempts total) in the same session. If it still fails, stop work on that unit: set status `Blocked`, and fill the Close-out **Blocked** line with the reason, the date, and the last failing command, plus a short output summary (the error, not the full log) and which files were touched so far. Record that result as pass or fail plus a redacted excerpt. The parent returns to Phase selection so an independent ready unit may run; if none is ready, stop and name the parked unit. Do not mark `Reviewing` over a failing required command, and do not leave `Started` with no record of the failure.
 - **No secret values.** Close-out records pass or fail and a redacted excerpt. Never paste tokens, passwords, keys, or secret-file contents.
 - An out-of-scope finding goes under **Follow-ups** (added, phase, task, destination). Do not fix it in this phase.
 - After verify, the worker MUST update the plan on its checkout: Done-when checkboxes, **Close-out**, and status to `Reviewing`. The worker MUST NOT mark `Done`. Report-only to the parent (no plan edit) does not count as finished (R6 (worker writeback), D9 (done timing)).
 - **Regression Close-out (bugfix).** When the phase has a scenario marked **Regression: yes** (typical for `Kind: bugfix`), Reviewing / Done **Close-out** MUST record red-before-green for that scenario: the check failed without the fix and passed with it (command, manual repro, or equivalent). Green-only evidence for that scenario is a defect — do not mark `Reviewing` until it is recorded. This applies to the regression scenario only; it does not force TDD for every phase.
-- Tell the user how to verify, and name any **Gates** row still owned `human`.
+- Tell the user how to verify, and name any **Gates** row still owned `human`. When the phase also has evidenced `agent` rows and **Close** is `human`, say those agent evidence refs will appear in the batched sign-off set.
 
 If implementation shows `<slug>.spec.md` scope, non-goals, or glossary are wrong, stop and update the spec, then the siblings that reference the change. Do not build around the mismatch.
 
@@ -129,16 +129,19 @@ Use these values in the progress overview (and on sub-tasks if present):
 
 | Status | When |
 | ------ | ---- |
-| **Not started** | No work yet |
+| **Not started** | No currently valid run: either no work yet, or cascade reopen invalidated an earlier run and its checkboxes/evidence are marked stale |
 | **Started** | In progress, including a session that ends mid-phase or a fix re-dispatch |
-| **Reviewing** | Worker finished automated verify and Close-out; agent review pending, or **Close** is `human` and a person has not continued |
-| **Done** | Parent marks after the review passes when **Close** is `automated`, or after a person continues when **Close** is `human`; every automated Done-when item verified and **Close-out** filled |
+| **Reviewing** | Worker finished automated verify and Close-out; agent review pending only (not the human sign-off halt) |
+| **Awaiting sign-off** | Agent review passed; **Close** is `human`; person has not yet accepted (see D2 (status name)). Does not occupy the active slot |
+| **Done** | Parent marks after the review passes when **Close** is `automated`, or after the person accepts from `Awaiting sign-off` when **Close** is `human`; every automated Done-when item verified and **Close-out** filled |
 | **Deferred** | Remaining Done-when items for this phase deliberately dropped, and the drop is noted in **Close-out** or **Follow-ups** |
-| **Blocked** | Stuck after exhausted fix budget or person Ask-before. Reason, date, and last failing command go on the Close-out **Blocked** line |
+| **Blocked** | Parked after exhausted fix budget or person Ask-before. Does not occupy the active slot; resume only when the person explicitly names it. Reason, date, and last failing command go on the Close-out **Blocked** line |
 
-Only one phase (or combinable group) may be `Started`, `Reviewing`, or `Blocked` at a time. Under serial SDD, after the parent marks a unit `Done`, the runner may start the next ready unit whose **Close** is `automated` without asking (see Stop and resume). A unit with **Close** `human` stays `Reviewing` after the agent review until a person continues. Otherwise leave later units `Not started` until continue.
+Only one phase (or combinable group) may be `Started` or `Reviewing` at a time. `Blocked` and `Awaiting sign-off` MUST NOT count against that set (R4 (active slot)). Under serial SDD, after the parent marks a unit `Done`, parks it as `Blocked`, or moves it to `Awaiting sign-off`, the runner may start the next ready unit (Phase selection) whose **Close** is `automated` without asking (see Stop and resume). After review pass, **Close** `human` MUST move to `Awaiting sign-off` — MUST NOT leave `Reviewing` as the sole active halt (R3 (awaiting after review)). Otherwise leave later units `Not started` until continue or batch sign-off.
 
 Ask before: a new dependency, a fork that changes the approach, a security or data-migration choice, cloud agent, implementation branch, worktree, commit / push / PR, archiving, or setting a phase to `Deferred`. Cloud, branch, and worktree are distinct asks — one does not imply another. Chat consent is enough; there is no project-level SCM opt-in. When the run already is a Cursor Cloud Agent, cloud consent is implied; extra branch / worktree / commit still need an ask unless that runner's normal branch story applies.
+
+**Skip recorded pre-flight.** When an Ask-before item already has an Answer in the plan's top-level Pre-flight section, MUST NOT re-ask it (R2 (no re-ask)). Stop only for an unpredicted person input. When recording any Ask-before or Pre-flight answer that names a secret, record the secret **name** only — never the value — in the plan, Close-out, or Linear (R11 (secret names only)).
 
 **MUST NOT:** Create a branch, worktree, or commit unless the user explicitly asked in this conversation. Default serial SDD uses the shared checkout.
 
@@ -154,9 +157,9 @@ When a phase (or combinable unit) status changes in the plan, run [linear-sync/s
 
 ## Review gate
 
-**In short:** After the worker marks `Reviewing`, the parent runs exactly one review subagent. **Close** `automated` may then become `Done`. **Close** `human` stays `Reviewing`. Fail gets one autofix, then the same reviewer re-checks only its findings. Still failing → `Blocked`. Dual reviewers are forbidden.
+**In short:** After the worker marks `Reviewing`, the parent runs exactly one review subagent. **Close** `automated` may then become `Done`. **Close** `human` moves to `Awaiting sign-off` and frees the active slot. Fail gets one autofix, then the same reviewer re-checks only its findings. Still failing → `Blocked`. Dual reviewers are forbidden.
 
-After the worker marks `Reviewing`, the parent MUST run exactly one review subagent before marking `Done` or escalating (R7 (required review), D9 (done timing)). The review checks spec compliance and code quality for that unit only. It does not pass a **Gates** row owned `human`.
+After the worker marks `Reviewing`, the parent MUST run exactly one review subagent before marking `Done`, moving to `Awaiting sign-off`, or escalating (R7 (required review), D9 (done timing)). The review checks spec compliance and code quality for that unit only. It does not pass a **Gates** row owned `human`. It treats evidenced `agent` rows like automated rows for pass or fail, and MUST NOT pass an `agent` row whose Close-out lacks the check name and evidence ref.
 
 Pass the reviewer a Review packet with at least:
 
@@ -169,40 +172,56 @@ Pass the reviewer a Review packet with at least:
 | Close (`automated` or `human`, from the plan) | yes |
 | Close-out (commands, results, deviations) | yes |
 
-The reviewer returns a verdict of `pass` or `fail`. For each automated **Gates** row, cite the **Close-out** result, re-run the cheapest automated row and record that result, or say why it could not be run. A packet with no Close-out is not a pass.
+The reviewer returns a verdict of `pass` or `fail`. For each automated or agent **Gates** row, cite the **Close-out** result, re-run the cheapest automated row and record that result, or say why it could not be run. For an `agent` row, confirm Close-out names the check and an evidence ref. A packet with no Close-out is not a pass. When Close-out shows an automated or agent scenario Gates row passed, confirm that scenario's title checkbox is checked (or note the miss as a finding).
 
-**On pass.** If **Close** is `automated`, the parent marks `Done`. If **Close** is `human`, leave `Reviewing` and halt — that halt is the human gate, not a second agent. Do not infer **Close** from Done when. A missing or disagreed **Close** stops the run (see Phase selection).
+**On pass.** If **Close** is `automated`, the parent marks `Done` — MUST NOT enter `Awaiting sign-off`. If **Close** is `human`, reset that phase's Close-out `Ran while awaiting` to `—` (add the line on an older plan), move to `Awaiting sign-off` (R3 (awaiting after review), D2 (status name)), and free the active slot so another ready unit may start; MUST NOT leave `Reviewing` as the sole active halt after that pass. Resetting the line starts a new durable awaiting interval; later starts append to it as Phase selection requires. Do not infer **Close** from Done when. A missing or disagreed **Close** stops the run (see Phase selection).
 
-**On fail.** Re-dispatch the implementer once for a bounded fix (D8 (review fail), D10 (fix budget)). The worker re-runs the automated **Gates** rows after the fix and updates **Close-out**. The same reviewer then re-checks only its findings (a continuation of that review, not a second reviewer). If findings remain after that attempt, mark `Blocked`, fill the Close-out **Blocked** line (reason, date, last failing command) and Follow-ups, and wait for continue.
+**On fail.** Re-dispatch the implementer once for a bounded fix (D8 (review fail), D10 (fix budget)). The worker re-runs the automated **Gates** rows after the fix and updates **Close-out**. The same reviewer then re-checks only its findings (a continuation of that review, not a second reviewer). If findings remain after that attempt, mark `Blocked`, fill the Close-out **Blocked** line (reason, date, last failing command) and Follow-ups, then return to Phase selection. Run an independent ready unit when one exists; otherwise stop and name the parked blocked unit.
 
 A dual-reviewer loop (two review agents) MUST NOT be required.
 
 ## Stop and resume
 
-**In short:** Auto-continue units whose **Close** is `automated`. Halt when **Close** is `human`, the unit is `Blocked`, or a person must answer **Ask-before**. Resume finishes the open unit first.
+**In short:** Auto-continue units whose **Close** is `automated`. After review pass, **Close** `human` → `Awaiting sign-off` (slot frees). `Blocked` parks that unit and independent work may continue. Halt for an unpredicted Ask-before, an explicitly resumed blocked unit that still cannot proceed, or batched sign-off when the ready queue is empty. Resume finishes an open `Started` / `Reviewing` unit first.
 
-The runner MUST continue automatically across units whose **Close** is `automated` without asking "should I continue?" (R8 (stop resume)). It MUST NOT halt solely because the worker set `Reviewing` for the agent review gate when **Close** is `automated`. After that review passes, mark `Done` and start the next ready unit — unless that unit had its own checkout (cloud or branch/worktree), in which case integration gates the start (next bullet).
+The runner MUST continue automatically across units whose **Close** is `automated` without asking "should I continue?" (R8 (stop resume)). It MUST NOT halt solely because the worker set `Reviewing` for the agent review gate when **Close** is `automated`. After that review passes, mark `Done` and start the next ready unit — unless that unit had its own checkout (cloud or branch/worktree), in which case integration gates the start (next bullet). After review pass on **Close** `human`, move to `Awaiting sign-off` (not stay `Reviewing`) and, when Phase selection allows, start the next ready unit (R3 (awaiting after review), R4 (active slot)).
 
 It MUST stop when:
 
-- **Close** is `human` after the agent review pass (`Reviewing` stays until a person continues)
-- The unit is `Blocked` after a failed fix loop
-- An Ask-before item only a person can answer
+- No ready phase remains and one or more phases are `Awaiting sign-off` — batched sign-off (below)
+- The explicitly resumed unit is still `Blocked` after its retry, or only blocked units remain (independents continue first; see Phase selection)
+- An Ask-before item only a person can answer **and** that item has no recorded Pre-flight Answer on the plan (R2 (no re-ask)). Skip re-asking recorded pre-flight items; secret answers record the name only (R11 (secret names only))
 - The just-finished unit ran on its own checkout or branch (cloud agent, worktree, or branch) and a dependent unit is next: stop and ask the person to integrate that branch (code + plan edits) into the shared checkout before dispatching the dependent unit (see Env checklist › Integrate before next). A unit with no dependents, or a unit that was implemented directly in the shared checkout, is not gated by this.
 
-Resume uses the same `/spec implement` / continue entry: finish the open `Reviewing` / `Blocked` unit first, then pick the next ready unit. On resuming a `Reviewing` unit whose **Close** is `human`, list the pending human **Gates** rows once, as one set. A bare `implement` or `continue`, with no word that the phase was reviewed, is not acceptance — show that set and stop. Any other reply that accepts the phase (`reviewed`, `confirmed`, `approved`, `accept`, or those words with the phase named) accepts every pending human gate in the set. Do not ask the person to name each row, each scenario, or to repeat a set phrase. Record that acceptance under **Close-out**, naming the rows in the set, then mark `Done`. If the reply names only some rows, accept those and leave the others pending.
+### Batched sign-off
 
-The controller MUST NOT invent rulings that replace Ask-before for security or irreversible ops. The controller MUST NOT mark a human **Gates** row passed unless the person has accepted that phase's pending human gates as one set, or has named that row.
+When Phase selection finds no ready unit and any phase is still `Awaiting sign-off`, the runner MUST list every pending human gate across those awaiting phases in **one** prompt (R8 (batched sign-off)). Include evidenced `agent` rows for those same phases so the person can reject that evidence with the human gates. One reply MAY accept all of them, or name the ones it accepts or rejects. Accepted phases: record acceptance under **Close-out** (naming the human **Gates** rows in the set), set the matching human scenario title checkboxes to checked, and mark `Done`. Reject of a human gate or of agent evidence for a phase follows cascade reopen below. A bare `implement` or `continue`, with no accept/reject wording, is not acceptance — show the batch set and stop. Do not ask the person to name each row, each scenario, or to repeat a set phrase unless they accept only some phases by name. A pure `agent`+`automated` phase has no batch reject path (Close was `automated` and it already became `Done`).
+
+### Cascade reopen
+
+On reject of a phase in `Awaiting sign-off` (including reject of agent evidence for that phase):
+
+1. Read that phase's durable Close-out `Ran while awaiting` list before changing statuses. `—` means no downstream unit ran in this awaiting interval. A missing line on an older plan is a defect: stop rather than guessing from current statuses.
+2. Set the rejected phase to `Started` (not `Reviewing` or `Blocked`). Uncheck each scenario title whose human Gate or agent evidence the person rejected. Keep unrelated passed scenario ticks and prior Close-out evidence, but append a dated deviation saying the rejected evidence is stale and must be rerun. `Blocked` is allowed only after a new retry exhausts the normal failure budget.
+3. For every dispatch unit recorded in `Ran while awaiting`, set every non-`Deferred` member to `Not started`, including members currently `Done`, `Awaiting sign-off`, `Reviewing`, or `Blocked`. This parks the invalidated units without violating the one-`Started` active slot while the rejected phase is retried. Leave an explicitly `Deferred` member deferred. Uncheck all scenario-title and Done-when checkboxes in each reopened member; preserve prior Close-out text but append a dated deviation naming the rejected upstream phase and saying prior evidence is stale.
+4. Run the selective Tracker Phase status mirror for every changed unit; each status transition also reconciles status-aware Linear blockers. Name all reopened phases to the person.
+5. Resume with the rejected phase first. After it passes review/sign-off again, re-run each reopened downstream unit's verify, Gates, and review before it may return to `Done` or `Awaiting sign-off`.
+
+Do not infer affected phases from phase numbers, current Linear relations, or current statuses. The `Ran while awaiting` list is the source of truth for the interval, including independent units that would not appear in a dependency walk.
+
+Resume uses the same `/spec implement` / continue entry: finish the open `Started` / `Reviewing` unit first, then pick the next ready `Not started` unit or run batched sign-off. A `Blocked` unit remains parked unless the person explicitly names it or asks to resume the blocked unit; when explicitly resumed, set it to `Started` before work. The controller MUST NOT invent rulings that replace Ask-before for security or irreversible ops. The controller MUST NOT mark a human **Gates** row passed, or check a human scenario title tick, unless the person has accepted that phase's pending human gates (batch or named), or has named that row.
 
 ## Archive
 
-When the user confirms the spec is done — including when they deliberately drop phases that are still `Not started` or `Deferred`:
+When the user confirms the spec is done and every phase is `Done` or `Deferred`:
 
-1. Note skipped or deferred phases in `<slug>.plan.md`, including anything left under **Follow-ups**.
-2. **Validate the destination.** `spec_docs/archive/<slug>/` must not already exist (slugs are unique across `spec_docs/` and `spec_docs/archive/` — [create-spec.md](create-spec.md) › Slug). If it does, stop and ask; do not nest or overwrite.
-3. **Archive gate (Linear).** Before marking the Tracker Spec Done, run [linear-sync/status.md](linear-sync/status.md) › Archive gate (R18 (archive gate)). Tracker Spec Done only when every referenced Tracker Phase is Done or Deferred; otherwise ask. Do not silently complete the Tracker Spec.
-4. Move the whole folder `spec_docs/<slug>/` to `spec_docs/archive/<slug>/` (do not rename siblings as a side effect — R4 (no auto migrate)).
-5. Set `Progress: archived` in `<slug>.spec.md`, now at its archived path. Set it last, only once the move succeeded, so an interruption before this point leaves the folder active (router re-offers archive) instead of falsely reporting `archived`.
-6. When the Linear gate allowed (or the user confirmed past it), update only the Tracker Spec via selective Progress → Tracker Spec — not a full explicit sync.
+1. **Status gate.** If any phase is `Not started`, `Started`, `Reviewing`, `Awaiting sign-off`, or `Blocked`, stop and refuse archive. Name every open phase and tell the person to finish it or explicitly set it to `Deferred`; do not move the folder. Deliberately dropping a `Not started` phase is not an archive shortcut: setting it to `Deferred` requires the existing person confirmation and a recorded reason in **Close-out** or **Follow-ups**.
+2. Confirm every `Deferred` phase has its reason recorded in `<slug>.plan.md`, and note anything left under **Follow-ups**.
+3. **Validate the destination.** `spec_docs/archive/<slug>/` must not already exist (slugs are unique across `spec_docs/` and `spec_docs/archive/` — [create-spec.md](create-spec.md) › Slug). If it does, stop and ask; do not nest or overwrite.
+4. **Archive gate (Linear).** Before marking the Tracker Spec Done, run [linear-sync/status.md](linear-sync/status.md) › Archive gate (R18 (archive gate)). Tracker Spec Done only when every referenced Tracker Phase is Done or Deferred; otherwise ask. Do not silently complete the Tracker Spec.
+5. Move the whole folder `spec_docs/<slug>/` to `spec_docs/archive/<slug>/` (do not rename siblings as a side effect — R4 (no auto migrate)).
+6. Set `Progress: archived` in `<slug>.spec.md`, now at its archived path. Set it last, only once the move succeeded, so an interruption before this point leaves the folder active (router re-offers archive) instead of falsely reporting `archived`.
+7. **Epic parent Status (R3 (done on archive)).** When frontmatter `epic` is a real slug (not `n/a` or missing), set or replace `**Status:** done` on the suggested-spec section whose **Slug** equals this child slug. Prefer `spec_docs/<epic>/<epic>.epic.md`, else `spec_docs/archive/<epic>/<epic>.epic.md`. When the epic file or matching section is missing, warn in chat and continue; do not fail the archive move. Do not edit other S sections or Tasks. Do not invent Status values other than `done` here.
+8. When the Linear gate allowed (or the user confirmed past it), update only the Tracker Spec via selective Progress → Tracker Spec — not a full explicit sync.
 
-Do not archive without explicit confirmation. If every phase is `Done`, or only `Done` plus `Deferred`, offer archive and wait. Do not re-archive. Do not read other archive folders.
+Do not archive without explicit confirmation. If and only if every phase is `Done` or `Deferred`, offer archive and wait. Do not re-archive. Do not read other archive folders except when step 7 must update a parent epic already under `archive/`.

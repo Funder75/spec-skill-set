@@ -28,14 +28,25 @@ Each phase uses the same block:
 | **Not in this phase** | Adjacent work the implementer must leave alone |
 | **Deliverables** | Concrete files: `extend`, `new`, or `remove`. `new` needs a one-line reason. Prefer `extend` |
 | **Approach** (advisory) | Ordered steps with real source paths, plus guiding code, do/do-not examples, and code-design notes when shape would otherwise be ambiguous. Omit when deliverables alone are enough |
-| **Acceptance scenarios** | `A<phase>.<n>` list items, Given / When / Then, each with a Kind-aware Trace (below) and **Check** `automated` or `human`. Behaviour only |
+| **Acceptance scenarios** | `A<phase>.<n>` list items with a title-line markdown checkbox, Given / When / Then, each with a Kind-aware Trace (below) and **Check** `automated`, `agent`, or `human`. Behaviour only |
 | **Tier** | Label plus a one-line reason naming the deciding factor. See [Phase tier](../design-quality.md#phase-tier) |
 | **Close** | `automated` or `human`, in the progress overview and on the phase. See [Phase close](../design-quality.md#phase-close) |
-| **Done when** | The tier's default verify first, plus any stronger command this phase needs, then the scenario IDs, then phase-specific regressions. Who runs each line is **Gates** |
-| **Gates** | One row per check: Check, Owner (`automated` or `human`), Evidence. Every scenario **Check** appears here |
+| **Done when** | The tier's default verify first, plus any stronger command this phase needs, then phase-specific regressions. No scenario-range or lone scenario-id pass lines — those ticks live on the scenario titles. Who runs each line is **Gates** |
+| **Gates** | One row per check: Check, Owner (`automated`, `agent`, or `human`), Evidence. Every scenario **Check** appears here. No tick column |
 | **Ask-before** | `—`, or the phase-specific person stop. Do not repeat the global stops in [implement.md](implement.md) |
-| **Close-out** | Leave blank. The implementer fills it |
+| **Close-out** | Leave result lines blank. Seed `Ran while awaiting: —`; implement updates it as durable cascade-reopen state |
 | **Sub-tasks** | Optional. Each sized for one implement session, with a Status cell |
+
+### Pre-flight collect
+
+Before treating the plan as ready to implement (and before phase 1 may start):
+
+1. Scan every phase **Ask-before** and any foreseeable global stop the plan can predict (new dependency, new command, secret name, branch or cloud consent).
+2. Write each item as a row in the top-level **Pre-flight** section (before the progress overview): **Item**, **Kind**, **Answer**, **Asked from** (phase id or `global`). Omit the section only when every **Close** is `automated` and no foreseeable person input exists.
+3. Stop for the person's answers. Record them in **Answer**. Secret values MUST NOT be written — record the secret name only.
+4. Do not treat the plan as ready to implement, and do not start phase 1, while any Pre-flight **Answer** is blank.
+
+Unpredicted Ask-before stops in [implement.md](implement.md) still apply at run time. Point authors at [Phase close](../design-quality.md#phase-close) for when a **Depends on** cell needs the `1 (needs sign-off)` suffix, and at [Phase sizing](../design-quality.md#phase-sizing) for placing human-checked work late.
 
 Rules:
 
@@ -44,12 +55,13 @@ Rules:
 - Set each phase's **Tier** with [Phase tier](../design-quality.md#phase-tier). Rate this phase, not the feature, and not by file count. The label in the progress overview matches the phase block. Read **Complexity hotspots** in `spec_docs/README.md` when that subsection has filled bullets. If it is missing, empty, or still a placeholder, use the generic rubric and do not ask.
 - The tier selects the default commands in **Verify tiers**. If that subsection is still the placeholder, ask — offer to save the answer via [fill-conventions.md](fill-conventions.md) so later phases do not ask again. Do not invent a build pipeline. A phase that needs a stronger check names that command in **Done when** and keeps its tier. A **Done when** command must come from **Verify tiers** or **Other commands** in `spec_docs/README.md`; a command that is not already listed there is flagged in the phase (one line, "new command — confirm before running") so the implementer asks before the first run.
 - Read **Documenting changes** in `spec_docs/README.md`. If that subsection is still the placeholder, ask — offer to save the answer via [fill-conventions.md](fill-conventions.md) so later plans do not ask again. If **Policy** is the explicit value `none` (or the whole subsection is `none`), do not add docs todos. When filled and not none: for each phase whose Deliverables touch a surface the convention names (project docs, code docs, other markdown), add matching **Deliverables** rows for those paths or surfaces, and a **Done when** checkbox that names the convention (for example "Project docs / code docs updated per Documenting changes"). Prefer attaching docs work to the phase that changes the surface, not a standalone docs-only phase, unless that is the only change. Do not add a Documenting or As-built section to `<slug>.spec.md` or tech siblings for this. Lite and standard thin plans follow the same rule.
-- Set each phase's **Close** with [Phase close](../design-quality.md#phase-close). The overview cell and the phase line use the same word: `automated` or `human`. `automated` only when every **Gates** owner and every scenario **Check** is `automated`. Any `human` owner forces **Close** `human`. A combinable group is `human` if any member is `human`. Do not leave **Close** for the implementer to infer.
-- **Gates** names who runs each check. Owner `automated` is a command, a test, or a result the review can show from the repo. Owner `human` is a person. Do not add a row for the implement review subagent. **Ask-before** is `—` when this phase has no extra person stop. When scenarios do not share an owner, put the human IDs on their own **Done when** line so the agent does not check them off. When the matching **Verify tiers** row is the explicit value `none` (no command for that tier), the phase's **Gates** owner for that check is `automated` only if the row names concrete review-observable evidence from the repo; otherwise set **Close** `human`. Do not treat `none` or an unresolved `{{command}}` placeholder as satisfied.
+- Set each phase's **Close** with [Phase close](../design-quality.md#phase-close). The overview cell and the phase line use the same word: `automated` or `human`. `automated` when every **Gates** owner and every scenario **Check** is `automated` or `agent` (owner `agent` counts as automated for Close). Any `human` owner forces **Close** `human`. Close MUST NOT be a third value such as `agent`. A combinable group is `human` if any member is `human`. Do not leave **Close** for the implementer to infer.
+- **Gates** names who runs each check. Owner `automated` is a command, a test, or a result the review can show from the repo. Owner `agent` is an in-session observation the implementer evidences in Close-out (prefer for visual or copy the agent can observe). Owner `human` is a person — required for auth, secrets, stored-data, and migration checks; do not recommend `agent` for those. Do not add a row for the implement review subagent. Do not add a Gates tick column — pass state lives on the scenario title checkbox. **Ask-before** is `—` when this phase has no extra person stop. When scenarios do not share an owner, leave human scenario title ticks unchecked until person accept; do not put those IDs on their own **Done when** line. When the matching **Verify tiers** row is the explicit value `none` (no command for that tier), the phase's **Gates** owner for that check is `automated` or `agent` only if the row names concrete review-observable evidence from the repo (for `agent`, Close-out note plus path or artifact ref); otherwise set **Close** `human`. Do not treat `none` or an unresolved `{{command}}` placeholder as satisfied.
 - Phases start at **Not started**.
-- **Depends on** and **Combinable with** in the progress overview are the order gate. `—` means none. **Close** in that same table is who can finish the phase. A Mermaid graph is optional, and only when there are more than four phases; the table stays the source of truth.
+- **Depends on** and **Combinable with** in the progress overview are the order gate. `—` means none. **Close** in that same table is who can finish the phase. A **Depends on** target that must wait for person accept uses the suffix `1 (needs sign-off)` on that phase id — see [Phase close](../design-quality.md#phase-close). A Mermaid graph is optional, and only when there are more than four phases; the table stays the source of truth.
+- Collect predictable person inputs into **Pre-flight** and record answers before phase 1 may start — see [Pre-flight collect](#pre-flight-collect).
 - **Read first** links each tech-doc section or **Technical notes** anchor the phase needs, not whole docs. Do not restate them.
-- Each acceptance scenario has a Kind-aware journey or list Trace and a **Check** of `automated` or `human`. **Check** and the **Gates** owner for that scenario use the same word.
+- Each acceptance scenario opens with a markdown checkbox on the title line (`- [ ] **A…**` / `- [x] **A…**`), then a Kind-aware journey or list Trace and a **Check** of `automated`, `agent`, or `human`. **Check** and the **Gates** owner for that scenario use the same word.
   - **Kind: feature** (or missing Kind): each scenario names the `<slug>.spec.md` journey step it checks (`Journey: …`), or `Journey: —` for a rule with no journey step. A journey step no scenario checks is a gap.
   - **Kind: bugfix**: each scenario's **Trace** maps one-to-one onto one item from Current / Expected / Unchanged behaviour (name the list and item, or an equivalent clear form). Journey-step traces MUST NOT be required. At least one scenario in the plan MUST be marked **Regression: yes** (the scenario that proves the fix).
 - For bugfix, the regression scenario's Reviewing / Done Close-out MUST record red-before-green evidence (failed without the fix; passed with it — command, manual repro, or equivalent). That rule applies to the regression scenario only; it does not force TDD for every phase. "Require TDD unless **Project conventions** say so" still holds.
@@ -80,7 +92,7 @@ Do not create branches, worktrees, or commits unless the user explicitly asks in
 
 ## Ready to implement
 
-Walk the checklist in [design-quality.md](../design-quality.md). Fix gaps, or add a **Q** item in `<slug>.spec.md` and point at it with `> **Open:** Q1 (short name)`. A question may remain only if its **Blocks** line does not include phase 1.
+Walk the checklist in [design-quality.md](../design-quality.md). Fix gaps, or add a **Q** item in `<slug>.spec.md` and point at it with `> **Open:** Q1 (short name)`. A question may remain only if its **Blocks** line does not include phase 1. Every Pre-flight **Answer** MUST be filled before phase 1 may start (see [Pre-flight collect](#pre-flight-collect)).
 
 ## Mechanical validate
 
@@ -97,7 +109,7 @@ When `Progress` changes to `plan` (this promote) or any later gate change lands 
 
 ## Tracker Phases after plan write or edit
 
-After the plan file is written or a dispatch-unit change lands (phase added, removed, renumbered, renamed, or combinable grouping changed), run [linear-sync/tracker-phases.md](linear-sync/tracker-phases.md) when write-back is allowed (G2 (tracker phases), R4 (freeze before plan)).
+After the plan file is written or a dispatch-unit change lands (phase added, removed, renumbered, renamed, combinable grouping changed, or **Depends on** changed), run [linear-sync/tracker-phases.md](linear-sync/tracker-phases.md) when write-back is allowed (G2 (tracker phases), R4 (freeze before plan)).
 
 **Plan file.** This stage emits `<slug>.plan.md`. “Plan exists” means that file only (R4 (no auto migrate)). Do not auto-rename a bare `implementation-plan.md` and do not dual-read it as the plan; stop and tell the user to rename it first. Without `<slug>.plan.md`, Tracker Phase work is a no-op (R5 (thin noop)) — this hook only runs after a plan write, so that case does not apply here.
 
@@ -110,7 +122,8 @@ Frontmatter `work_item` is a real id (not `n/a`), Work items conventions for cre
 1. Build dispatch units from the progress overview (one phase, or one combinable group).
 2. For each unit whose phases still say `Tracker phase: n/a` → create one Tracker Phase (`parentId` = Tracker Spec id) and write the returned id onto every phase in that unit.
 3. For each unit that already has a stored id → update that id in place when body source fields changed. Preserve the id through renames and renumbering; never title-search (R8 (direct and selective update)).
-4. When a unit with a stored id is removed → cancel + reason comment, then remove the repo field (R9 (cancel removed)). Leave unreferenced Linear work alone (R7 (unreferenced leave)).
+4. When a unit with a stored id is removed → cancel + reason comment, remember that id, then remove the repo field (R9 (cancel removed)). Leave unreferenced Linear work alone (R7 (unreferenced leave)).
+5. After those creates, updates, and cancels, run [linear-sync/tracker-phases.md](linear-sync/tracker-phases.md) › Blockers once for every unit with a real id. Run it even when the only change was **Depends on** and no description was rewritten.
 
 ### When write-back is not allowed
 

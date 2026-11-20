@@ -14,10 +14,11 @@ First successful link after create-spec sets frontmatter `work_item` and write-b
 
 - Frontmatter `work_item` is set to a real id (not `n/a`).
 - Preconditions pass for write-back.
+- This explicit sync's Issue body answer was not Skip. Skip writes no description and no link-back (R2 (no body rewrite)). Create-spec does not ask Issue body and still runs this section.
 
 ### Steps
 
-1. `save_comment` on the Tracker Spec: body names `spec_docs/<slug>/` (path text only).
+1. `save_comment` on the Tracker Spec: body is the italic line `*Repo canonical: spec_docs/<slug>/*` (path text only, wrapped in single asterisks).
 2. If conventions define a design-stage label: `save_issue` with `addLabels` for that label only (not a full label replace).
 3. Append Linear `links` only when a real URI exists (hosted remote or equivalent). NEVER invent a bare-path link such as `spec_docs/foo/`.
 4. After Linear returns the Tracker Spec URL, write it into the overview file's frontmatter as `tracker_spec_url` (`<slug>.spec.md`, or `<slug>.epic.md` when the folder is an epic). Do not invent the URL beforehand.
@@ -36,14 +37,14 @@ The Linear description is the one Linear mirror of the repo overview: the issue 
 
 ### Content
 
-Always start with the canon line `Repo canonical. Do not edit binding content in Linear.` (D16 (no linear edits)). Then, by Issue body choice:
+Always start with the canon line `*Repo canonical. Do not edit binding content in Linear. Synced from slug <slug> on branch <branch>.*` (D16 (no linear edits)). `<slug>` is the spec folder name. `<branch>` is the current git branch at write time; if git cannot name one, write `unknown`. Then, by Issue body choice:
 
 | Choice | Body after the canon line |
 | ------ | ------------------------- |
 | **Full** | The overview file after its YAML frontmatter: `<slug>.spec.md`, or `<slug>.epic.md` when the folder is an epic. An epic file already carries its suggested specs and tasks. Not the tech siblings and not the plan. |
 | **Abstract** | The `#` title and the `## TL;DR` section (the four bullets) from that overview file. Not goals, suggested specs, tech siblings, or the plan. |
 | **Custom** | Exactly the text the user gave this sync. Do not invent prose. |
-| **Skip** | No write (R2 (no body rewrite)). |
+| **Skip** | No description write, and no link-back (R2 (no body rewrite)). |
 
 Omit secret values in every write choice (R19 (no secrets)).
 
@@ -56,7 +57,7 @@ When an explicit sync's Issue body answer was Full, Abstract, or Custom:
 
 ### Refresh
 
-When TL;DR or goals change on a linked folder (on an epic, when suggested specs or tasks change), a Full or Abstract Linear description is now stale. A Custom body may also be stale. Routine stages do not write it, because the Issue body answer is not stored. Tell the user to run `/spec linear sync` to refresh it; that sync asks Issue body again. Progress-only and phase-status-only ticks do not trigger this.
+When TL;DR or goals change on a linked folder (on an epic, when suggested specs or tasks change), a Full or Abstract Linear description is now stale. A Custom body may also be stale. A new branch name makes the source line stale too. Routine stages do not write it, because the Issue body answer is not stored. Tell the user to run `/spec linear sync` to refresh it; that sync asks Issue body again. Progress-only and phase-status-only ticks do not trigger this.
 
 ### MUST NOT (Description)
 

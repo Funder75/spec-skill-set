@@ -4,21 +4,29 @@
 
 Phases for [{{feature-slug}}.spec.md](./{{feature-slug}}.spec.md).
 
-**Status values:** `Not started` · `Started` · `Reviewing` · `Done` · `Deferred` · `Blocked`
+**Status values:** `Not started` · `Started` · `Reviewing` · `Awaiting sign-off` · `Done` · `Deferred` · `Blocked`
+
+## Pre-flight
+
+<!-- required when the plan has any Close human, or any predictable Ask-before (new dependency, new command, secret name, branch/cloud consent). Omit the section only when every Close is automated and no foreseeable person input exists. Answers MUST be filled before phase 1 may start. Kind is a short label (dependency, secret name, command, consent, …). Asked from is a phase id or global. Secret values MUST NOT appear — record the secret name only. -->
+
+| Item | Kind | Answer | Asked from |
+| ---- | ---- | ------ | ---------- |
+| {{item}} | {{kind}} | {{answer}} | {{phase id or global}} |
 
 ## Progress overview
 
-<!-- required. Depends on and Combinable with are the order gate. — means none. Goal text stays in the phase, not here. -->
+<!-- required. Depends on and Combinable with are the order gate. — means none. Goal text stays in the phase, not here. A Depends on cell may list phase ids. To require person accept before a later phase may start, append the needs-sign-off suffix on that id: 1 (needs sign-off). Absent suffix → Awaiting sign-off on the target still satisfies the dependency. -->
 
 <!-- Tier: Low / Medium / High from Phase tier in the spec skill's design-quality.md. Rate the hardest factor in this phase, not the feature and not the file count. The label here matches the phase block. -->
 
-<!-- Close: automated or human, from Phase close in design-quality.md. automated = verify and the one agent review can mark Done with no person. human = after that review, stay Reviewing until a person continues. The cell matches the phase Close line. A combinable group is human if any member is human. -->
+<!-- Close: automated or human only (not agent), from Phase close in design-quality.md. automated = verify and the one agent review can mark Done with no person. human = after that review, move to Awaiting sign-off until a person accepts. Owner agent on Check/Gates counts as automated for Close. The cell matches the phase Close line. A combinable group is human if any member is human. -->
 
 | Phase | Status | Name | Tier | Close | Depends on | Combinable with |
 | ----- | ---- | ------ | ---- | ----- | ---------- | --------------- |
 | **1** | Not started | {{name}} | {{Low / Medium / High}} | {{automated / human}} | — | — |
 | **2** | Not started | {{name}} | {{…}} | {{automated / human}} | 1 | 3 |
-| **3** | Not started | {{name}} | {{…}} | {{automated / human}} | 1 | 2 |
+| **3** | Not started | {{name}} | {{…}} | {{automated / human}} | 1 (needs sign-off) | 2 |
 
 <!-- include when: more than about five phases. One line, for example "6 phases — migration needs a backfill-verify step before enforcing NOT NULL." -->
 
@@ -61,7 +69,7 @@ flowchart LR
 
 **Close:** {{automated / human}}
 
-<!-- Matches the progress overview. human when any Gates owner is human. automated only when every owner is automated. -->
+<!-- Matches the progress overview. human when any Gates owner is human. automated when every owner is automated or agent. -->
 
 **Not in this phase:** {{adjacent work the implementer must leave alone}}
 
@@ -89,32 +97,31 @@ flowchart LR
 
 ### Acceptance scenarios
 
-<!-- required. Binding. Behaviour only. Read Kind from {{feature-slug}}.spec.md (missing → feature). Feature / missing Kind: Journey title + step, or "Journey: —" when it checks a rule with no journey step. Bugfix: Trace 1:1 to one Current / Expected / Unchanged behaviour item (name the list and item); at least one scenario in the plan has Regression: yes. Check is automated or human, and the same word appears in Gates. -->
+<!-- required. Binding. Behaviour only. Read Kind from {{feature-slug}}.spec.md (missing → feature). Feature / missing Kind: Journey title + step, or "Journey: —" when it checks a rule with no journey step. Bugfix: Trace 1:1 to one Current / Expected / Unchanged behaviour item (name the list and item); at least one scenario in the plan has Regression: yes. Check is automated, agent, or human, and the same word appears in Gates. Prefer agent for visual or copy the implementer can observe; keep auth, secrets, stored-data, and migrations human. Pass state is the title checkbox; Gates stays owner-only (no tick column). -->
 
-- **A{{n}}.1 — {{short title}}**
+- [ ] **A{{n}}.1 — {{short title}}**
   - Journey: {{journey title}}, step {{n}}
   <!-- bugfix instead of Journey: use Trace + Regression, e.g. Trace: Expected behaviour › "When … the system shall …" and Regression: yes -->
-  - Check: {{automated / human}}
+  - Check: {{automated / agent / human}}
   - Given {{precondition}}
   - When {{action}}
   - Then {{observable result}}
 
 ### Done when
 
-<!-- required. Binding. The tier selects the default Verify tiers row. Add a stronger command on its own line when this phase needs one (config, dependency, or generated types that only a full build catches). That does not change the tier. Who runs each line is Gates, not this list. When some scenarios are human, put those IDs on their own line. -->
+<!-- required. Binding. The tier selects the default Verify tiers row. Add a stronger command on its own line when this phase needs one (config, dependency, or generated types that only a full build catches). That does not change the tier. Who runs each line is Gates, not this list. Do not list scenario-range or lone scenario-id pass lines — those ticks live on the scenario titles. -->
 
 - [ ] Tier verify passes (Project conventions in `spec_docs/README.md`)
-- [ ] A{{n}}.1–A{{n}}.x pass
 - [ ] {{regression: existing behaviour X unchanged}}
 
 ### Gates
 
-<!-- required. Binding. One row per check. Owner is automated or human. Every scenario Check appears here (a shared owner may be a range). Close is human when any owner is human. Do not add a row for the implement review subagent — that review always runs. A cell is about 10 words. Omit a human row only when Close is automated and no person check exists. -->
+<!-- required. Binding. One row per check. Owner is automated, agent, or human. Every scenario Check appears here (a shared owner may be a range). Close is human when any owner is human; agent counts as automated for Close. Agent evidence is a Close-out note plus path or artifact ref. Do not add a row for the implement review subagent — that review always runs. A cell is about 10 words. Omit a human row only when Close is automated and no person check exists. -->
 
 | Check | Owner | Evidence |
 | ----- | ----- | -------- |
 | {{Low verify command}} | automated | Close-out command result |
-| A{{n}}.1–A{{n}}.x | {{automated / human}} | {{Close-out, or unchecked until continue}} |
+| A{{n}}.1–A{{n}}.x | {{automated / agent / human}} | {{Close-out, or unchecked until continue}} |
 
 **Ask-before:** {{— or the person stop for this phase}}
 
@@ -122,12 +129,13 @@ flowchart LR
 
 ### Close-out
 
-<!-- The implementer fills this at Reviewing, Done, or Blocked. Leave the lines blank until then. Fill Blocked only when status is Blocked: reason, date, and the last failing command. Bugfix + Regression: yes on a scenario → Verified MUST include red-before-green for that scenario: red (named command or repro failed without the fix); green (same check passed with the fix). Green-only for that scenario is a defect. Does not force TDD for every phase. -->
+<!-- The implementer fills this at Reviewing, Done, or Blocked. Leave the ordinary result lines blank until then. Ran while awaiting is durable scheduler state: start it at —; while this phase is Awaiting sign-off, the runner appends each dispatch-unit phase id that starts, without duplicates. Fill Blocked only when status is Blocked: reason, date, and the last failing command. Bugfix + Regression: yes on a scenario → Verified MUST include red-before-green for that scenario: red (named command or repro failed without the fix); green (same check passed with the fix). Green-only for that scenario is a defect. Does not force TDD for every phase. -->
 
 - Verified:
 - Deviations:
 - Follow-ups:
 - Blocked:
+- Ran while awaiting: —
 
 ## Follow-ups
 

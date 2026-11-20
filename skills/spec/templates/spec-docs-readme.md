@@ -27,7 +27,7 @@ Planning documents for this repo. One folder per feature spec. The spec workflow
 
 `Kind` in `<slug>.spec.md` is `feature` (default) or `bugfix`. Say `create … as bugfix` (alone or with a Depth) to set Kind without a recommend ask. Lite is recommended for many bugs, not required. Bugfix design uses behaviour lists and Root cause instead of User journeys and Work split. Older folders without Kind are treated as feature.
 
-`create epic` writes `<slug>.epic.md` only. Each suggested spec is a numbered section such as `S1 (short name)`. `/spec create spec for` an epic file adds one child from that section: the child's frontmatter `epic` and **Source** point back at the epic. Tasks that are not specs are done by hand or in a chat. They do not get a folder. `/spec linear sync` asks whether the epic is a new Linear project or an issue, then pushes that choice. A project is not also created as an issue. Syncing a child whose `epic` is set nests its Tracker Spec as a sub-issue of the epic issue, or under the epic's Linear project. Tracker text is not pulled back.
+`create epic` writes `<slug>.epic.md` only. Each suggested spec is a numbered section such as `S1 (short name)`. `/spec create spec for` an epic file adds one child from that section: the child's frontmatter `epic` and **Source** point back at the epic, and that section gets `**Status:** created`. Archiving the child sets that section's Status to `done`. Tasks that are not specs are done by hand or in a chat. They do not get a folder. `/spec next` on an epic (and a refuse of implement or promote on that epic) names each suggested section's Status from the epic (`created`, `done`, or absent). `/spec linear sync` asks whether the epic is a new Linear project or an issue, then pushes that choice. A project is not also created as an issue. Syncing a child whose `epic` is set nests its Tracker Spec as a sub-issue of the epic issue, or under the epic's Linear project. Tracker text is not pulled back.
 
 Full path:
 
@@ -36,7 +36,7 @@ Full path:
 3. **Implementation plan** — `<slug>.plan.md`: phases, Done when, phase status, and **Close** (`automated` or `human`) (`Progress: plan`).
 4. **Implement** one phase at a time (`Progress: implementing`). When the work is done, move the folder to `archive/` (`Progress: archived`).
 
-`Progress` in `<slug>.spec.md` is the gate: `design`, `tech`, `plan`, `implementing`, or `archived`. Phase status (`Not started` through `Done`, plus `Deferred` and `Blocked`) lives only in `<slug>.plan.md`.
+`Progress` in `<slug>.spec.md` is the gate: `design`, `tech`, `plan`, `implementing`, or `archived`. Phase status (`Not started` through `Done`, plus `Awaiting sign-off`, `Deferred`, and `Blocked`) lives only in `<slug>.plan.md`.
 
 Invoke the **spec** skill with `/spec`. Examples: create a spec from a note or a work item (optionally `as lite`, `as bugfix`, or both), `/spec next`, promote to tech specs, promote to an implementation plan, implement the next phase, audit or review a spec, archive, sync with Linear.
 
@@ -64,11 +64,11 @@ IDs carry a short name, for example `G1 (writing style)`:
 
 To find every citation of an ID, search for the ID and the opening parenthesis, for example `G1 (`. A plain `G1` search also hits `G10`.
 
-Phase status: `Not started`, `Started`, `Reviewing`, `Done`, `Deferred`, `Blocked`.
+Phase status: `Not started`, `Started`, `Reviewing`, `Awaiting sign-off`, `Done`, `Deferred`, `Blocked`.
 
 **Tier** rates how hard a phase is to implement (Low / Medium / High) so the implementer can choose effort. It also selects the default verify row under **Project conventions**.
 
-**Close** on each plan phase is `automated` or `human`. The same word is in the progress overview. `automated` means verify and the agent review can mark the phase Done. `human` means a person continues after that review. **Gates** names who runs each check.
+**Close** on each plan phase is `automated` or `human`. The same word is in the progress overview. `automated` means verify and the agent review can mark the phase Done. `human` means after that review the phase moves to `Awaiting sign-off` until a person accepts (batched when the ready queue is empty). **Gates** names who runs each check. Owner may be `automated`, `agent` (in-session observation with Close-out evidence; counts as automated for Close), or `human` (required for auth, secrets, stored data, and migrations).
 
 ## Project conventions
 
@@ -92,7 +92,8 @@ Hand-fill either shape the same way.
 - **Team:** {{name or id}}
 - **Fetch:** {{use Linear MCP `get_issue` by id or URL}}
 - **Tracker Spec Progress → state/label map:** {{design → …; tech → …; plan → …; implementing → …; archived → …}}
-- **Tracker Phase status → state map:** {{Not started → …; Started → …; Reviewing → …; Done → …; Deferred → …; Blocked → …; Removed → …}}
+- **Tracker Phase status → state map:** {{Not started → …; Started → …; Reviewing → …; Awaiting sign-off → …; Done → …; Deferred → …; Blocked → …; Removed → …}}
+- **Close → label map:** {{human → …; automated → …}}
 - **Optional design-stage label:** {{label name/id, or omit}}
 - **Optional default `[repo=…]`:** {{owner/name the cloud agent should use, or omit}}
 
